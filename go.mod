@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/go-macaron/cache v0.0.0-20200329073519-53bb48172687
+	github.com/go-macaron/captcha v0.2.0
 	gopkg.in/macaron.v1 v1.4.0
 )
 

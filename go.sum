@@ -4,8 +4,11 @@ github.com/cupcake/rdb v0.0.0-20161107195141-43ba34106c76/go.mod h1:vYwsqCOLxGii
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/edsrzf/mmap-go v1.0.0/go.mod h1:YO35OhQPt3KJa3ryjFM5Bs14WD66h8eGKpfaBNrHW5M=
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
+github.com/go-macaron/cache v0.0.0-20190810181446-10f7c57e2196/go.mod h1:O6fSdaYZbGh4clVMGMGO5k2KbMO0Cz8YdBnPrD0I8dM=
 github.com/go-macaron/cache v0.0.0-20200329073519-53bb48172687 h1:G4yk9vJc6amLZu9rEEafr1FZJHytZ2IKHUmuPUTb2zc=
 github.com/go-macaron/cache v0.0.0-20200329073519-53bb48172687/go.mod h1:wZk2O+x+Aqyx1QuP3fcRHtPVwxYWNNEzaAZHxb9GGkA=
+github.com/go-macaron/captcha v0.2.0 h1:d38eYDDF8tdqoM0hJbk+Jb7WQGWlwYNnQwRqLRmSk1Y=
+github.com/go-macaron/captcha v0.2.0/go.mod h1:lmhlZnu9cTRGNQEkSh1qZi2IK3HJH4Z1MXkg6ARQKZA=
 github.com/go-macaron/inject v0.0.0-20160627170012-d8a0b8677191 h1:NjHlg70DuOkcAMqgt0+XA+NHwtu66MkTVVgR4fFWbcI=
 github.com/go-macaron/inject v0.0.0-20160627170012-d8a0b8677191/go.mod h1:VFI2o2q9kYsC4o7VP1HrEVosiZZTd+MVT3YZx4gqvJw=
 github.com/go-sql-driver/mysql v1.5.0/go.mod h1:DCzpHaOWr8IXmIStZouvnhqoel9Qv2LBy8hT2VhHyBg=
