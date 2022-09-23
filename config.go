@@ -10,6 +10,7 @@ import (
 type Config struct {
 	PublicKey  string `json:"public_key"`
 	PrivateKey string `json:"private_key"`
+	Host       string `json:"host"`
 }
 
 // Load method loads configuration file to Config struct

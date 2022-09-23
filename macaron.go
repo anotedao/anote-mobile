@@ -14,11 +14,10 @@ func initMacaron() *macaron.Macaron {
 	m.Use(captcha.Captchaer(
 		captcha.Options{
 			ChallengeNums: 5,
-			Width:         160,
-			Height:        60,
-		}))
+		},
+	))
 
-	m.Get("/mine/:addr", mineView)
+	m.Get("/mine/:captchaid/:captcha/:code", mineView)
 	m.Get("/new-captcha/:addr", newCaptchaView)
 
 	return m
