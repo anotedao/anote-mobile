@@ -17,5 +17,11 @@ func main() {
 
 	m = initMacaron()
 
+	enc := EncryptMessage("blablabla")
+
+	log.Println(enc)
+
+	log.Println(DecryptMessage(enc))
+
 	m.Run("127.0.0.1", Port)
 }
