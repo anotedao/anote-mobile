@@ -15,16 +15,15 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 		Error:   0,
 	}
 
+	addr := ctx.Params("address")
 	cpid := ctx.Params("captchaid")
 	cp := ctx.Params("captcha")
 	code := ctx.Params("code")
+
 	codeInt, err := strconv.Atoi(code)
 	if err != nil {
 		log.Println(err)
 	}
-
-	log.Println(cpid)
-	log.Println(cp)
 
 	if !cpt.Verify(cpid, cp) {
 		pr.Success = false
@@ -34,6 +33,11 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 	if int(codeInt) != getMiningCode() {
 		pr.Success = false
 		pr.Error = 2
+	}
+
+	if pr.Error == 0 {
+		height := int64(getHeight())
+		dataTransaction(addr, nil, &height, nil)
 	}
 
 	ctx.Resp.Header().Add("Access-Control-Allow-Origin", "*")
