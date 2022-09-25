@@ -36,6 +36,10 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 	}
 
 	if pr.Error == 0 {
+		savedHeight, err := getData(addr)
+		if err == nil && savedHeight != nil {
+			sendMinded(addr)
+		}
 		height := int64(getHeight())
 		dataTransaction(addr, nil, &height, nil)
 	}
