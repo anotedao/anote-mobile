@@ -35,13 +35,21 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 		pr.Error = 2
 	}
 
-	if pr.Error == 0 {
-		savedHeight, err := getData(addr)
-		if err == nil && savedHeight != nil {
+	var savedHeight int64
+	sh, err := getData(addr)
+	if err != nil {
+		log.Println(err)
+		savedHeight = 0
+	} else {
+		savedHeight = sh.(int64)
+	}
+	height := int64(getHeight())
+
+	if pr.Error == 0 && (height-savedHeight > 1440) {
+		dataTransaction(addr, nil, &height, nil)
+		if sh != nil && height-savedHeight <= 2880 {
 			sendMinded(addr)
 		}
-		height := int64(getHeight())
-		dataTransaction(addr, nil, &height, nil)
 	}
 
 	ctx.Resp.Header().Add("Access-Control-Allow-Origin", "*")
