@@ -23,8 +23,8 @@ func main() {
 
 	// log.Println(DecryptMessage(enc))
 
-	// height := int64(174710)
-	// dataTransaction("3A9Rb3t91eHg1ypsmBiRth4Ld9ZytGwZe9p", nil, &height, nil)
+	// height := int64(172000)
+	// dataTransaction("3AShXVgRcRis82CwD7o9pz1Ac9vmRYMqELT", nil, &height, nil)
 	// dataTransaction("3AKGP29V8Pjh5VekzXq1SnwWXjMkQm7Zf9h", nil, nil, nil)
 
 	// count := countReferred("3A9Rb3t91eHg1ypsmBiRth4Ld9ZytGwZe9p", nil)

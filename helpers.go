@@ -353,6 +353,7 @@ func sendMined(address string) {
 }
 
 func countReferred(address string, miners *proto.DataEntries) int {
+	height := getHeight()
 	count := 0
 
 	if miners == nil {
@@ -385,8 +386,11 @@ func countReferred(address string, miners *proto.DataEntries) int {
 	for _, e := range *miners {
 		addr := e.GetKey()
 		referral, _ := getData("referral", &addr)
+		blocks := height - uint64(e.ToProtobuf().GetIntValue())
 
-		if referral != nil && address == referral.(string) {
+		if referral != nil &&
+			address == referral.(string) &&
+			blocks <= 2880 {
 			count++
 		}
 	}
