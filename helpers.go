@@ -6,6 +6,7 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"encoding/base64"
+	"encoding/json"
 	"io"
 	"log"
 	"net/http"
@@ -271,6 +272,9 @@ func sendAsset(amount uint64, assetId string, recipient string) error {
 }
 
 func countActiveMiners() int {
+	height := getHeight()
+	count := 0
+
 	sender, err := crypto.NewPublicKeyFromBase58(conf.PublicKey)
 	if err != nil {
 		log.Println(err)
@@ -294,10 +298,17 @@ func countActiveMiners() int {
 		log.Println(err)
 	}
 
-	return len(entries)
+	for _, e := range entries {
+		blocks := height - uint64(e.ToProtobuf().GetIntValue())
+		if blocks <= 2880 {
+			count++
+		}
+	}
+
+	return count
 }
 
-func sendMinded(address string) {
+func sendMined(address string) {
 	count := countActiveMiners()
 
 	sender, err := crypto.NewPublicKeyFromBase58(conf.PublicKey)
@@ -326,4 +337,9 @@ func sendMinded(address string) {
 	amount := (total.Balance / uint64(count)) - Fee
 
 	sendAsset(amount, "", address)
+}
+
+func prettyPrint(i interface{}) string {
+	s, _ := json.MarshalIndent(i, "", "\t")
+	return string(s)
 }
