@@ -36,7 +36,7 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 	}
 
 	var savedHeight int64
-	sh, err := getData(addr)
+	sh, err := getData(addr, nil)
 	if err != nil {
 		log.Println(err)
 		savedHeight = 0
@@ -48,7 +48,7 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 	if pr.Error == 0 && (height-savedHeight > 1440) {
 		dataTransaction(addr, nil, &height, nil)
 		if sh != nil && height-savedHeight <= 2880 {
-			sendMined(addr)
+			go sendMined(addr)
 		}
 	}
 

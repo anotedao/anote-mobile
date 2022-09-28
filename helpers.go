@@ -103,20 +103,29 @@ func dataTransaction(key string, valueStr *string, valueInt *int64, valueBool *b
 	return nil
 }
 
-func getData(key string) (interface{}, error) {
+func getData(key string, address *string) (interface{}, error) {
+	var a proto.WavesAddress
+
 	wc, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{}})
 	if err != nil {
 		log.Println(err)
 	}
 
-	pk, err := crypto.NewPublicKeyFromBase58(conf.PublicKey)
-	if err != nil {
-		return nil, err
-	}
+	if address == nil {
+		pk, err := crypto.NewPublicKeyFromBase58(conf.PublicKey)
+		if err != nil {
+			return nil, err
+		}
 
-	a, err := proto.NewAddressFromPublicKey(55, pk)
-	if err != nil {
-		return nil, err
+		a, err = proto.NewAddressFromPublicKey(55, pk)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		a, err = proto.NewAddressFromString(*address)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	ad, _, err := wc.Addresses.AddressesDataKey(context.Background(), a, key)
@@ -300,8 +309,10 @@ func countActiveMiners() int {
 
 	for _, e := range entries {
 		blocks := height - uint64(e.ToProtobuf().GetIntValue())
+		log.Printf("%s %d %d", e.GetKey(), blocks, countReferred(e.GetKey(), &entries))
 		if blocks <= 2880 {
 			count++
+			count += countReferred(e.GetKey(), &entries)
 		}
 	}
 
@@ -336,7 +347,51 @@ func sendMined(address string) {
 
 	amount := (total.Balance / uint64(count)) - Fee
 
-	sendAsset(amount, "", address)
+	referralIndex := 1 + countReferred(address, nil)
+
+	sendAsset(amount*uint64(referralIndex), "", address)
+}
+
+func countReferred(address string, miners *proto.DataEntries) int {
+	count := 0
+
+	if miners == nil {
+		cl, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{}})
+		if err != nil {
+			log.Println(err)
+		}
+
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		sender, err := crypto.NewPublicKeyFromBase58(conf.PublicKey)
+		if err != nil {
+			log.Println(err)
+		}
+
+		addr, err := proto.NewAddressFromPublicKey(55, sender)
+		if err != nil {
+			log.Println(err)
+		}
+
+		entries, _, err := cl.Addresses.AddressesData(ctx, addr)
+		if err != nil {
+			log.Println(err)
+		}
+
+		miners = &entries
+	}
+
+	for _, e := range *miners {
+		addr := e.GetKey()
+		referral, _ := getData("referral", &addr)
+
+		if referral != nil && address == referral.(string) {
+			count++
+		}
+	}
+
+	return count
 }
 
 func prettyPrint(i interface{}) string {

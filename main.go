@@ -23,9 +23,16 @@ func main() {
 
 	// log.Println(DecryptMessage(enc))
 
-	// height := int64(173423)
+	// height := int64(174710)
 	// dataTransaction("3A9Rb3t91eHg1ypsmBiRth4Ld9ZytGwZe9p", nil, &height, nil)
 	// dataTransaction("3AKGP29V8Pjh5VekzXq1SnwWXjMkQm7Zf9h", nil, nil, nil)
+
+	// count := countReferred("3A9Rb3t91eHg1ypsmBiRth4Ld9ZytGwZe9p", nil)
+	// log.Println(count)
+
+	// addr := "3AShXVgRcRis82CwD7o9pz1Ac9vmRYMqELT"
+	// referral, _ := getData("referral", &addr)
+	// log.Println(referral)
 
 	m.Run("127.0.0.1", Port)
 }
