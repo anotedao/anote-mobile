@@ -7,7 +7,9 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
@@ -416,4 +418,28 @@ func countReferred(address string, miners *proto.DataEntries) int {
 func prettyPrint(i interface{}) string {
 	s, _ := json.MarshalIndent(i, "", "\t")
 	return string(s)
+}
+
+func sendTelegramNotification(addr string) bool {
+	resp, err := http.Get(fmt.Sprintf("http://localhost:5002/notification/%s", addr))
+	if err != nil {
+		log.Println(err)
+		return false
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+
+	var result NotificationResponse
+	if err := json.Unmarshal(body, &result); err != nil { // Parse []byte to the go struct pointer
+		log.Println(err)
+		return false
+	}
+
+	sent := result.Success
+
+	return sent
+}
+
+type NotificationResponse struct {
+	Success bool `json:"success"`
 }

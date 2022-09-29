@@ -45,6 +45,11 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 	}
 	height := int64(getHeight())
 
+	if pr.Error == 0 && (height-savedHeight > 1440) && !sendTelegramNotification(addr) {
+		pr.Success = false
+		pr.Error = 3
+	}
+
 	if pr.Error == 0 && (height-savedHeight > 1440) {
 		dataTransaction(addr, nil, &height, nil)
 		if sh != nil && height-savedHeight <= 2880 {

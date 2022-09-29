@@ -34,7 +34,7 @@ func main() {
 	// referral, _ := getData("referral", &addr)
 	// log.Println(referral)
 
-	log.Println(getMiningCode())
+	sendTelegramNotification("3AShXVgRcRis82CwD7o9pz1Ac9vmRYMqELT")
 
 	m.Run("127.0.0.1", Port)
 }
