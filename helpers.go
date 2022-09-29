@@ -15,10 +15,25 @@ import (
 	"github.com/wavesplatform/gowaves/pkg/client"
 	"github.com/wavesplatform/gowaves/pkg/crypto"
 	"github.com/wavesplatform/gowaves/pkg/proto"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 func getMiningCode() int {
-	return 178
+	dbconf := gorm.Config{}
+	dbconf.Logger = logger.Default.LogMode(logger.Error)
+
+	db, err := gorm.Open(sqlite.Open("../anote-robot/robot.db"), &dbconf)
+	if err != nil {
+		log.Println(err)
+	}
+
+	ks := &KeyValue{Key: "dailyCode"}
+	db.FirstOrCreate(ks, ks)
+
+	return int(ks.ValueInt)
+	// return 178
 }
 
 func dataTransaction(key string, valueStr *string, valueInt *int64, valueBool *bool) error {

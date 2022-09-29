@@ -7,6 +7,8 @@ require (
 	github.com/go-macaron/captcha v0.2.0
 	github.com/wavesplatform/gowaves v0.10.1
 	gopkg.in/macaron.v1 v1.4.0
+	gorm.io/driver/sqlite v1.3.6
+	gorm.io/gorm v1.23.10
 )
 
 require (
@@ -15,7 +17,10 @@ require (
 	github.com/go-macaron/inject v0.0.0-20160627170012-d8a0b8677191 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/jinzhu/copier v0.3.5 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/kilic/bls12-381 v0.0.0-20200820230200-6b2c19996391 // indirect
+	github.com/mattn/go-sqlite3 v1.14.12 // indirect
 	github.com/mr-tron/base58 v1.2.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/umbracle/fastrlp v0.0.0-20210128110402-41364ca56ca8 // indirect

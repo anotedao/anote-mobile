@@ -34,5 +34,7 @@ func main() {
 	// referral, _ := getData("referral", &addr)
 	// log.Println(referral)
 
+	log.Println(getMiningCode())
+
 	m.Run("127.0.0.1", Port)
 }
