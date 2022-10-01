@@ -2,13 +2,8 @@ package main
 
 import (
 	"context"
-	"crypto/aes"
-	"crypto/cipher"
-	"crypto/rand"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -183,49 +178,6 @@ func getHeight() uint64 {
 	return height
 }
 
-func EncryptMessage(message string) string {
-	byteMsg := []byte(message)
-	block, err := aes.NewCipher(conf.Password)
-	if err != nil {
-		log.Println(err)
-	}
-
-	cipherText := make([]byte, aes.BlockSize+len(byteMsg))
-	iv := cipherText[:aes.BlockSize]
-	if _, err = io.ReadFull(rand.Reader, iv); err != nil {
-		log.Println(err)
-	}
-
-	stream := cipher.NewCFBEncrypter(block, iv)
-	stream.XORKeyStream(cipherText[aes.BlockSize:], byteMsg)
-
-	return base64.StdEncoding.EncodeToString(cipherText)
-}
-
-func DecryptMessage(message string) string {
-	cipherText, err := base64.StdEncoding.DecodeString(message)
-	if err != nil {
-		log.Println(err)
-	}
-
-	block, err := aes.NewCipher(conf.Password)
-	if err != nil {
-		log.Println(err)
-	}
-
-	if len(cipherText) < aes.BlockSize {
-		log.Println(err)
-	}
-
-	iv := cipherText[:aes.BlockSize]
-	cipherText = cipherText[aes.BlockSize:]
-
-	stream := cipher.NewCFBDecrypter(block, iv)
-	stream.XORKeyStream(cipherText, cipherText)
-
-	return string(cipherText)
-}
-
 func sendAsset(amount uint64, assetId string, recipient string) error {
 	var networkByte byte
 	var nodeURL string
@@ -297,47 +249,8 @@ func sendAsset(amount uint64, assetId string, recipient string) error {
 	return nil
 }
 
-func countActiveMiners() int {
-	height := getHeight()
-	count := 0
-
-	sender, err := crypto.NewPublicKeyFromBase58(conf.PublicKey)
-	if err != nil {
-		log.Println(err)
-	}
-
-	addr, err := proto.NewAddressFromPublicKey(55, sender)
-	if err != nil {
-		log.Println(err)
-	}
-
-	cl, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{}})
-	if err != nil {
-		log.Println(err)
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	entries, _, err := cl.Addresses.AddressesData(ctx, addr)
-	if err != nil {
-		log.Println(err)
-	}
-
-	for _, e := range entries {
-		blocks := height - uint64(e.ToProtobuf().GetIntValue())
-		log.Printf("%s %d %d", e.GetKey(), blocks, countReferred(e.GetKey(), &entries))
-		if blocks <= 2880 {
-			count++
-			count += countReferred(e.GetKey(), &entries)
-		}
-	}
-
-	return count
-}
-
 func sendMined(address string) {
-	count := countActiveMiners()
+	miner := getMiner(address)
 
 	sender, err := crypto.NewPublicKeyFromBase58(conf.PublicKey)
 	if err != nil {
@@ -362,57 +275,11 @@ func sendMined(address string) {
 		log.Println(err)
 	}
 
-	amount := (total.Balance / uint64(count)) - Fee
+	amount := (total.Balance / uint64(miner.MinRefCount)) - Fee
 
-	referralIndex := 1 + countReferred(address, nil)
+	referralIndex := 1 + miner.ReferredCount
 
 	sendAsset(amount*uint64(referralIndex), "", address)
-}
-
-func countReferred(address string, miners *proto.DataEntries) int {
-	height := getHeight()
-	count := 0
-
-	if miners == nil {
-		cl, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{}})
-		if err != nil {
-			log.Println(err)
-		}
-
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		defer cancel()
-
-		sender, err := crypto.NewPublicKeyFromBase58(conf.PublicKey)
-		if err != nil {
-			log.Println(err)
-		}
-
-		addr, err := proto.NewAddressFromPublicKey(55, sender)
-		if err != nil {
-			log.Println(err)
-		}
-
-		entries, _, err := cl.Addresses.AddressesData(ctx, addr)
-		if err != nil {
-			log.Println(err)
-		}
-
-		miners = &entries
-	}
-
-	for _, e := range *miners {
-		addr := e.GetKey()
-		referral, _ := getData("referral", &addr)
-		blocks := height - uint64(e.ToProtobuf().GetIntValue())
-
-		if referral != nil &&
-			address == referral.(string) &&
-			blocks <= 2880 {
-			count++
-		}
-	}
-
-	return count
 }
 
 func prettyPrint(i interface{}) string {
@@ -430,7 +297,7 @@ func sendTelegramNotification(addr string) bool {
 	body, err := ioutil.ReadAll(resp.Body)
 
 	var result NotificationResponse
-	if err := json.Unmarshal(body, &result); err != nil { // Parse []byte to the go struct pointer
+	if err := json.Unmarshal(body, &result); err != nil {
 		log.Println(err)
 		return false
 	}
@@ -440,6 +307,34 @@ func sendTelegramNotification(addr string) bool {
 	return sent
 }
 
+func getMiner(addr string) *MinerResponse {
+	resp, err := http.Get(fmt.Sprintf("http://localhost:5003/miner/%s", addr))
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+
+	var result MinerResponse
+	if err := json.Unmarshal(body, &result); err != nil {
+		log.Println(err)
+		return nil
+	}
+
+	return &result
+}
+
 type NotificationResponse struct {
 	Success bool `json:"success"`
+}
+
+type MinerResponse struct {
+	Address          string
+	LastNotification time.Time
+	TelegramId       int64
+	MiningHeight     int64
+	ReferredCount    int
+	MinRefCount      int
+	ActiveMiners     int
 }
