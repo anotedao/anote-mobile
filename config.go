@@ -19,6 +19,7 @@ func (c *Config) load(configFile string) {
 
 	if err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 	}
 
 	decoder := json.NewDecoder(file)
@@ -27,6 +28,7 @@ func (c *Config) load(configFile string) {
 
 	if err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 	}
 }
 

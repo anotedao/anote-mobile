@@ -7,6 +7,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"path"
+	"runtime"
 	"time"
 
 	"github.com/wavesplatform/gowaves/pkg/client"
@@ -24,6 +26,7 @@ func getMiningCode() int {
 	db, err := gorm.Open(sqlite.Open("../anote-robot/robot.db"), &dbconf)
 	if err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 	}
 
 	ks := &KeyValue{Key: "dailyCode"}
@@ -38,6 +41,7 @@ func dataTransaction(key string, valueStr *string, valueInt *int64, valueBool *b
 	sender, err := crypto.NewPublicKeyFromBase58(conf.PublicKey)
 	if err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 		return err
 	}
 
@@ -45,6 +49,7 @@ func dataTransaction(key string, valueStr *string, valueInt *int64, valueBool *b
 	sk, err := crypto.NewSecretKeyFromBase58(conf.PrivateKey)
 	if err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 		return err
 	}
 
@@ -91,6 +96,7 @@ func dataTransaction(key string, valueStr *string, valueInt *int64, valueBool *b
 	err = tr.Sign(55, sk)
 	if err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 		return err
 	}
 
@@ -98,6 +104,7 @@ func dataTransaction(key string, valueStr *string, valueInt *int64, valueBool *b
 	cl, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{}})
 	if err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 		return err
 	}
 
@@ -109,6 +116,7 @@ func dataTransaction(key string, valueStr *string, valueInt *int64, valueBool *b
 	_, err = cl.Transactions.Broadcast(ctx, tr)
 	if err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 		return err
 	}
 
@@ -121,6 +129,7 @@ func getData(key string, address *string) (interface{}, error) {
 	wc, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{}})
 	if err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 	}
 
 	if address == nil {
@@ -166,6 +175,7 @@ func getHeight() uint64 {
 	cl, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{}})
 	if err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -189,6 +199,7 @@ func sendAsset(amount uint64, assetId string, recipient string) error {
 	sender, err := crypto.NewPublicKeyFromBase58(conf.PublicKey)
 	if err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 		return err
 	}
 
@@ -196,6 +207,7 @@ func sendAsset(amount uint64, assetId string, recipient string) error {
 	sk, err := crypto.NewSecretKeyFromBase58(conf.PrivateKey)
 	if err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 		return err
 	}
 
@@ -205,18 +217,21 @@ func sendAsset(amount uint64, assetId string, recipient string) error {
 	asset, err := proto.NewOptionalAssetFromString(assetId)
 	if err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 		return err
 	}
 
 	assetW, err := proto.NewOptionalAssetFromString("")
 	if err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 		return err
 	}
 
 	rec, err := proto.NewAddressFromString(recipient)
 	if err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 		return err
 	}
 
@@ -225,6 +240,7 @@ func sendAsset(amount uint64, assetId string, recipient string) error {
 	err = tr.Sign(networkByte, sk)
 	if err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 		return err
 	}
 
@@ -232,6 +248,7 @@ func sendAsset(amount uint64, assetId string, recipient string) error {
 	client, err := client.NewClient(client.Options{BaseUrl: nodeURL, Client: &http.Client{}})
 	if err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 		return err
 	}
 
@@ -243,6 +260,7 @@ func sendAsset(amount uint64, assetId string, recipient string) error {
 	_, err = client.Transactions.Broadcast(ctx, tr)
 	if err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 		return err
 	}
 
@@ -255,16 +273,19 @@ func sendMined(address string) {
 	sender, err := crypto.NewPublicKeyFromBase58(conf.PublicKey)
 	if err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 	}
 
 	addr, err := proto.NewAddressFromPublicKey(55, sender)
 	if err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 	}
 
 	cl, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{}})
 	if err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -273,6 +294,7 @@ func sendMined(address string) {
 	total, _, err := cl.Addresses.Balance(ctx, addr)
 	if err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 	}
 
 	amount := (total.Balance / uint64(miner.MinRefCount)) - Fee
@@ -291,6 +313,7 @@ func sendTelegramNotification(addr string) bool {
 	resp, err := http.Get(fmt.Sprintf("http://localhost:5002/notification/%s", addr))
 	if err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 		return false
 	}
 	defer resp.Body.Close()
@@ -299,6 +322,7 @@ func sendTelegramNotification(addr string) bool {
 	var result NotificationResponse
 	if err := json.Unmarshal(body, &result); err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 		return false
 	}
 
@@ -311,6 +335,7 @@ func getMiner(addr string) *MinerResponse {
 	resp, err := http.Get(fmt.Sprintf("http://localhost:5003/miner/%s", addr))
 	if err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 		return nil
 	}
 	defer resp.Body.Close()
@@ -319,6 +344,7 @@ func getMiner(addr string) *MinerResponse {
 	var result MinerResponse
 	if err := json.Unmarshal(body, &result); err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 		return nil
 	}
 
@@ -337,4 +363,36 @@ type MinerResponse struct {
 	ReferredCount    int
 	MinRefCount      int
 	ActiveMiners     int
+}
+
+func getCallerInfo() (info string) {
+
+	// pc, file, lineNo, ok := runtime.Caller(2)
+	_, file, lineNo, ok := runtime.Caller(2)
+	if !ok {
+		info = "runtime.Caller() failed"
+		return
+	}
+	// funcName := runtime.FuncForPC(pc).Name()
+	fileName := path.Base(file) // The Base function returns the last element of the path
+	return fmt.Sprintf("%s:%d: ", fileName, lineNo)
+}
+
+func logTelegram(message string) {
+	message = "anote-mobile:" + getCallerInfo() + message
+
+	_, err := http.Get(fmt.Sprintf("http://localhost:5002/log/%s", message))
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+	}
+	// defer resp.Body.Close()
+	// body, err := ioutil.ReadAll(resp.Body)
+
+	// var result NotificationResponse
+	// if err := json.Unmarshal(body, &result); err != nil {
+	// 	log.Println(err)
+	// logTelegram(err.Error())
+	// 	return false
+	// }
 }

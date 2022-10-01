@@ -23,6 +23,7 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 	codeInt, err := strconv.Atoi(code)
 	if err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 	}
 
 	if !cpt.Verify(cpid, cp) {
@@ -39,6 +40,7 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 	sh, err := getData(addr, nil)
 	if err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 		savedHeight = 0
 	} else {
 		savedHeight = sh.(int64)
@@ -65,6 +67,7 @@ func newCaptchaView(ctx *macaron.Context, cpt *captcha.Captcha) {
 	c, err := cpt.CreateCaptcha()
 	if err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 	}
 
 	ir := &ImageResponse{
