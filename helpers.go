@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"path"
 	"runtime"
 	"time"
@@ -379,20 +380,10 @@ func getCallerInfo() (info string) {
 }
 
 func logTelegram(message string) {
-	message = "anote-mobile:" + getCallerInfo() + message
+	message = "anote-mobile:" + getCallerInfo() + url.PathEscape(url.QueryEscape(message))
 
 	_, err := http.Get(fmt.Sprintf("http://localhost:5002/log/%s", message))
 	if err != nil {
 		log.Println(err)
-		logTelegram(err.Error())
 	}
-	// defer resp.Body.Close()
-	// body, err := ioutil.ReadAll(resp.Body)
-
-	// var result NotificationResponse
-	// if err := json.Unmarshal(body, &result); err != nil {
-	// 	log.Println(err)
-	// logTelegram(err.Error())
-	// 	return false
-	// }
 }
