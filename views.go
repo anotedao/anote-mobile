@@ -49,7 +49,8 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 	} else {
 		sh := parseItem(minerData.(string), 1)
 		if sh != nil {
-			savedHeight = sh.(int64)
+			savedHeight = int64(sh.(int))
+		} else {
 			savedHeight = 0
 		}
 	}

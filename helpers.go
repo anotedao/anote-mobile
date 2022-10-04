@@ -419,6 +419,8 @@ func updateItem(value string, newval interface{}, index int) string {
 		switch newval.(type) {
 		case int:
 			values[index+1] = strconv.Itoa(newval.(int))
+		case int64:
+			values[index+1] = strconv.Itoa(int(newval.(int64)))
 		default:
 			values[index+1] = newval.(string)
 		}
