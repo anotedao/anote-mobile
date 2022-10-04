@@ -12,4 +12,6 @@ const (
 
 	// Port represents a port the app will listen on
 	Port = 5001
+
+	Sep = "__"
 )

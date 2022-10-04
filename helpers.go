@@ -10,6 +10,8 @@ import (
 	"net/url"
 	"path"
 	"runtime"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/wavesplatform/gowaves/pkg/client"
@@ -386,4 +388,50 @@ func logTelegram(message string) {
 	if err != nil {
 		log.Println(err)
 	}
+}
+
+func parseItem(value string, index int) interface{} {
+	values := strings.Split(value, Sep)
+	var val interface{}
+	types := strings.Split(values[0], "%")
+
+	if index < len(values)-1 {
+		val = values[index+1]
+	}
+
+	if val != nil && types[index+1] == "d" {
+		intval, err := strconv.Atoi(val.(string))
+		if err != nil {
+			log.Println(err.Error())
+			logTelegram(err.Error())
+		}
+		val = intval
+	}
+
+	return val
+}
+
+func updateItem(value string, newval interface{}, index int) string {
+	values := strings.Split(value, Sep)
+	types := strings.Split(values[0], "%")
+
+	if index < len(values)-1 {
+		switch newval.(type) {
+		case int:
+			values[index+1] = strconv.Itoa(newval.(int))
+		default:
+			values[index+1] = newval.(string)
+		}
+	} else if index < len(types)-1 {
+		switch newval.(type) {
+		case int:
+			values = append(values, strconv.Itoa(newval.(int)))
+		case int64:
+			values = append(values, strconv.Itoa(int(newval.(int64))))
+		default:
+			values = append(values, newval.(string))
+		}
+	}
+
+	return strings.Join(values, Sep)
 }

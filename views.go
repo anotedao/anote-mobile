@@ -10,6 +10,8 @@ import (
 )
 
 func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
+	var savedHeight int64
+	height := int64(getHeight())
 	pr := &MineResponse{
 		Success: true,
 		Error:   0,
@@ -19,6 +21,9 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 	cpid := ctx.Params("captchaid")
 	cp := ctx.Params("captcha")
 	code := ctx.Params("code")
+	ref := ctx.Params("ref")
+
+	log.Println(ref)
 
 	codeInt, err := strconv.Atoi(code)
 	if err != nil {
@@ -36,16 +41,20 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 		pr.Error = 2
 	}
 
-	var savedHeight int64
-	sh, err := getData(addr, nil)
+	minerData, err := getData(addr, nil)
 	if err != nil {
 		log.Println(err)
 		logTelegram(err.Error())
 		savedHeight = 0
 	} else {
-		savedHeight = sh.(int64)
+		sh := parseItem(minerData.(string), 1)
+		if sh != nil {
+			savedHeight = sh.(int64)
+			savedHeight = 0
+		}
 	}
-	height := int64(getHeight())
+
+	log.Println(savedHeight)
 
 	if pr.Error == 0 && (height-savedHeight > 1440) && !sendTelegramNotification(addr) {
 		pr.Success = false
@@ -53,8 +62,12 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 	}
 
 	if pr.Error == 0 && (height-savedHeight > 1440) {
-		dataTransaction(addr, nil, &height, nil)
-		if sh != nil && height-savedHeight <= 2880 {
+		newMinerData := updateItem(minerData.(string), height, 1)
+		if len(ref) > 0 {
+			newMinerData = updateItem(newMinerData, ref, 2)
+		}
+		dataTransaction(addr, &newMinerData, nil, nil)
+		if height-savedHeight <= 2880 {
 			go sendMined(addr)
 		}
 	}

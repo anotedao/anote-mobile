@@ -18,6 +18,7 @@ func initMacaron() *macaron.Macaron {
 	))
 
 	m.Get("/mine/:address/:captchaid/:captcha/:code", mineView)
+	m.Get("/mine/:address/:captchaid/:captcha/:code/:ref", mineView)
 	m.Get("/new-captcha/:addr", newCaptchaView)
 
 	return m
