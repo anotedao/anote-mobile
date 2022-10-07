@@ -403,9 +403,12 @@ func sendMined(address string) {
 		logTelegram(err.Error())
 	}
 
-	amount2 := uint64(float64(total2.Balance)*getAintFactor(address)) - Fee
+	af := getAintFactor(address)
+	amount2 := uint64(float64(total2.Balance)*af) - Fee
 
-	sendAsset2(amount2, "", address)
+	if af > 0 {
+		sendAsset2(amount2, "", address)
+	}
 }
 
 func getAintFactor(address string) float64 {
