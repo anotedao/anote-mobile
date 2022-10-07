@@ -270,6 +270,85 @@ func sendAsset(amount uint64, assetId string, recipient string) error {
 	return nil
 }
 
+func sendAsset2(amount uint64, assetId string, recipient string) error {
+	var networkByte byte
+	var nodeURL string
+
+	networkByte = 55
+	nodeURL = AnoteNodeURL
+
+	// Create sender's public key from BASE58 string
+	sender, err := crypto.NewPublicKeyFromBase58(conf.PublicKeyStake)
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+		return err
+	}
+
+	// Create sender's private key from BASE58 string
+	sk, err := crypto.NewSecretKeyFromBase58(conf.PrivateKeyStake)
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+		return err
+	}
+
+	// Current time in milliseconds
+	ts := time.Now().Unix() * 1000
+
+	asset, err := proto.NewOptionalAssetFromString(assetId)
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+		return err
+	}
+
+	assetW, err := proto.NewOptionalAssetFromString("")
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+		return err
+	}
+
+	rec, err := proto.NewAddressFromString(recipient)
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+		return err
+	}
+
+	tr := proto.NewUnsignedTransferWithSig(sender, *asset, *assetW, uint64(ts), amount, Fee, proto.Recipient{Address: &rec}, nil)
+
+	err = tr.Sign(networkByte, sk)
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+		return err
+	}
+
+	// Create new HTTP client to send the transaction to public TestNet nodes
+	client, err := client.NewClient(client.Options{BaseUrl: nodeURL, Client: &http.Client{}})
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+		return err
+	}
+
+	// Context to cancel the request execution on timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	// // Send the transaction to the network
+	_, err = client.Transactions.Broadcast(ctx, tr)
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+		return err
+	}
+
+	return nil
+}
+
 func sendMined(address string) {
 	miner := getMiner(address)
 
@@ -305,6 +384,85 @@ func sendMined(address string) {
 	referralIndex := 1 + miner.ReferredCount
 
 	sendAsset(amount*uint64(referralIndex), "", address)
+
+	sender2, err := crypto.NewPublicKeyFromBase58(conf.PublicKeyStake)
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+	}
+
+	addr2, err := proto.NewAddressFromPublicKey(55, sender2)
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+	}
+
+	total2, _, err := cl.Addresses.Balance(ctx, addr2)
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+	}
+
+	amount2 := uint64(float64(total2.Balance)*getAintFactor(address)) - Fee
+
+	sendAsset2(amount2, "", address)
+}
+
+func getAintFactor(address string) float64 {
+	sa := StakeAddress
+	stakeData, err := getData("%s__"+address, &sa)
+	if err != nil {
+		log.Println(err.Error())
+		logTelegram(err.Error())
+		return float64(0)
+	}
+
+	cl, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{}})
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	addr, err := proto.NewAddressFromString(StakeAddress)
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+	}
+
+	stakes, _, err := cl.Addresses.AddressesData(ctx, addr)
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+	}
+
+	addr2, err := proto.NewAddressFromString(NodesAddress)
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+	}
+
+	nodes, _, err := cl.Addresses.AddressesData(ctx, addr2)
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+	}
+
+	total := int64(0)
+
+	for _, s := range stakes {
+		stake := s.ToProtobuf().GetIntValue()
+		for _, n := range nodes {
+			if strings.HasSuffix(s.GetKey(), n.GetKey()) {
+				stake = 0
+			}
+		}
+		total += stake
+	}
+
+	return float64(stakeData.(int64)) / float64(total)
 }
 
 func prettyPrint(i interface{}) string {

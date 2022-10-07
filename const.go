@@ -13,5 +13,13 @@ const (
 	// Port represents a port the app will listen on
 	Port = 5001
 
+	StakeAddress = "3ACyYVfFcyco4RS8WLbyRSGPHPeCCiUuSqP"
+
+	StakeMobileAddress = "3A9y1Zy78DDApbQWXKxonXxci6DvnJnnNZD"
+
+	MobileAddress = "3ANzidsKXn9a1s9FEbWA19hnMgV9zZ2RB9a"
+
+	NodesAddress = "3AVTze8bR1SqqMKv3uLedrnqCuWpdU7GZwX"
+
 	Sep = "__"
 )
