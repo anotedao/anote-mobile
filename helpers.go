@@ -416,7 +416,7 @@ func getAintFactor(address string) float64 {
 	stakeData, err := getData("%s__"+address, &sa)
 	if err != nil {
 		log.Println(err.Error())
-		logTelegram(err.Error())
+		// logTelegram(err.Error())
 		return float64(0)
 	}
 
