@@ -598,3 +598,17 @@ func updateItem(value string, newval interface{}, index int) string {
 
 	return strings.Join(values, Sep)
 }
+
+func GetRealIP(r *http.Request) string {
+	IPAddress := r.Header.Get("X-Real-IP")
+	if IPAddress == "" {
+		IPAddress = r.Header.Get("X-Forwarder-For")
+	}
+	if IPAddress == "" {
+		IPAddress = r.RemoteAddr
+	}
+
+	IPAddress = strings.Split(IPAddress, ":")[0]
+
+	return IPAddress
+}

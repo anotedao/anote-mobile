@@ -68,6 +68,10 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 			newMinerData = updateItem(newMinerData, ref, 2)
 		}
 		dataTransaction(addr, &newMinerData, nil, nil)
+
+		ip := GetRealIP(ctx.Req.Request)
+		logTelegram(fmt.Sprintf("%s %s", addr, ip))
+
 		if height-savedHeight <= 2880 {
 			go sendMined(addr)
 		}

@@ -1,6 +1,6 @@
 module anote-mobile
 
-go 1.18
+go 1.19
 
 require (
 	github.com/go-macaron/cache v0.0.0-20200329073519-53bb48172687
