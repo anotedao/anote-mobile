@@ -2,8 +2,13 @@ package main
 
 import (
 	"context"
+	"crypto/aes"
+	"crypto/cipher"
+	"crypto/rand"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -36,7 +41,6 @@ func getMiningCode() int {
 	db.FirstOrCreate(ks, ks)
 
 	return int(ks.ValueInt)
-	// return 178
 }
 
 func dataTransaction(key string, valueStr *string, valueInt *int64, valueBool *bool) error {
@@ -611,4 +615,52 @@ func GetRealIP(r *http.Request) string {
 	IPAddress = strings.Split(IPAddress, ":")[0]
 
 	return IPAddress
+}
+
+func EncryptMessage(message string) string {
+	byteMsg := []byte(message)
+	block, err := aes.NewCipher(conf.Password)
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+	}
+
+	cipherText := make([]byte, aes.BlockSize+len(byteMsg))
+	iv := cipherText[:aes.BlockSize]
+	if _, err = io.ReadFull(rand.Reader, iv); err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+	}
+
+	stream := cipher.NewCFBEncrypter(block, iv)
+	stream.XORKeyStream(cipherText[aes.BlockSize:], byteMsg)
+
+	return base64.StdEncoding.EncodeToString(cipherText)
+}
+
+func DecryptMessage(message string) string {
+	cipherText, err := base64.StdEncoding.DecodeString(message)
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+	}
+
+	block, err := aes.NewCipher(conf.Password)
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+	}
+
+	if len(cipherText) < aes.BlockSize {
+		log.Println(err)
+		logTelegram(err.Error())
+	}
+
+	iv := cipherText[:aes.BlockSize]
+	cipherText = cipherText[aes.BlockSize:]
+
+	stream := cipher.NewCFBDecrypter(block, iv)
+	stream.XORKeyStream(cipherText, cipherText)
+
+	return string(cipherText)
 }

@@ -13,6 +13,7 @@ type Config struct {
 	PublicKeyStake  string `json:"public_key_stake"`
 	PrivateKeyStake string `json:"private_key_stake"`
 	Host            string `json:"host"`
+	Password        []byte `json:"password"`
 }
 
 // Load method loads configuration file to Config struct

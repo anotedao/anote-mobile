@@ -63,15 +63,21 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 	}
 
 	if pr.Error == 0 && (height-savedHeight > 1440) {
-		newMinerData := updateItem(minerData.(string), height, 1)
-		if len(ref) > 0 {
-			newMinerData = updateItem(newMinerData, ref, 2)
-		}
-		dataTransaction(addr, &newMinerData, nil, nil)
-
 		ip := GetRealIP(ctx.Req.Request)
+
 		logTelegram(fmt.Sprintf("%s %s", addr, ip))
 		log.Println(fmt.Sprintf("%s %s", addr, ip))
+
+		encIp := EncryptMessage(ip)
+
+		newMinerData := updateItem(minerData.(string), height, 1)
+		newMinerData = updateItem(newMinerData, encIp, 2)
+
+		if len(ref) > 0 {
+			newMinerData = updateItem(newMinerData, ref, 3)
+		}
+
+		dataTransaction(addr, &newMinerData, nil, nil)
 
 		if height-savedHeight <= 2880 {
 			go sendMined(addr)
