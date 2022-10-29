@@ -519,6 +519,28 @@ func getMiner(addr string) *MinerResponse {
 	return &result
 }
 
+func countIP(ip string) int {
+	resp, err := http.Get(fmt.Sprintf("http://localhost:5003/ipcount/%s", ip))
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+
+	var result IPCountResponse
+	if err := json.Unmarshal(body, &result); err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+	}
+
+	return result.Count
+}
+
+type IPCountResponse struct {
+	Count int `json:"count"`
+}
+
 type NotificationResponse struct {
 	Success bool `json:"success"`
 }

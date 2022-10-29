@@ -22,6 +22,7 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 	cp := ctx.Params("captcha")
 	code := ctx.Params("code")
 	ref := ctx.Params("ref")
+	ip := GetRealIP(ctx.Req.Request)
 
 	log.Println(ref)
 
@@ -62,8 +63,15 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 		pr.Error = 3
 	}
 
+	if pr.Error == 0 && countIP(ip) >= 3 {
+		pr.Success = false
+		pr.Error = 4
+	}
+
 	if pr.Error == 0 && (height-savedHeight > 1440) {
-		ip := GetRealIP(ctx.Req.Request)
+		if ip == "180.244.166.9" {
+			return
+		}
 
 		logTelegram(fmt.Sprintf("%s %s", addr, ip))
 		log.Println(fmt.Sprintf("%s %s", addr, ip))
