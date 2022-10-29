@@ -63,12 +63,12 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 		pr.Error = 4
 	}
 
-	if pr.Error == 0 && (height-savedHeight > 1440) && !sendTelegramNotification(addr) {
+	if pr.Error == 0 && (height-savedHeight > 1410) && !sendTelegramNotification(addr) {
 		pr.Success = false
 		pr.Error = 3
 	}
 
-	if pr.Error == 0 && (height-savedHeight > 1440) {
+	if pr.Error == 0 && (height-savedHeight > 1410) {
 		log.Println(fmt.Sprintf("%s %s", addr, ip))
 
 		encIp := EncryptMessage(ip)
