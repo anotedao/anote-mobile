@@ -5,7 +5,7 @@ const (
 	MULTI8 = 100000000
 
 	// AnoteNodeURL is an URL for Anote Node
-	AnoteNodeURL = "https://nodes.anote.digital"
+	AnoteNodeURL = "http://localhost:6869"
 
 	// Fee is regular fee amount
 	Fee = 100000
