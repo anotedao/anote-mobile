@@ -385,9 +385,9 @@ func sendMined(address string) {
 
 	amount := (total.Balance / uint64(miner.MinRefCount)) - Fee
 
-	referralIndex := 1 + miner.ReferredCount
+	referralIndex := 1 + (float64(miner.ReferredCount) * 0.25)
 
-	sendAsset(amount*uint64(referralIndex), "", address)
+	sendAsset(uint64(float64(amount)*referralIndex), "", address)
 
 	sender2, err := crypto.NewPublicKeyFromBase58(conf.PublicKeyStake)
 	if err != nil {
