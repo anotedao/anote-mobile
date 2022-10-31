@@ -355,6 +355,7 @@ func sendAsset2(amount uint64, assetId string, recipient string) error {
 
 func sendMined(address string) {
 	miner := getMiner(address)
+	stats := getStats()
 
 	sender, err := crypto.NewPublicKeyFromBase58(conf.PublicKey)
 	if err != nil {
@@ -383,7 +384,7 @@ func sendMined(address string) {
 		logTelegram(err.Error())
 	}
 
-	amount := (total.Balance / uint64(miner.MinRefCount)) - Fee
+	amount := (total.Balance / (uint64(stats.ActiveMiners) + uint64(stats.ActiveReferred))) - Fee
 
 	referralIndex := 1 + (float64(miner.ReferredCount) * 0.25)
 
@@ -517,6 +518,33 @@ func getMiner(addr string) *MinerResponse {
 	}
 
 	return &result
+}
+
+func getStats() *StatsResponse {
+	resp, err := http.Get("http://localhost:5003/stats")
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+		return nil
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+
+	var result StatsResponse
+	if err := json.Unmarshal(body, &result); err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+		return nil
+	}
+
+	return &result
+}
+
+type StatsResponse struct {
+	ActiveMiners   int `json:"active_miners"`
+	ActiveReferred int `json:"active_referred"`
+	PayoutMiners   int `json:"payout_miners"`
+	InactiveMiners int `json:"inactive_miners"`
 }
 
 func countIP(ip string) int {
