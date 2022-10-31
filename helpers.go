@@ -384,7 +384,7 @@ func sendMined(address string) {
 		logTelegram(err.Error())
 	}
 
-	amount := (total.Balance / (uint64(stats.ActiveMiners) + uint64(stats.ActiveReferred))) - Fee
+	amount := (total.Balance / (uint64(stats.PayoutMiners) + uint64(stats.ActiveReferred/4))) - Fee
 
 	referralIndex := 1 + (float64(miner.ReferredCount) * 0.25)
 
