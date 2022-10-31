@@ -579,9 +579,6 @@ type MinerResponse struct {
 	TelegramId       int64     `json:"telegram_id"`
 	MiningHeight     int64     `json:"mining_height"`
 	ReferredCount    int       `json:"referred_count"`
-	MinRefCount      int       `json:"min_ref_count"`
-	ActiveMiners     int       `json:"active_miners"`
-	ActiveReferred   int       `json:"active_referred"`
 	Confirmed        bool      `json:"confirmed"`
 }
 
