@@ -546,13 +546,15 @@ type NotificationResponse struct {
 }
 
 type MinerResponse struct {
-	Address          string
-	LastNotification time.Time
-	TelegramId       int64
-	MiningHeight     int64
-	ReferredCount    int
-	MinRefCount      int
-	ActiveMiners     int
+	Address          string    `json:"address"`
+	LastNotification time.Time `json:"last_notification"`
+	TelegramId       int64     `json:"telegram_id"`
+	MiningHeight     int64     `json:"mining_height"`
+	ReferredCount    int       `json:"referred_count"`
+	MinRefCount      int       `json:"min_ref_count"`
+	ActiveMiners     int       `json:"active_miners"`
+	ActiveReferred   int       `json:"active_referred"`
+	Confirmed        bool      `json:"confirmed"`
 }
 
 func getCallerInfo() (info string) {
@@ -685,4 +687,13 @@ func DecryptMessage(message string) string {
 	stream.XORKeyStream(cipherText, cipherText)
 
 	return string(cipherText)
+}
+
+func checkConfirmation(addr string) {
+	resp, err := http.Get(fmt.Sprintf("http://localhost:5003/confirmation/%s", addr))
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+	}
+	defer resp.Body.Close()
 }

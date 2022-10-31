@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"time"
 
 	"github.com/go-macaron/captcha"
 	macaron "gopkg.in/macaron.v1"
@@ -11,6 +12,7 @@ import (
 
 func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 	var savedHeight int64
+	var savedRef interface{}
 	height := int64(getHeight())
 	pr := &MineResponse{
 		Success: true,
@@ -49,6 +51,7 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 		savedHeight = 0
 	} else {
 		sh := parseItem(minerData.(string), 1)
+		savedRef = parseItem(minerData.(string), 3)
 		if sh != nil {
 			savedHeight = int64(sh.(int))
 		} else {
@@ -58,7 +61,7 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 
 	log.Println(savedHeight)
 
-	if pr.Error == 0 && countIP(ip) >= 3 {
+	if pr.Error == 0 && countIP(ip) > 3 {
 		pr.Success = false
 		pr.Error = 4
 	}
@@ -76,7 +79,9 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 		newMinerData := updateItem(minerData.(string), height, 1)
 		newMinerData = updateItem(newMinerData, encIp, 2)
 
-		if len(ref) > 0 {
+		if savedRef != nil && len(savedRef.(string)) > 0 {
+			newMinerData = updateItem(newMinerData, savedRef.(string), 3)
+		} else if len(ref) > 0 {
 			newMinerData = updateItem(newMinerData, ref, 3)
 		}
 
@@ -84,6 +89,10 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 
 		if height-savedHeight <= 2880 {
 			go sendMined(addr)
+			go func() {
+				time.Sleep(time.Second * 30)
+				checkConfirmation(addr)
+			}()
 		}
 	}
 
