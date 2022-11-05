@@ -490,7 +490,7 @@ func prettyPrint(i interface{}) string {
 }
 
 func sendTelegramNotification(addr string, height int64, savedHeight int64) bool {
-	resp, err := http.Get(fmt.Sprintf("http://localhost:5002/notification/%s", addr))
+	resp, err := http.Get(fmt.Sprintf("http://localhost:5002/notification/%s/%d/%d", addr, height, savedHeight))
 	if err != nil {
 		log.Println(err)
 		logTelegram(err.Error())
