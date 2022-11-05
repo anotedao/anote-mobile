@@ -353,7 +353,9 @@ func sendAsset2(amount uint64, assetId string, recipient string) error {
 	return nil
 }
 
-func sendMined(address string) {
+func sendMined(address string, heightDif int64) {
+	var amount uint64
+	var referralIndex float64
 	miner := getMiner(address)
 	stats := getStats()
 
@@ -384,9 +386,18 @@ func sendMined(address string) {
 		logTelegram(err.Error())
 	}
 
-	amount := (total.Balance / (uint64(stats.PayoutMiners) + uint64(stats.ActiveReferred/4))) - Fee
+	amount = (total.Balance / (uint64(stats.PayoutMiners) + uint64(stats.ActiveReferred/4))) - Fee
+	referralIndex = 1 + (float64(miner.ReferredCount) * 0.25)
 
-	referralIndex := 1 + (float64(miner.ReferredCount) * 0.25)
+	if heightDif > 2880 {
+		times := int(heightDif / 1440)
+		for i := 0; i < times; i++ {
+			if amount > Fee {
+				amount /= 2
+			}
+		}
+		referralIndex = 1.0
+	}
 
 	sendAsset(uint64(float64(amount)*referralIndex), "", address)
 
@@ -478,7 +489,7 @@ func prettyPrint(i interface{}) string {
 	return string(s)
 }
 
-func sendTelegramNotification(addr string) bool {
+func sendTelegramNotification(addr string, height int64, savedHeight int64) bool {
 	resp, err := http.Get(fmt.Sprintf("http://localhost:5002/notification/%s", addr))
 	if err != nil {
 		log.Println(err)

@@ -66,7 +66,7 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 		pr.Error = 4
 	}
 
-	if pr.Error == 0 && (height-savedHeight > 1410) && !sendTelegramNotification(addr) {
+	if pr.Error == 0 && (height-savedHeight > 1410) && !sendTelegramNotification(addr, height, savedHeight) {
 		pr.Success = false
 		pr.Error = 3
 	}
@@ -87,8 +87,8 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 
 		dataTransaction(addr, &newMinerData, nil, nil)
 
-		if height-savedHeight <= 2880 {
-			go sendMined(addr)
+		if savedHeight > 0 {
+			go sendMined(addr, height-savedHeight)
 			go func() {
 				time.Sleep(time.Second * 30)
 				checkConfirmation(addr)
