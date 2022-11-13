@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"log"
+	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/go-macaron/captcha"
@@ -27,6 +29,9 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 	ip := GetRealIP(ctx.Req.Request)
 
 	log.Println(ref)
+
+	code = strings.TrimSpace(code)
+	code = regexp.MustCompile(`[^0-9]+`).ReplaceAllString(code, "")
 
 	codeInt, err := strconv.Atoi(code)
 	if err != nil {

@@ -401,30 +401,30 @@ func sendMined(address string, heightDif int64) {
 
 	sendAsset(uint64(float64(amount)*referralIndex), "", address)
 
-	sender2, err := crypto.NewPublicKeyFromBase58(conf.PublicKeyStake)
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
+	// sender2, err := crypto.NewPublicKeyFromBase58(conf.PublicKeyStake)
+	// if err != nil {
+	// 	log.Println(err)
+	// 	logTelegram(err.Error())
+	// }
 
-	addr2, err := proto.NewAddressFromPublicKey(55, sender2)
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
+	// addr2, err := proto.NewAddressFromPublicKey(55, sender2)
+	// if err != nil {
+	// 	log.Println(err)
+	// 	logTelegram(err.Error())
+	// }
 
-	total2, _, err := cl.Addresses.Balance(ctx, addr2)
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
+	// total2, _, err := cl.Addresses.Balance(ctx, addr2)
+	// if err != nil {
+	// 	log.Println(err)
+	// 	logTelegram(err.Error())
+	// }
 
-	af := getAintFactor(address)
-	amount2 := uint64(float64(total2.Balance)*af) - Fee
+	// af := getAintFactor(address)
+	// amount2 := uint64(float64(total2.Balance)*af) - Fee
 
-	if af > 0 {
-		sendAsset2(amount2, "", address)
-	}
+	// if af > 0 {
+	// 	sendAsset2(amount2, "", address)
+	// }
 }
 
 func getAintFactor(address string) float64 {
