@@ -54,6 +54,8 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 		log.Println(err)
 		logTelegram(err.Error())
 		savedHeight = 0
+		pr.Success = false
+		pr.Error = 3
 	} else {
 		sh := parseItem(minerData.(string), 1)
 		savedRef = parseItem(minerData.(string), 3)
