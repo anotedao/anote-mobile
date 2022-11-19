@@ -359,72 +359,74 @@ func sendMined(address string, heightDif int64) {
 	miner := getMiner(address)
 	stats := getStats()
 
-	sender, err := crypto.NewPublicKeyFromBase58(conf.PublicKey)
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
-
-	addr, err := proto.NewAddressFromPublicKey(55, sender)
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
-
-	cl, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{}})
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	total, _, err := cl.Addresses.Balance(ctx, addr)
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
-
-	amount = (total.Balance / (uint64(stats.PayoutMiners) + uint64(stats.ActiveReferred/4))) - Fee
-	referralIndex = 1 + (float64(miner.ReferredCount) * 0.25)
-
-	if heightDif > 2880 {
-		times := int(heightDif / 1440)
-		for i := 0; i < times; i++ {
-			if amount > Fee {
-				amount /= 2
-			}
+	if miner.Exists {
+		sender, err := crypto.NewPublicKeyFromBase58(conf.PublicKey)
+		if err != nil {
+			log.Println(err)
+			logTelegram(err.Error())
 		}
-		referralIndex = 1.0
+
+		addr, err := proto.NewAddressFromPublicKey(55, sender)
+		if err != nil {
+			log.Println(err)
+			logTelegram(err.Error())
+		}
+
+		cl, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{}})
+		if err != nil {
+			log.Println(err)
+			logTelegram(err.Error())
+		}
+
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		total, _, err := cl.Addresses.Balance(ctx, addr)
+		if err != nil {
+			log.Println(err)
+			logTelegram(err.Error())
+		}
+
+		amount = (total.Balance / (uint64(stats.PayoutMiners) + uint64(stats.ActiveReferred/4))) - Fee
+		referralIndex = 1 + (float64(miner.ReferredCount) * 0.25)
+
+		if heightDif > 2880 {
+			times := int(heightDif / 1440)
+			for i := 0; i < times; i++ {
+				if amount > Fee {
+					amount /= 2
+				}
+			}
+			referralIndex = 1.0
+		}
+
+		sendAsset(uint64(float64(amount)*referralIndex), "", address)
+
+		// sender2, err := crypto.NewPublicKeyFromBase58(conf.PublicKeyStake)
+		// if err != nil {
+		// 	log.Println(err)
+		// 	logTelegram(err.Error())
+		// }
+
+		// addr2, err := proto.NewAddressFromPublicKey(55, sender2)
+		// if err != nil {
+		// 	log.Println(err)
+		// 	logTelegram(err.Error())
+		// }
+
+		// total2, _, err := cl.Addresses.Balance(ctx, addr2)
+		// if err != nil {
+		// 	log.Println(err)
+		// 	logTelegram(err.Error())
+		// }
+
+		// af := getAintFactor(address)
+		// amount2 := uint64(float64(total2.Balance)*af) - Fee
+
+		// if af > 0 {
+		// 	sendAsset2(amount2, "", address)
+		// }
 	}
-
-	sendAsset(uint64(float64(amount)*referralIndex), "", address)
-
-	// sender2, err := crypto.NewPublicKeyFromBase58(conf.PublicKeyStake)
-	// if err != nil {
-	// 	log.Println(err)
-	// 	logTelegram(err.Error())
-	// }
-
-	// addr2, err := proto.NewAddressFromPublicKey(55, sender2)
-	// if err != nil {
-	// 	log.Println(err)
-	// 	logTelegram(err.Error())
-	// }
-
-	// total2, _, err := cl.Addresses.Balance(ctx, addr2)
-	// if err != nil {
-	// 	log.Println(err)
-	// 	logTelegram(err.Error())
-	// }
-
-	// af := getAintFactor(address)
-	// amount2 := uint64(float64(total2.Balance)*af) - Fee
-
-	// if af > 0 {
-	// 	sendAsset2(amount2, "", address)
-	// }
 }
 
 func getAintFactor(address string) float64 {
@@ -591,6 +593,7 @@ type MinerResponse struct {
 	MiningHeight     int64     `json:"mining_height"`
 	ReferredCount    int       `json:"referred_count"`
 	Confirmed        bool      `json:"confirmed"`
+	Exists           bool      `json:"exists"`
 }
 
 func getCallerInfo() (info string) {

@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/go-macaron/cache v0.0.0-20200329073519-53bb48172687
 	github.com/go-macaron/captcha v0.2.0
+	github.com/ip2location/ip2location-go/v9 v9.5.0
 	github.com/wavesplatform/gowaves v0.10.1
 	gopkg.in/macaron.v1 v1.4.0
 	gorm.io/driver/sqlite v1.3.6
