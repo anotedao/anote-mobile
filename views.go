@@ -128,7 +128,47 @@ type MineResponse struct {
 	Error   int  `json:"error"`
 }
 
+type MinePingResponse struct {
+	Success       bool `json:"success"`
+	CycleFinished bool `json:"cycle_finished"`
+	Error         int  `json:"error"`
+}
+
 type ImageResponse struct {
 	Image string `json:"image"`
 	Id    string `json:"id"`
+}
+
+func minePingView(ctx *macaron.Context) {
+	a := ctx.Params("address")
+	log.Println("Ping: " + a)
+
+	mr := &MinePingResponse{Success: true}
+	mr.CycleFinished = false
+
+	height := int64(getHeight())
+	savedHeight := int64(0)
+	minerData, err := getData(a, nil)
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+		savedHeight = 0
+		mr.Success = false
+		mr.Error = 1
+	} else {
+		sh := parseItem(minerData.(string), 1)
+		if sh != nil {
+			savedHeight = int64(sh.(int))
+		} else {
+			savedHeight = 0
+		}
+
+		if height-savedHeight > 1410 {
+			mr.CycleFinished = true
+		}
+	}
+
+	log.Println(GetRealIP(ctx.Req.Request))
+
+	ctx.JSON(200, mr)
 }
