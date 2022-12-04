@@ -168,6 +168,8 @@ func minePingView(ctx *macaron.Context) {
 		}
 	}
 
+	ping(a)
+
 	log.Println(GetRealIP(ctx.Req.Request))
 
 	ctx.JSON(200, mr)

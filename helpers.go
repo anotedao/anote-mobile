@@ -736,3 +736,12 @@ func checkConfirmation(addr string) {
 	}
 	defer resp.Body.Close()
 }
+
+func ping(addr string) {
+	resp, err := http.Get(fmt.Sprintf("http://localhost:5003/ping/%s", addr))
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+	}
+	defer resp.Body.Close()
+}
