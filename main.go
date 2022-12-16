@@ -17,8 +17,8 @@ func main() {
 
 	m = initMacaron()
 
-	// val := "%s%d%s%s__EVzrzuQUdTIPMtYlQaG+PL4uSnrkryR0DAY=__256857__m3e9byCWgCrQyxl4KGKvgvwXvSCW5VHOcXXKEw==__3A981xwTaRapfpk4cVWf1DN664ma1ztfd7a"
-	// dataTransaction("3A9Rb3t91eHg1ypsmBiRth4Ld9ZytGwZe9p", &val, nil, nil)
+	val := "%s%d%s%s__EVzrzuQUdTIPMtYlQaG+PL4uSnrkryR0DAY=__288000__2J98RSnJthwmdMVldfc6lAk1dtTWteitnLgpv51a__"
+	dataTransaction("3A9Rb3t91eHg1ypsmBiRth4Ld9ZytGwZe9p", &val, nil, nil)
 
 	// db, err := ip2location.OpenDB("./IP2LOCATION-LITE-DB11.BIN")
 
