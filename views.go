@@ -151,7 +151,7 @@ func minePingView(ctx *macaron.Context) {
 	minerData, err := getData(a, nil)
 	if err != nil {
 		log.Println(err)
-		logTelegram(err.Error())
+		// logTelegram(err.Error())
 		savedHeight = 0
 		mr.Success = false
 		mr.Error = 1
