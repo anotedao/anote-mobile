@@ -277,10 +277,12 @@ func sendAsset(amount uint64, assetId string, recipient string) error {
 func sendMined(address string, heightDif int64) {
 	var amount uint64
 	var referralIndex float64
-	miner := getMiner(address)
-	stats := getStats()
+	miner := &Miner{}
+	db.First(miner, &Miner{Address: address})
+	// miner := getMiner(address)
+	// stats := getStats()
 
-	if miner.Exists {
+	if miner.ID != 0 {
 		sender, err := crypto.NewPublicKeyFromBase58(conf.PublicKey)
 		if err != nil {
 			log.Println(err)
@@ -321,67 +323,10 @@ func sendMined(address string, heightDif int64) {
 			referralIndex = 1.0
 		}
 
-		resetPing(address)
+		// resetPing(address)
 
 		sendAsset(uint64(float64(amount)*referralIndex), "", address)
 	}
-}
-
-func getAintFactor(address string) float64 {
-	sa := StakeAddress
-	stakeData, err := getData("%s__"+address, &sa)
-	if err != nil {
-		log.Println(err.Error())
-		// logTelegram(err.Error())
-		return float64(0)
-	}
-
-	cl, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{}})
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
-
-	addr, err := proto.NewAddressFromString(StakeAddress)
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
-
-	stakes, _, err := cl.Addresses.AddressesData(ctx, addr)
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
-
-	addr2, err := proto.NewAddressFromString(NodesAddress)
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
-
-	nodes, _, err := cl.Addresses.AddressesData(ctx, addr2)
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
-
-	total := int64(0)
-
-	for _, s := range stakes {
-		stake := s.ToProtobuf().GetIntValue()
-		for _, n := range nodes {
-			if strings.HasSuffix(s.GetKey(), n.GetKey()) {
-				stake = 0
-			}
-		}
-		total += stake
-	}
-
-	return float64(stakeData.(int64)) / float64(total)
 }
 
 func prettyPrint(i interface{}) string {
@@ -411,87 +356,8 @@ func sendTelegramNotification(addr string, height int64, savedHeight int64) bool
 	return sent
 }
 
-func getMiner(addr string) *MinerResponse {
-	resp, err := http.Get(fmt.Sprintf("http://localhost:5003/miner/%s", addr))
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-		return nil
-	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-
-	var result MinerResponse
-	if err := json.Unmarshal(body, &result); err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-		return nil
-	}
-
-	return &result
-}
-
-func getStats() *StatsResponse {
-	resp, err := http.Get("http://localhost:5003/stats")
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-		return nil
-	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-
-	var result StatsResponse
-	if err := json.Unmarshal(body, &result); err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-		return nil
-	}
-
-	return &result
-}
-
-type StatsResponse struct {
-	ActiveMiners   int `json:"active_miners"`
-	ActiveReferred int `json:"active_referred"`
-	PayoutMiners   int `json:"payout_miners"`
-	InactiveMiners int `json:"inactive_miners"`
-}
-
-func countIP(ip string) int {
-	resp, err := http.Get(fmt.Sprintf("http://localhost:5003/ipcount/%s", ip))
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-
-	var result IPCountResponse
-	if err := json.Unmarshal(body, &result); err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
-
-	return result.Count
-}
-
-type IPCountResponse struct {
-	Count int `json:"count"`
-}
-
 type NotificationResponse struct {
 	Success bool `json:"success"`
-}
-
-type MinerResponse struct {
-	Address          string    `json:"address"`
-	LastNotification time.Time `json:"last_notification"`
-	TelegramId       int64     `json:"telegram_id"`
-	MiningHeight     int64     `json:"mining_height"`
-	ReferredCount    int       `json:"referred_count"`
-	Confirmed        bool      `json:"confirmed"`
-	Exists           bool      `json:"exists"`
 }
 
 func getCallerInfo() (info string) {
@@ -624,31 +490,4 @@ func DecryptMessage(message string) string {
 	stream.XORKeyStream(cipherText, cipherText)
 
 	return string(cipherText)
-}
-
-func checkConfirmation(addr string) {
-	resp, err := http.Get(fmt.Sprintf("http://localhost:5003/confirmation/%s", addr))
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
-	defer resp.Body.Close()
-}
-
-func ping(addr string) {
-	resp, err := http.Get(fmt.Sprintf("http://localhost:5003/ping/%s", addr))
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
-	defer resp.Body.Close()
-}
-
-func resetPing(addr string) {
-	resp, err := http.Get(fmt.Sprintf("http://localhost:5003/reset-ping/%s", addr))
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
-	defer resp.Body.Close()
 }
