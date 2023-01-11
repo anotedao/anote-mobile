@@ -182,9 +182,6 @@ func statsView(ctx *macaron.Context) {
 	height := getHeight()
 	pc := 0
 
-	log.Println(height)
-	log.Println(len(miners))
-
 	for _, m := range miners {
 		if height-uint64(m.MiningHeight) <= 1440 {
 			sr.ActiveMiners++
