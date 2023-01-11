@@ -26,3 +26,10 @@ type Miner struct {
 	LastPing         time.Time
 	PingCount        int64
 }
+
+func getMiner(addr string) *Miner {
+	m := &Miner{}
+	db.First(m, &Miner{Address: addr})
+
+	return m
+}

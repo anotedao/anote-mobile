@@ -277,10 +277,8 @@ func sendAsset(amount uint64, assetId string, recipient string) error {
 func sendMined(address string, heightDif int64) {
 	var amount uint64
 	var referralIndex float64
-	miner := &Miner{}
-	db.First(miner, &Miner{Address: address})
-	// miner := getMiner(address)
-	// stats := getStats()
+	miner := getMiner(address)
+	stats := getStats()
 
 	if miner.ID != 0 {
 		sender, err := crypto.NewPublicKeyFromBase58(conf.PublicKey)
@@ -311,7 +309,7 @@ func sendMined(address string, heightDif int64) {
 		}
 
 		amount = (total.Balance / (uint64(stats.PayoutMiners) + uint64(stats.ActiveReferred/4))) - Fee
-		referralIndex = 1 + (float64(miner.ReferredCount) * 0.25)
+		referralIndex = 1 + (float64(getRefCount(miner)) * 0.25)
 
 		if heightDif > 2880 {
 			times := int(heightDif / 1440)
@@ -325,7 +323,9 @@ func sendMined(address string, heightDif int64) {
 
 		// resetPing(address)
 
-		sendAsset(uint64(float64(amount)*referralIndex), "", address)
+		if false {
+			sendAsset(uint64(float64(amount)*referralIndex), "", address)
+		}
 	}
 }
 
@@ -490,4 +490,30 @@ func DecryptMessage(message string) string {
 	stream.XORKeyStream(cipherText, cipherText)
 
 	return string(cipherText)
+}
+
+func countIP(string) int64 {
+	return 1
+}
+
+func checkConfirmation(addr string) {
+
+}
+
+func getStats() *Stats {
+	s := &Stats{}
+
+	return s
+}
+
+func getRefCount(m *Miner) uint64 {
+	return 0
+}
+
+type Stats struct {
+	ActiveMiners   int
+	ActiveReferred int
+	PayoutMiners   int
+	InactiveMiners int
+	PingCount      int
 }
