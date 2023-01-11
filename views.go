@@ -174,3 +174,41 @@ func minePingView(ctx *macaron.Context) {
 
 	ctx.JSON(200, mr)
 }
+
+func statsView(ctx *macaron.Context) {
+	var miners []*Miner
+	sr := &StatsResponse{}
+	db.Find(&miners)
+	height := getHeight()
+	pc := 0
+
+	log.Println(height)
+	log.Println(len(miners))
+
+	for _, m := range miners {
+		if height-uint64(m.MiningHeight) <= 1440 {
+			sr.ActiveMiners++
+			if m.ReferralID != 0 && m.Confirmed {
+				sr.ActiveReferred++
+			}
+		}
+
+		if height-uint64(m.MiningHeight) <= 2880 {
+			sr.PayoutMiners++
+			pc += int(m.PingCount)
+		}
+	}
+
+	sr.InactiveMiners = len(miners) - sr.PayoutMiners
+	sr.PingCount = pc
+
+	ctx.JSON(200, sr)
+}
+
+type StatsResponse struct {
+	ActiveMiners   int `json:"active_miners"`
+	ActiveReferred int `json:"active_referred"`
+	PayoutMiners   int `json:"payout_miners"`
+	InactiveMiners int `json:"inactive_miners"`
+	PingCount      int `json:"ping_count"`
+}
