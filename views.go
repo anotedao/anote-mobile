@@ -151,7 +151,7 @@ func minePingView(ctx *macaron.Context) {
 		mr.Success = false
 		mr.Error = 1
 	} else {
-		sh := parseItem(minerData.(string), 1)
+		sh := parseItem(minerData.(string), 0)
 		if sh != nil {
 			savedHeight = int64(sh.(int))
 		} else {
