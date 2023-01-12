@@ -28,6 +28,8 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 	ref := ctx.Params("ref")
 	ip := GetRealIP(ctx.Req.Request)
 
+	miner := getMinerOrCreate(addr)
+
 	log.Println(ref)
 
 	code = strings.TrimSpace(code)
@@ -88,6 +90,8 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 		}
 
 		dataTransaction(addr, &newMinerData, nil, nil)
+		miner.MiningHeight = savedHeight
+		db.Save(miner)
 
 		if savedHeight > 0 {
 			go sendMined(addr, height-savedHeight)
@@ -136,7 +140,9 @@ type ImageResponse struct {
 
 func minePingView(ctx *macaron.Context) {
 	a := ctx.Params("address")
-	log.Println("Ping: " + a + " " + GetRealIP(ctx.Req.Request))
+	ip := GetRealIP(ctx.Req.Request)
+
+	log.Println("Ping: " + a + " " + ip)
 
 	mr := &MinePingResponse{Success: true}
 	mr.CycleFinished = false

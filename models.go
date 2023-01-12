@@ -33,3 +33,10 @@ func getMiner(addr string) *Miner {
 
 	return m
 }
+
+func getMinerOrCreate(addr string) *Miner {
+	m := &Miner{}
+	db.FirstOrCreate(m, &Miner{Address: addr})
+
+	return m
+}
