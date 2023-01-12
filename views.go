@@ -146,28 +146,20 @@ func minePingView(ctx *macaron.Context) {
 	mr.CycleFinished = false
 
 	height := int64(getHeight())
-	savedHeight := int64(0)
-	minerData, err := getData(a, nil)
-	if err != nil {
-		log.Println(err)
-		// logTelegram(err.Error())
-		savedHeight = 0
+
+	miner := getMiner(a)
+
+	if miner.ID == 0 {
 		mr.Success = false
 		mr.Error = 1
 	} else {
-		sh := parseItem(minerData.(string), 0)
-		if sh != nil {
-			savedHeight = int64(sh.(int))
-		} else {
-			savedHeight = 0
-		}
-
-		if height-savedHeight > 1410 {
+		if height-miner.MiningHeight > 1410 {
 			mr.CycleFinished = true
 		}
+		miner.PingCount++
+		miner.LastPing = time.Now()
+		db.Save(miner)
 	}
-
-	// ping(a)
 
 	ctx.JSON(200, mr)
 }
