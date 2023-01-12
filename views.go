@@ -51,14 +51,12 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 
 	minerData, err := getData(addr, nil)
 	if err != nil {
-		log.Println(err)
-		// logTelegram(err.Error())
 		savedHeight = 0
-		pr.Success = false
-		pr.Error = 3
+		md := "%d%s__0"
+		dataTransaction(addr, &md, nil, nil)
 	} else {
-		sh := parseItem(minerData.(string), 1)
-		savedRef = parseItem(minerData.(string), 3)
+		sh := parseItem(minerData.(string), 0)
+		savedRef = parseItem(minerData.(string), 1)
 		if sh != nil {
 			savedHeight = int64(sh.(int))
 		} else {
@@ -73,23 +71,19 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 		pr.Error = 4
 	}
 
-	if pr.Error == 0 && (height-savedHeight > 1410) && !sendTelegramNotification(addr, height, savedHeight) {
-		pr.Success = false
-		pr.Error = 3
-	}
+	// if pr.Error == 0 && (height-savedHeight > 1410) && !sendTelegramNotification(addr, height, savedHeight) {
+	// 	pr.Success = false
+	// 	pr.Error = 3
+	// }
 
 	if pr.Error == 0 && (height-savedHeight > 1410) {
 		log.Println(fmt.Sprintf("%s %s", addr, ip))
-
-		encIp := EncryptMessage(ip)
-
-		newMinerData := updateItem(minerData.(string), height, 1)
-		newMinerData = updateItem(newMinerData, encIp, 2)
+		newMinerData := updateItem(minerData.(string), height, 0)
 
 		if savedRef != nil && len(savedRef.(string)) > 0 {
-			newMinerData = updateItem(newMinerData, savedRef.(string), 3)
+			newMinerData = updateItem(newMinerData, savedRef.(string), 1)
 		} else if len(ref) > 0 {
-			newMinerData = updateItem(newMinerData, ref, 3)
+			newMinerData = updateItem(newMinerData, ref, 1)
 		}
 
 		dataTransaction(addr, &newMinerData, nil, nil)
