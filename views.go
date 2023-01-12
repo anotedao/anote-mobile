@@ -156,9 +156,15 @@ func minePingView(ctx *macaron.Context) {
 		if height-miner.MiningHeight > 1410 {
 			mr.CycleFinished = true
 		}
-		miner.PingCount++
-		miner.LastPing = time.Now()
-		db.Save(miner)
+
+		if ip == miner.IP && time.Since(miner.LastPing) > time.Second*55 {
+			miner.PingCount++
+			miner.LastPing = time.Now()
+			db.Save(miner)
+		} else {
+			miner.PingCount = 1
+			db.Save(miner)
+		}
 	}
 
 	ctx.JSON(200, mr)
