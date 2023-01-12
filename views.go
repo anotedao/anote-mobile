@@ -74,11 +74,6 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 		pr.Error = 4
 	}
 
-	// if pr.Error == 0 && (height-savedHeight > 1410) && !sendTelegramNotification(addr, height, savedHeight) {
-	// 	pr.Success = false
-	// 	pr.Error = 3
-	// }
-
 	if pr.Error == 0 && (height-savedHeight > 1410) {
 		log.Println(fmt.Sprintf("%s %s", addr, ip))
 		newMinerData := updateItem(minerData.(string), height, 0)
@@ -88,6 +83,8 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 		} else if len(ref) > 0 {
 			newMinerData = updateItem(newMinerData, ref, 1)
 		}
+
+		log.Println(newMinerData)
 
 		dataTransaction(addr, &newMinerData, nil, nil)
 		miner.MiningHeight = height
