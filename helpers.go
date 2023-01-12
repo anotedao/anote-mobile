@@ -326,6 +326,7 @@ func sendMined(address string, heightDif int64) {
 			fa = MULTI8
 		}
 
+		log.Println(fa)
 		log.Println(getIpFactor(miner))
 
 		fa = uint64(float64(fa) * getIpFactor(miner))
