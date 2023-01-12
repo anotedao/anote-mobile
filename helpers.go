@@ -501,9 +501,30 @@ func checkConfirmation(addr string) {
 }
 
 func getStats() *Stats {
-	s := &Stats{}
+	var miners []*Miner
+	sr := &Stats{}
+	db.Find(&miners)
+	height := getHeight()
+	pc := 0
 
-	return s
+	for _, m := range miners {
+		if height-uint64(m.MiningHeight) <= 1440 {
+			sr.ActiveMiners++
+			if m.ReferralID != 0 && m.Confirmed {
+				sr.ActiveReferred++
+			}
+		}
+
+		if height-uint64(m.MiningHeight) <= 2880 {
+			sr.PayoutMiners++
+			pc += int(m.PingCount)
+		}
+	}
+
+	sr.InactiveMiners = len(miners) - sr.PayoutMiners
+	sr.PingCount = pc
+
+	return sr
 }
 
 func getRefCount(m *Miner) uint64 {
