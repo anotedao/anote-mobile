@@ -323,9 +323,7 @@ func sendMined(address string, heightDif int64) {
 
 		// resetPing(address)
 
-		if false {
-			sendAsset(uint64(float64(amount)*referralIndex), "", address)
-		}
+		sendAsset(uint64(float64(amount)*referralIndex), "", address)
 	}
 }
 
@@ -532,9 +530,9 @@ func getRefCount(m *Miner) uint64 {
 }
 
 type Stats struct {
-	ActiveMiners   int
-	ActiveReferred int
-	PayoutMiners   int
-	InactiveMiners int
-	PingCount      int
+	ActiveMiners   int `json:"active_miners"`
+	ActiveReferred int `json:"active_referred"`
+	PayoutMiners   int `json:"payout_miners"`
+	InactiveMiners int `json:"inactive_miners"`
+	PingCount      int `json:"ping_count"`
 }
