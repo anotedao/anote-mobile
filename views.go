@@ -52,7 +52,7 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 	minerData, err := getData(addr, nil)
 	if err != nil {
 		log.Println(err)
-		logTelegram(err.Error())
+		// logTelegram(err.Error())
 		savedHeight = 0
 		pr.Success = false
 		pr.Error = 3
