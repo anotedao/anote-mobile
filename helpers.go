@@ -332,6 +332,9 @@ func sendMined(address string, heightDif int64) {
 		fa = uint64(float64(fa) * getIpFactor(miner))
 
 		sendAsset(fa, "", address)
+
+		miner.PingCount = 0
+		db.Save(miner)
 	}
 }
 

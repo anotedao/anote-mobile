@@ -89,7 +89,6 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 		dataTransaction(addr, &newMinerData, nil, nil)
 		miner.MiningHeight = height
 		miner.IP = ip
-		miner.PingCount = 0
 		db.Save(miner)
 
 		if savedHeight > 0 {
