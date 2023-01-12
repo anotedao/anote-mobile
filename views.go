@@ -141,7 +141,7 @@ type ImageResponse struct {
 
 func minePingView(ctx *macaron.Context) {
 	a := ctx.Params("address")
-	log.Println("Ping: " + a)
+	log.Println("Ping: " + a + " " + GetRealIP(ctx.Req.Request))
 
 	mr := &MinePingResponse{Success: true}
 	mr.CycleFinished = false
@@ -169,8 +169,6 @@ func minePingView(ctx *macaron.Context) {
 	}
 
 	// ping(a)
-
-	log.Println(GetRealIP(ctx.Req.Request))
 
 	ctx.JSON(200, mr)
 }
