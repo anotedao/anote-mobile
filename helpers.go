@@ -321,12 +321,12 @@ func sendMined(address string, heightDif int64) {
 			referralIndex = 1.0
 		}
 
-		// resetPing(address)
-
 		fa := uint64(float64(amount) * referralIndex)
 		if fa > MULTI8 {
 			fa = MULTI8
 		}
+
+		fa = uint64(float64(fa) * getIpFactor(miner))
 
 		sendAsset(fa, "", address)
 	}
@@ -495,14 +495,6 @@ func DecryptMessage(message string) string {
 	return string(cipherText)
 }
 
-func countIP(string) int64 {
-	return 1
-}
-
-func checkConfirmation(addr string) {
-
-}
-
 func getStats() *Stats {
 	var miners []*Miner
 	sr := &Stats{}
@@ -530,14 +522,72 @@ func getStats() *Stats {
 	return sr
 }
 
-func getRefCount(m *Miner) uint64 {
-	return 0
-}
-
 type Stats struct {
 	ActiveMiners   int `json:"active_miners"`
 	ActiveReferred int `json:"active_referred"`
 	PayoutMiners   int `json:"payout_miners"`
 	InactiveMiners int `json:"inactive_miners"`
 	PingCount      int `json:"ping_count"`
+}
+
+func getRefCount(m *Miner) uint64 {
+	var miners []*Miner
+
+	height := getHeight()
+
+	db.Where("referral_id = ? AND mining_height > ? AND confirmed = true", m.ID, height-2880).Find(&miners)
+	count := len(miners)
+
+	return uint64(count)
+}
+
+func countIP(ip string) int64 {
+	var miners []*Miner
+
+	height := getHeight()
+
+	db.Where("ip = ? AND mining_height > ?", ip, height-2880).Find(&miners)
+	count := len(miners)
+
+	return int64(count)
+}
+
+func checkConfirmation(addr string) {
+	m := &Miner{}
+	db.First(m, &Miner{Address: addr})
+
+	cl, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{}})
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+	}
+
+	c, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	a := proto.MustAddressFromString(addr)
+
+	balance, _, err := cl.Addresses.Balance(c, a)
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+	}
+
+	if balance.Balance >= Fee {
+		m.Confirmed = true
+		m.Balance = balance.Balance
+		db.Save(m)
+	}
+}
+
+func getIpFactor(m *Miner) float64 {
+	ipf := float64(0)
+
+	ipf = float64(m.PingCount) / 1410
+
+	if ipf > 1 {
+		ipf = 1
+	}
+
+	return ipf
 }
