@@ -323,7 +323,12 @@ func sendMined(address string, heightDif int64) {
 
 		// resetPing(address)
 
-		sendAsset(uint64(float64(amount)*referralIndex), "", address)
+		fa := uint64(float64(amount) * referralIndex)
+		if fa > MULTI8 {
+			fa = MULTI8
+		}
+
+		sendAsset(fa, "", address)
 	}
 }
 
