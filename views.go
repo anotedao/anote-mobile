@@ -53,6 +53,7 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 	if err != nil {
 		savedHeight = 0
 		md := "%d%s__0"
+		minerData = md
 		dataTransaction(addr, &md, nil, nil)
 	} else {
 		sh := parseItem(minerData.(string), 0)
