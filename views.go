@@ -157,15 +157,16 @@ func minePingView(ctx *macaron.Context) {
 			mr.CycleFinished = true
 		}
 
-		if ip == miner.IP {
-			if time.Since(miner.LastPing) > time.Second*55 {
-				miner.PingCount++
-				miner.LastPing = time.Now()
-				db.Save(miner)
+		if time.Since(miner.LastPing) > time.Second*55 {
+			if ip == miner.IP {
+				minerPing(miner)
+			} else if len(miner.IP2) == 0 || miner.IP2 == ip {
+				miner.IP2 = ip
+				minerPing(miner)
+			} else if len(miner.IP3) == 0 || miner.IP3 == ip {
+				miner.IP3 = ip
+				minerPing(miner)
 			}
-		} else {
-			miner.PingCount = 1
-			db.Save(miner)
 		}
 	}
 
@@ -175,4 +176,10 @@ func minePingView(ctx *macaron.Context) {
 func statsView(ctx *macaron.Context) {
 	sr := getStats()
 	ctx.JSON(200, sr)
+}
+
+func minerPing(miner *Miner) {
+	miner.PingCount++
+	miner.LastPing = time.Now()
+	db.Save(miner)
 }
