@@ -20,11 +20,13 @@ type Miner struct {
 	TelegramId       int64
 	MiningHeight     int64
 	ReferralID       uint   `gorm:"index"`
-	IP               string `gorm:"index;default:127.0.0.1"`
+	IP               string `gorm:"index"`
 	Confirmed        bool   `gorm:"default:false"`
 	Balance          uint64
 	LastPing         time.Time
 	PingCount        int64
+	IP2              string `gorm:"index"`
+	IP3              string `gorm:"index"`
 }
 
 func getMiner(addr string) *Miner {
