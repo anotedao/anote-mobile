@@ -175,6 +175,10 @@ func minePingView(ctx *macaron.Context) {
 
 	mr.Health = int(float64(miner.PingCount) / float64(height-miner.MiningHeight) * 100)
 
+	if mr.Health > 100 {
+		mr.Health = 100
+	}
+
 	ctx.JSON(200, mr)
 }
 
