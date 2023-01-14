@@ -131,6 +131,7 @@ type MinePingResponse struct {
 	Success       bool `json:"success"`
 	CycleFinished bool `json:"cycle_finished"`
 	Error         int  `json:"error"`
+	Health        int  `json:"health"`
 }
 
 type ImageResponse struct {
@@ -171,6 +172,8 @@ func minePingView(ctx *macaron.Context) {
 			}
 		}
 	}
+
+	mr.Health = int(float64(miner.PingCount) / float64(height-miner.MiningHeight) * 100)
 
 	ctx.JSON(200, mr)
 }
