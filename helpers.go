@@ -583,18 +583,20 @@ func checkConfirmation(addr string) {
 	c, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	a := proto.MustAddressFromString(addr)
+	a, err := proto.NewAddressFromString(addr)
 
-	balance, _, err := cl.Addresses.Balance(c, a)
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
+	if err == nil {
+		balance, _, err := cl.Addresses.Balance(c, a)
+		if err != nil {
+			log.Println(err)
+			logTelegram(err.Error())
+		}
 
-	if balance.Balance >= Fee {
-		m.Confirmed = true
-		m.Balance = balance.Balance
-		db.Save(m)
+		if balance.Balance >= Fee {
+			m.Confirmed = true
+			m.Balance = balance.Balance
+			db.Save(m)
+		}
 	}
 }
 
