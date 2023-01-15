@@ -174,8 +174,8 @@ func minePingView(ctx *macaron.Context) {
 		}
 	}
 
-	s := time.Since(miner.MiningTime).Seconds()
-	mr.Health = int(float64(miner.PingCount) / float64(int64(s)/60) * 100)
+	m := time.Since(miner.MiningTime).Minutes()
+	mr.Health = int(float64(miner.PingCount) / float64(m) * 100)
 
 	if mr.Health > 100 {
 		mr.Health = 100
