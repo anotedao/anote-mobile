@@ -161,7 +161,7 @@ func minePingView(ctx *macaron.Context) {
 			mr.CycleFinished = true
 		}
 
-		if time.Since(miner.LastPing) > time.Second*55 {
+		if time.Since(miner.LastPing) > time.Second*59 {
 			if ip == miner.IP {
 				minerPing(miner)
 			} else if len(miner.IP2) == 0 || miner.IP2 == ip {
