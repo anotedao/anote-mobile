@@ -176,7 +176,7 @@ func minePingView(ctx *macaron.Context) {
 				miner.IP4 = ip
 				minerPing(miner)
 			} else if len(miner.IP5) == 0 || miner.IP5 == ip {
-				miner.IP3 = ip
+				miner.IP5 = ip
 				minerPing(miner)
 			}
 		}
