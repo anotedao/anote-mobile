@@ -333,7 +333,7 @@ func sendMined(address string, heightDif int64) {
 
 		sendAsset(fa, "", address)
 
-		miner.PingCount = 0
+		miner.PingCount = 1
 		db.Save(miner)
 	}
 }
