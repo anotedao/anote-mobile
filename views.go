@@ -91,6 +91,8 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 		miner.IP = ip
 		miner.IP2 = ""
 		miner.IP3 = ""
+		miner.IP4 = ""
+		miner.IP5 = ""
 		miner.MiningTime = time.Now()
 		db.Save(miner)
 
