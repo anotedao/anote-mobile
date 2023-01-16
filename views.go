@@ -179,6 +179,8 @@ func minePingView(ctx *macaron.Context) {
 
 	if mr.Health > 100 {
 		mr.Health = 100
+	} else if mr.Health < 0 {
+		mr.Health = 0
 	}
 
 	ctx.JSON(200, mr)
