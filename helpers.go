@@ -11,6 +11,7 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"math"
 	"net/http"
 	"net/url"
 	"path"
@@ -606,7 +607,7 @@ func getIpFactor(m *Miner) float64 {
 	// ipf = float64(m.PingCount) / 1410
 
 	min := time.Since(m.MiningTime).Minutes()
-	ipf = float64(m.PingCount) / float64(min)
+	ipf = float64(m.PingCount+1) / math.Floor(min)
 
 	if ipf > 1 {
 		ipf = 1
