@@ -603,7 +603,10 @@ func checkConfirmation(addr string) {
 func getIpFactor(m *Miner) float64 {
 	ipf := float64(0)
 
-	ipf = float64(m.PingCount) / 1410
+	// ipf = float64(m.PingCount) / 1410
+
+	min := time.Since(m.MiningTime).Minutes()
+	ipf = float64(m.PingCount) / float64(min)
 
 	if ipf > 1 {
 		ipf = 1
