@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"math"
 	"regexp"
 	"strconv"
 	"strings"
@@ -183,7 +184,7 @@ func minePingView(ctx *macaron.Context) {
 	}
 
 	m := time.Since(miner.MiningTime).Minutes()
-	mr.Health = int(float64(miner.PingCount) / float64(m) * 100)
+	mr.Health = int(math.Ceil(miner.PingCount)/float64(m) * 100))
 
 	if mr.Health > 100 {
 		mr.Health = 100
