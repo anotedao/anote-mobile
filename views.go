@@ -137,6 +137,10 @@ type MinePingResponse struct {
 	Health        int  `json:"health"`
 }
 
+type HealthResponse struct {
+	Health int `json:"health"`
+}
+
 type ImageResponse struct {
 	Image string `json:"image"`
 	Id    string `json:"id"`
@@ -192,6 +196,24 @@ func minePingView(ctx *macaron.Context) {
 	}
 
 	ctx.JSON(200, mr)
+}
+
+func healthView(ctx *macaron.Context) {
+	a := ctx.Params("address")
+
+	hr := &HealthResponse{}
+
+	miner := getMiner(a)
+
+	hr.Health = int(getIpFactor(miner) * 100)
+
+	if hr.Health > 100 {
+		hr.Health = 100
+	} else if hr.Health < 0 {
+		hr.Health = 0
+	}
+
+	ctx.JSON(200, hr)
 }
 
 func statsView(ctx *macaron.Context) {
