@@ -28,6 +28,8 @@ type Miner struct {
 	PingCount        int64
 	IP2              string `gorm:"index"`
 	IP3              string `gorm:"index"`
+	IP4              string `gorm:"index"`
+	IP5              string `gorm:"index"`
 }
 
 func getMiner(addr string) *Miner {
