@@ -171,9 +171,6 @@ func minePingView(ctx *macaron.Context) {
 				miner.IP3 = ip
 				minerPing(miner)
 			}
-		} else {
-			miner.LastPing = time.Now()
-			db.Save(miner)
 		}
 	}
 
