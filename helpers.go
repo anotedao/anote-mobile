@@ -279,6 +279,7 @@ func sendMined(address string, heightDif int64) {
 	var referralIndex float64
 	miner := getMiner(address)
 	stats := getStats()
+	height := int64(getHeight())
 
 	if miner.ID != 0 {
 		sender, err := crypto.NewPublicKeyFromBase58(conf.PublicKey)
@@ -334,6 +335,8 @@ func sendMined(address string, heightDif int64) {
 		sendAsset(fa, "", address)
 
 		miner.PingCount = 1
+		miner.MiningTime = time.Now()
+		miner.MiningHeight = height
 		db.Save(miner)
 	}
 }
