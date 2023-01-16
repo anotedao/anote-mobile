@@ -612,7 +612,7 @@ func getIpFactor(m *Miner) float64 {
 
 	log.Println(s)
 
-	ipf = float64(m.PingCount+1) / float64(int64(s)/60)
+	ipf = float64(m.PingCount+3) / float64(int64(s)/60)
 
 	log.Println(ipf)
 
