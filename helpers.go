@@ -279,8 +279,9 @@ func sendMined(address string, heightDif int64) {
 	var referralIndex float64
 	miner := getMiner(address)
 	stats := getStats()
+	height := int64(getHeight())
 
-	if miner.Exists {
+	if miner.ID != 0 {
 		sender, err := crypto.NewPublicKeyFromBase58(conf.PublicKey)
 		if err != nil {
 			log.Println(err)
@@ -309,7 +310,7 @@ func sendMined(address string, heightDif int64) {
 		}
 
 		amount = (total.Balance / (uint64(stats.PayoutMiners) + uint64(stats.ActiveReferred/4))) - Fee
-		referralIndex = 1 + (float64(miner.ReferredCount) * 0.25)
+		referralIndex = 1 + (float64(getRefCount(miner)) * 0.25)
 
 		if heightDif > 2880 {
 			times := int(heightDif / 1440)
@@ -321,67 +322,23 @@ func sendMined(address string, heightDif int64) {
 			referralIndex = 1.0
 		}
 
-		resetPing(address)
-
-		sendAsset(uint64(float64(amount)*referralIndex), "", address)
-	}
-}
-
-func getAintFactor(address string) float64 {
-	sa := StakeAddress
-	stakeData, err := getData("%s__"+address, &sa)
-	if err != nil {
-		log.Println(err.Error())
-		// logTelegram(err.Error())
-		return float64(0)
-	}
-
-	cl, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{}})
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
-
-	addr, err := proto.NewAddressFromString(StakeAddress)
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
-
-	stakes, _, err := cl.Addresses.AddressesData(ctx, addr)
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
-
-	addr2, err := proto.NewAddressFromString(NodesAddress)
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
-
-	nodes, _, err := cl.Addresses.AddressesData(ctx, addr2)
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
-
-	total := int64(0)
-
-	for _, s := range stakes {
-		stake := s.ToProtobuf().GetIntValue()
-		for _, n := range nodes {
-			if strings.HasSuffix(s.GetKey(), n.GetKey()) {
-				stake = 0
-			}
+		fa := uint64(float64(amount) * referralIndex)
+		if fa > MULTI8 {
+			fa = MULTI8
 		}
-		total += stake
-	}
 
-	return float64(stakeData.(int64)) / float64(total)
+		log.Println(fa)
+		log.Println(getIpFactor(miner))
+
+		fa = uint64(float64(fa) * getIpFactor(miner))
+
+		sendAsset(fa, "", address)
+
+		miner.PingCount = 1
+		miner.MiningTime = time.Now()
+		miner.MiningHeight = height
+		db.Save(miner)
+	}
 }
 
 func prettyPrint(i interface{}) string {
@@ -411,87 +368,8 @@ func sendTelegramNotification(addr string, height int64, savedHeight int64) bool
 	return sent
 }
 
-func getMiner(addr string) *MinerResponse {
-	resp, err := http.Get(fmt.Sprintf("http://localhost:5003/miner/%s", addr))
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-		return nil
-	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-
-	var result MinerResponse
-	if err := json.Unmarshal(body, &result); err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-		return nil
-	}
-
-	return &result
-}
-
-func getStats() *StatsResponse {
-	resp, err := http.Get("http://localhost:5003/stats")
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-		return nil
-	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-
-	var result StatsResponse
-	if err := json.Unmarshal(body, &result); err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-		return nil
-	}
-
-	return &result
-}
-
-type StatsResponse struct {
-	ActiveMiners   int `json:"active_miners"`
-	ActiveReferred int `json:"active_referred"`
-	PayoutMiners   int `json:"payout_miners"`
-	InactiveMiners int `json:"inactive_miners"`
-}
-
-func countIP(ip string) int {
-	resp, err := http.Get(fmt.Sprintf("http://localhost:5003/ipcount/%s", ip))
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-
-	var result IPCountResponse
-	if err := json.Unmarshal(body, &result); err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
-
-	return result.Count
-}
-
-type IPCountResponse struct {
-	Count int `json:"count"`
-}
-
 type NotificationResponse struct {
 	Success bool `json:"success"`
-}
-
-type MinerResponse struct {
-	Address          string    `json:"address"`
-	LastNotification time.Time `json:"last_notification"`
-	TelegramId       int64     `json:"telegram_id"`
-	MiningHeight     int64     `json:"mining_height"`
-	ReferredCount    int       `json:"referred_count"`
-	Confirmed        bool      `json:"confirmed"`
-	Exists           bool      `json:"exists"`
 }
 
 func getCallerInfo() (info string) {
@@ -626,29 +504,124 @@ func DecryptMessage(message string) string {
 	return string(cipherText)
 }
 
+func getStats() *Stats {
+	var miners []*Miner
+	sr := &Stats{}
+	db.Find(&miners)
+	height := getHeight()
+	pc := 0
+
+	for _, m := range miners {
+		if height-uint64(m.MiningHeight) <= 1440 {
+			sr.ActiveMiners++
+			if m.ReferralID != 0 && m.Confirmed {
+				sr.ActiveReferred++
+			}
+		}
+
+		if height-uint64(m.MiningHeight) <= 2880 {
+			sr.PayoutMiners++
+			pc += int(m.PingCount)
+		}
+	}
+
+	sr.InactiveMiners = len(miners) - sr.PayoutMiners
+	sr.PingCount = pc
+
+	return sr
+}
+
+type Stats struct {
+	ActiveMiners   int `json:"active_miners"`
+	ActiveReferred int `json:"active_referred"`
+	PayoutMiners   int `json:"payout_miners"`
+	InactiveMiners int `json:"inactive_miners"`
+	PingCount      int `json:"ping_count"`
+}
+
+func getRefCount(m *Miner) uint64 {
+	var miners []*Miner
+
+	height := getHeight()
+
+	db.Where("referral_id = ? AND mining_height > ? AND confirmed = true", m.ID, height-2880).Find(&miners)
+	count := len(miners)
+
+	return uint64(count)
+}
+
+func countIP(ip string) int64 {
+	var miners []*Miner
+
+	height := getHeight()
+
+	db.Where("ip = ? AND mining_height > ?", ip, height-2880).Find(&miners)
+	count := len(miners)
+
+	log.Println(count)
+
+	// db.Where("ip2 = ? AND mining_height > ?", ip, height-2880).Find(&miners)
+	// count += len(miners)
+
+	// log.Println(count)
+
+	// db.Where("ip3 = ? AND mining_height > ?", ip, height-2880).Find(&miners)
+	// count += len(miners)
+
+	// log.Println(count)
+
+	return int64(count)
+}
+
 func checkConfirmation(addr string) {
-	resp, err := http.Get(fmt.Sprintf("http://localhost:5003/confirmation/%s", addr))
+	m := &Miner{}
+	db.First(m, &Miner{Address: addr})
+
+	cl, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{}})
 	if err != nil {
 		log.Println(err)
 		logTelegram(err.Error())
 	}
-	defer resp.Body.Close()
+
+	c, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	a, err := proto.NewAddressFromString(addr)
+
+	if err == nil {
+		balance, _, err := cl.Addresses.Balance(c, a)
+		if err != nil {
+			log.Println(err)
+			logTelegram(err.Error())
+		}
+
+		if balance.Balance >= Fee {
+			m.Confirmed = true
+			m.Balance = balance.Balance
+			db.Save(m)
+		}
+	}
 }
 
-func ping(addr string) {
-	resp, err := http.Get(fmt.Sprintf("http://localhost:5003/ping/%s", addr))
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
-	defer resp.Body.Close()
-}
+func getIpFactor(m *Miner) float64 {
+	ipf := float64(0)
 
-func resetPing(addr string) {
-	resp, err := http.Get(fmt.Sprintf("http://localhost:5003/reset-ping/%s", addr))
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
+	// ipf = float64(m.PingCount) / 1410
+
+	// min := time.Since(m.MiningTime).Minutes()
+	// ipf = float64(m.PingCount+1) / math.Floor(min)
+
+	s := time.Since(m.MiningTime).Seconds()
+
+	log.Println(s)
+
+	ipf = float64(m.PingCount+3) / float64(int64(s)/60)
+
+	log.Println(ipf)
+
+	if ipf > 1 {
+		ipf = 1
 	}
-	defer resp.Body.Close()
+
+	return ipf
 }

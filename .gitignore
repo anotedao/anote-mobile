@@ -3,5 +3,4 @@ config.json
 deploy.sh
 ips.bin
 data.json
-.gitignore
 mobile.db
