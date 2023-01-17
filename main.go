@@ -22,8 +22,8 @@ func main() {
 
 	m = initMacaron()
 
-	// val := "%d%s__24000"
-	// dataTransaction("3A9Rb3t91eHg1ypsmBiRth4Ld9ZytGwZe9p", &val, nil, nil)
+	// val := "%d%s__31000__3A9Rb3t91eHg1ypsmBiRth4Ld9ZytGwZe9p"
+	// dataTransaction("3AShXVgRcRis82CwD7o9pz1Ac9vmRYMqELT", &val, nil, nil)
 
 	m.Run("127.0.0.1", Port)
 
