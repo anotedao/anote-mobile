@@ -611,11 +611,9 @@ func getIpFactor(m *Miner) float64 {
 	// min := time.Since(m.MiningTime).Minutes()
 	// ipf = float64(m.PingCount+1) / math.Floor(min)
 
-	s := time.Since(m.MiningTime).Seconds()
+	height := getHeight()
 
-	log.Println(s)
-
-	ipf = float64(m.PingCount+3) / float64(int64(s)/60)
+	ipf = float64(m.PingCount+3) / float64(height-uint64(m.MiningHeight))
 
 	log.Println(ipf)
 

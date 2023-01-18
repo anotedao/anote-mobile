@@ -1,6 +1,7 @@
 package main
 
 import (
+	"strconv"
 	"time"
 
 	"gorm.io/gorm"
@@ -30,6 +31,18 @@ type Miner struct {
 	IP3              string `gorm:"index"`
 	IP4              string `gorm:"index"`
 	IP5              string `gorm:"index"`
+}
+
+func (m *Miner) saveInBlockchain() {
+	md := "%d%s__" + strconv.Itoa(int(m.MiningHeight))
+
+	if m.ReferralID != 0 {
+		r := &Miner{}
+		db.First(r, m.ReferralID)
+		md += "__" + r.Address
+	}
+
+	dataTransaction(m.Address, &md, nil, nil)
 }
 
 func getMiner(addr string) *Miner {
