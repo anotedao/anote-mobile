@@ -126,8 +126,6 @@ func minePingView(ctx *macaron.Context) {
 	a := ctx.Params("address")
 	ip := GetRealIP(ctx.Req.Request)
 
-	log.Println("Ping: " + a + " " + ip)
-
 	mr := &MinePingResponse{Success: true}
 	mr.CycleFinished = false
 
@@ -170,6 +168,8 @@ func minePingView(ctx *macaron.Context) {
 	} else if mr.Health < 0 {
 		mr.Health = 0
 	}
+
+	log.Println("Ping: " + a + " " + ip + " " + strconv.Itoa(int(getIpFactor(miner)*100)))
 
 	ctx.JSON(200, mr)
 }
