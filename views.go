@@ -13,7 +13,6 @@ import (
 )
 
 func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
-	var savedHeight int64
 	height := int64(getHeight())
 
 	pr := &MineResponse{
@@ -28,6 +27,7 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 	ip := GetRealIP(ctx.Req.Request)
 
 	miner := getMinerOrCreate(addr)
+	savedHeight := miner.MiningHeight
 
 	code = strings.TrimSpace(code)
 	code = regexp.MustCompile(`[^0-9]+`).ReplaceAllString(code, "")
