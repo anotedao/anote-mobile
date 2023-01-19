@@ -338,6 +338,7 @@ func sendMined(address string, heightDif int64) {
 		miner.MiningTime = time.Now()
 		miner.MiningHeight = height
 		db.Save(miner)
+		miner.saveInBlockchain()
 	}
 }
 

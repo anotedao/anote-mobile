@@ -74,11 +74,9 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 			miner.PingCount = 1
 			miner.MiningTime = time.Now()
 			miner.MiningHeight = height
+			db.Save(miner)
+			miner.saveInBlockchain()
 		}
-
-		db.Save(miner)
-
-		miner.saveInBlockchain()
 	}
 
 	ctx.Resp.Header().Add("Access-Control-Allow-Origin", "*")
