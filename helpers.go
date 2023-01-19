@@ -614,7 +614,7 @@ func getIpFactor(m *Miner) float64 {
 
 	height := getHeight()
 
-	ipf = float64(m.PingCount+3) / float64(height-uint64(m.MiningHeight))
+	ipf = float64(m.PingCount+10) / float64(height-uint64(m.MiningHeight))
 
 	log.Println(ipf)
 
