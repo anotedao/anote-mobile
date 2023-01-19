@@ -55,6 +55,11 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 		pr.Error = 4
 	}
 
+	if !strings.HasPrefix(addr, "3A") {
+		pr.Success = false
+		pr.Error = 5
+	}
+
 	if pr.Error == 0 && (height-miner.MiningHeight > 1410) {
 		log.Println(fmt.Sprintf("%s %s", addr, ip))
 
@@ -134,6 +139,11 @@ func minePingView(ctx *macaron.Context) {
 	if miner.ID == 0 {
 		mr.Success = false
 		mr.Error = 1
+		mr.CycleFinished = true
+	} else if !strings.HasPrefix(a, "3A") {
+		mr.Success = false
+		mr.Error = 2
+		mr.CycleFinished = true
 	} else {
 		if height-miner.MiningHeight > 1410 {
 			mr.CycleFinished = true
