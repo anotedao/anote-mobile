@@ -42,7 +42,9 @@ func (m *Miner) saveInBlockchain() {
 }
 
 func (m *Miner) saveIp(ip string) {
-	db.Model(m).Association("IpAddresses").Append(&IpAddress{Address: ip})
+	ipa := &IpAddress{}
+	db.FirstOrCreate(ipa, &IpAddress{Address: ip})
+	db.Model(m).Association("IpAddresses").Append(ipa)
 }
 
 func (m *Miner) clearIps() {

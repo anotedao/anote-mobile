@@ -12,7 +12,7 @@ type Config struct {
 	PrivateKey string `json:"private_key"`
 	Host       string `json:"host"`
 	Password   []byte `json:"password"`
-	APK        string `json:"host"`
+	APK        string `json:"apk"`
 }
 
 // Load method loads configuration file to Config struct
