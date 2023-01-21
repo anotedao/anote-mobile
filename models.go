@@ -21,16 +21,12 @@ type Miner struct {
 	TelegramId       int64
 	MiningHeight     int64
 	MiningTime       time.Time
-	ReferralID       uint   `gorm:"index"`
-	IP               string `gorm:"index"`
-	Confirmed        bool   `gorm:"default:false"`
+	ReferralID       uint `gorm:"index"`
+	Confirmed        bool `gorm:"default:false"`
 	Balance          uint64
 	LastPing         time.Time
 	PingCount        int64
-	IP2              string `gorm:"index"`
-	IP3              string `gorm:"index"`
-	IP4              string `gorm:"index"`
-	IP5              string `gorm:"index"`
+	IpAddresses      []*IpAddress `gorm:"many2many:miner_ip_addresses;"`
 }
 
 func (m *Miner) saveInBlockchain() {
@@ -43,6 +39,14 @@ func (m *Miner) saveInBlockchain() {
 	}
 
 	dataTransaction(m.Address, &md, nil, nil)
+}
+
+func (m *Miner) saveIp(ip string) {
+	db.Model(m).Association("IpAddresses").Append(&IpAddress{Address: ip})
+}
+
+func (m *Miner) clearIps() {
+	db.Model(m).Association("IpAddresses").Clear()
 }
 
 func getMiner(addr string) *Miner {
@@ -61,5 +65,6 @@ func getMinerOrCreate(addr string) *Miner {
 
 type IpAddress struct {
 	gorm.Model
-	Address string `gorm:"size:255;uniqueIndex"`
+	Address string   `gorm:"size:255;uniqueIndex"`
+	Miners  []*Miner `gorm:"many2many:miner_ip_addresses;"`
 }

@@ -63,11 +63,8 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 	if pr.Error == 0 && (height-miner.MiningHeight > 1410) {
 		log.Println(fmt.Sprintf("%s %s", addr, ip))
 
-		miner.IP = ip
-		miner.IP2 = ""
-		miner.IP3 = ""
-		miner.IP4 = ""
-		miner.IP5 = ""
+		miner.clearIps()
+		miner.saveIp(ip)
 
 		if savedHeight > 0 {
 			go sendMined(addr, height-savedHeight)
@@ -151,21 +148,23 @@ func minePingView(ctx *macaron.Context) {
 		}
 
 		if time.Since(miner.LastPing) > time.Second*59 {
-			if ip == miner.IP {
-				minerPing(miner)
-			} else if len(miner.IP2) == 0 || miner.IP2 == ip {
-				miner.IP2 = ip
-				minerPing(miner)
-			} else if len(miner.IP3) == 0 || miner.IP3 == ip {
-				miner.IP3 = ip
-				minerPing(miner)
-			} else if len(miner.IP4) == 0 || miner.IP4 == ip {
-				miner.IP4 = ip
-				minerPing(miner)
-			} else if len(miner.IP5) == 0 || miner.IP5 == ip {
-				miner.IP5 = ip
-				minerPing(miner)
-			}
+			// if ip == miner.IP {
+			// 	minerPing(miner)
+			// } else if len(miner.IP2) == 0 || miner.IP2 == ip {
+			// 	miner.IP2 = ip
+			// 	minerPing(miner)
+			// } else if len(miner.IP3) == 0 || miner.IP3 == ip {
+			// 	miner.IP3 = ip
+			// 	minerPing(miner)
+			// } else if len(miner.IP4) == 0 || miner.IP4 == ip {
+			// 	miner.IP4 = ip
+			// 	minerPing(miner)
+			// } else if len(miner.IP5) == 0 || miner.IP5 == ip {
+			// 	miner.IP5 = ip
+			// 	minerPing(miner)
+			// }
+			miner.saveIp(ip)
+			minerPing(miner)
 		}
 	}
 

@@ -552,26 +552,10 @@ func getRefCount(m *Miner) uint64 {
 }
 
 func countIP(ip string) int64 {
-	var miners []*Miner
+	ipa := &IpAddress{Address: ip}
+	count := db.Model(&ipa).Association("Miners").Count()
 
-	height := getHeight()
-
-	db.Where("ip = ? AND mining_height > ?", ip, height-2880).Find(&miners)
-	count := len(miners)
-
-	log.Println(count)
-
-	// db.Where("ip2 = ? AND mining_height > ?", ip, height-2880).Find(&miners)
-	// count += len(miners)
-
-	// log.Println(count)
-
-	// db.Where("ip3 = ? AND mining_height > ?", ip, height-2880).Find(&miners)
-	// count += len(miners)
-
-	// log.Println(count)
-
-	return int64(count)
+	return count
 }
 
 func checkConfirmation(addr string) {
