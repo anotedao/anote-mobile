@@ -127,6 +127,7 @@ type ImageResponse struct {
 
 func minePingView(ctx *macaron.Context) {
 	a := ctx.Params("address")
+	apk := ctx.Params("apk")
 	ip := GetRealIP(ctx.Req.Request)
 
 	mr := &MinePingResponse{Success: true}
@@ -177,7 +178,7 @@ func minePingView(ctx *macaron.Context) {
 		mr.Health = 0
 	}
 
-	log.Println("Ping: " + a + " " + ip + " " + strconv.Itoa(int(getIpFactor(miner)*100)))
+	log.Println("Ping: " + a + " " + ip + " " + strconv.Itoa(int(getIpFactor(miner)*100)) + " " + apk)
 
 	ctx.JSON(200, mr)
 }

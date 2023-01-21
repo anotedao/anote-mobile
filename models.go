@@ -58,3 +58,8 @@ func getMinerOrCreate(addr string) *Miner {
 
 	return m
 }
+
+type IpAddress struct {
+	gorm.Model
+	Address string `gorm:"size:255;uniqueIndex"`
+}
