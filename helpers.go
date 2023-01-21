@@ -11,6 +11,7 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"math"
 	"net/http"
 	"net/url"
 	"path"
@@ -591,14 +592,12 @@ func checkConfirmation(addr string) {
 func getIpFactor(m *Miner) float64 {
 	ipf := float64(0)
 
-	// ipf = float64(m.PingCount) / 1410
-
-	// min := time.Since(m.MiningTime).Minutes()
-	// ipf = float64(m.PingCount+1) / math.Floor(min)
-
-	height := getHeight()
-
-	ipf = float64(m.PingCount+10) / float64(height-uint64(m.MiningHeight))
+	min := time.Since(m.MiningTime).Minutes()
+	if min <= 1410 {
+		ipf = float64(m.PingCount+10) / math.Floor(min)
+	} else {
+		ipf = float64(m.PingCount+10) / 1410
+	}
 
 	log.Println(ipf)
 

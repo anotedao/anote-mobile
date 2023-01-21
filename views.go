@@ -147,7 +147,7 @@ func minePingView(ctx *macaron.Context) {
 			mr.CycleFinished = true
 		}
 
-		if time.Since(miner.LastPing) > time.Second*59 {
+		if time.Since(miner.LastPing) > time.Second*55 {
 			// if ip == miner.IP {
 			// 	minerPing(miner)
 			// } else if len(miner.IP2) == 0 || miner.IP2 == ip {
@@ -177,7 +177,7 @@ func minePingView(ctx *macaron.Context) {
 		mr.Health = 0
 	}
 
-	log.Println("Ping: " + a + " " + ip + " " + strconv.Itoa(int(getIpFactor(miner)*100)) + " " + apk)
+	log.Println("Ping: " + a + " " + ip + " Health: " + strconv.Itoa(int(getIpFactor(miner)*100)) + " " + apk + " IPs: " + strconv.Itoa(int(db.Model(miner).Association("IpAddresses").Count())) + " Pings: " + strconv.Itoa(int(miner.PingCount)))
 
 	ctx.JSON(200, mr)
 }
