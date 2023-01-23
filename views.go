@@ -114,7 +114,8 @@ type MinePingResponse struct {
 }
 
 type HealthResponse struct {
-	Health int `json:"health"`
+	Health     int  `json:"health"`
+	UpdatedApp bool `json:"updated_app"`
 }
 
 type ImageResponse struct {
@@ -165,6 +166,11 @@ func minePingView(ctx *macaron.Context) {
 			// }
 			miner.saveIp(ip)
 			minerPing(miner)
+
+			if apk == conf.APK {
+				miner.UpdatedApp = true
+				db.Save(miner)
+			}
 		}
 	}
 
@@ -196,6 +202,8 @@ func healthView(ctx *macaron.Context) {
 	} else if hr.Health < 0 {
 		hr.Health = 0
 	}
+
+	hr.UpdatedApp = miner.UpdatedApp
 
 	ctx.JSON(200, hr)
 }
