@@ -76,6 +76,7 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 			miner.PingCount = 1
 			miner.MiningTime = time.Now()
 			miner.MiningHeight = height
+			miner.UpdatedApp = true
 			db.Save(miner)
 			miner.saveInBlockchain()
 		}
