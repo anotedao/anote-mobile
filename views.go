@@ -170,8 +170,11 @@ func minePingView(ctx *macaron.Context) {
 
 			if apk == conf.APK {
 				miner.UpdatedApp = true
-				db.Save(miner)
+			} else {
+				miner.UpdatedApp = false
 			}
+
+			db.Save(miner)
 		}
 	}
 
