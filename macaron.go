@@ -20,6 +20,8 @@ func initMacaron() *macaron.Macaron {
 	m.Get("/mine/:address/:captchaid/:captcha/:code", mineView)
 	m.Get("/mine/:address/:captchaid/:captcha/:code/:ref", mineView)
 	m.Get("/new-captcha/:addr", newCaptchaView)
+	m.Get("/new-user/:addr", newUserView)
+	m.Get("/new-user/:addr/:ref", newUserView)
 	m.Get("/mine/:address", minePingView)
 	m.Get("/mine/:address/:apk", minePingView)
 	m.Get("/health/:address", healthView)

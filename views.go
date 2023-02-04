@@ -222,3 +222,26 @@ func minerPing(miner *Miner) {
 	miner.LastPing = time.Now()
 	db.Save(miner)
 }
+
+func newUserView(ctx *macaron.Context) {
+	u := &Miner{}
+	r := &Miner{}
+
+	ap := ctx.Params("addr")
+	rp := ctx.Params("ref")
+
+	if len(ap) > 0 {
+		db.FirstOrCreate(u, &Miner{Address: ap})
+	}
+
+	if len(rp) > 0 && u.ID != 0 {
+		db.First(r, &Miner{Address: rp})
+		if r.ID != 0 {
+			u.ReferralID = r.ID
+			db.Save(u)
+		}
+	}
+
+	mr := &MineResponse{Success: true}
+	ctx.JSON(200, mr)
+}
