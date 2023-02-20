@@ -107,6 +107,12 @@ type MineResponse struct {
 	Error   int  `json:"error"`
 }
 
+type MinerResponse struct {
+	Address  string `json:"address"`
+	Referred int64  `json:"referred"`
+	Active   int64  `json:"active"`
+}
+
 type MinePingResponse struct {
 	Success       bool `json:"success"`
 	CycleFinished bool `json:"cycle_finished"`
@@ -243,5 +249,24 @@ func newUserView(ctx *macaron.Context) {
 	}
 
 	mr := &MineResponse{Success: true}
+	ctx.JSON(200, mr)
+}
+
+func minerView(ctx *macaron.Context) {
+	height := getHeight()
+	mr := &MinerResponse{}
+	u := &Miner{}
+	var miners []*Miner
+	ap := ctx.Params("addr")
+
+	if len(ap) > 0 {
+		db.First(u, &Miner{Address: ap})
+		mr.Address = u.Address
+	}
+
+	db.Where("referral_id = ?", u.ID).Find(&miners).Count(&mr.Referred)
+
+	db.Where("referral_id = ? AND mining_height > ?", u.ID, height-2880).Find(&miners).Count(&mr.Active)
+
 	ctx.JSON(200, mr)
 }
