@@ -17,6 +17,7 @@ func initMacaron() *macaron.Macaron {
 		},
 	))
 
+	m.Get("/save-telegram/:addr/:telegramid", saveTelegram)
 	m.Get("/mine/:address/:captchaid/:captcha/:code", mineView)
 	m.Get("/mine/:address/:captchaid/:captcha/:code/:ref", mineView)
 	m.Get("/new-captcha/:addr", newCaptchaView)

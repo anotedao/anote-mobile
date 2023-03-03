@@ -270,3 +270,35 @@ func minerView(ctx *macaron.Context) {
 
 	ctx.JSON(200, mr)
 }
+
+func saveTelegram(ctx *macaron.Context) {
+	mr := &MineResponse{Success: true}
+	ap := ctx.Params("addr")
+	tids := ctx.Params("telegramid")
+	tid, err := strconv.Atoi(tids)
+	if err != nil {
+		mr.Success = false
+		mr.Error = 1
+	}
+
+	m := &Miner{}
+	db.First(m, &Miner{Address: ap})
+
+	if strings.Contains(ctx.Req.RemoteAddr, "127.0.0.1") {
+		if m.ID == 0 {
+			mr.Success = false
+			mr.Error = 2
+		} else if m.TelegramId != 0 {
+			mr.Success = false
+			mr.Error = 3
+		} else {
+			m.TelegramId = int64(tid)
+			db.Save(m)
+		}
+	} else {
+		mr.Success = false
+		mr.Error = 4
+	}
+
+	ctx.JSON(200, mr)
+}
