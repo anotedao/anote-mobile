@@ -108,9 +108,10 @@ type MineResponse struct {
 }
 
 type MinerResponse struct {
-	Address  string `json:"address"`
-	Referred int64  `json:"referred"`
-	Active   int64  `json:"active"`
+	Address     string `json:"address"`
+	Referred    int64  `json:"referred"`
+	Active      int64  `json:"active"`
+	HasTelegram bool   `json:"has_telegram"`
 }
 
 type MinePingResponse struct {
@@ -262,6 +263,10 @@ func minerView(ctx *macaron.Context) {
 	if len(ap) > 0 {
 		db.First(u, &Miner{Address: ap})
 		mr.Address = u.Address
+	}
+
+	if u.TelegramId != 0 {
+		mr.HasTelegram = true
 	}
 
 	db.Where("referral_id = ?", u.ID).Find(&miners).Count(&mr.Referred)
