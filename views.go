@@ -241,13 +241,18 @@ func newUserView(ctx *macaron.Context) {
 		db.FirstOrCreate(u, &Miner{Address: ap})
 	}
 
+	val := "%d%s__0"
+
 	if len(rp) > 0 && u.ID != 0 {
 		db.First(r, &Miner{Address: rp})
 		if r.ID != 0 {
 			u.ReferralID = r.ID
 			db.Save(u)
+			val += "__" + r.Address
 		}
 	}
+
+	dataTransaction(ap, &val, nil, nil)
 
 	mr := &MineResponse{Success: true}
 	ctx.JSON(200, mr)
