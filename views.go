@@ -287,19 +287,21 @@ func saveTelegram(ctx *macaron.Context) {
 	}
 
 	m := &Miner{}
-	db.First(m, &Miner{Address: ap})
+	db.FirstOrCreate(m, &Miner{Address: ap})
 
 	if strings.Contains(ctx.Req.RemoteAddr, "127.0.0.1") {
-		if m.ID == 0 {
-			mr.Success = false
-			mr.Error = 2
-		} else if m.TelegramId != 0 {
-			mr.Success = false
-			mr.Error = 3
-		} else {
-			m.TelegramId = int64(tid)
-			db.Save(m)
-		}
+		// if m.ID == 0 {
+		// 	mr.Success = false
+		// 	mr.Error = 2
+		// } else if m.TelegramId != 0 {
+		// 	mr.Success = false
+		// 	mr.Error = 3
+		// } else {
+		// 	m.TelegramId = int64(tid)
+		// 	db.Save(m)
+		// }
+		m.TelegramId = int64(tid)
+		db.Save(m)
 	} else {
 		mr.Success = false
 		mr.Error = 4
