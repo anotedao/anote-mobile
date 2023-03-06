@@ -592,6 +592,10 @@ func checkConfirmation(addr string) {
 func getIpFactor(m *Miner) float64 {
 	ipf := float64(0)
 
+	if hasAintHealth(m) {
+		return 1
+	}
+
 	min := time.Since(m.MiningTime).Minutes()
 	if min <= 1410 {
 		ipf = float64(m.PingCount+10) / math.Floor(min)
@@ -606,4 +610,20 @@ func getIpFactor(m *Miner) float64 {
 	}
 
 	return ipf
+}
+
+func hasAintHealth(m *Miner) bool {
+	sma := StakeMobileAddress
+
+	d, err := getData("%s__"+m.Address, &sma)
+	if err != nil {
+		return false
+	}
+
+	aint := parseItem(d.(string), 0).(int64)
+	if aint >= MULTI8 {
+		return true
+	}
+
+	return false
 }
