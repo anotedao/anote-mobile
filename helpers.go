@@ -585,7 +585,7 @@ func checkConfirmation(addr string) {
 			logTelegram(err.Error())
 		}
 
-		if balance.Balance >= Fee {
+		if balance.Balance > Fee {
 			m.Confirmed = true
 			m.Balance = balance.Balance
 			db.Save(m)
