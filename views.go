@@ -73,6 +73,7 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 				checkConfirmation(addr)
 			}()
 		} else {
+			go sendMinedFirst(addr)
 			miner.PingCount = 1
 			miner.MiningTime = time.Now()
 			miner.MiningHeight = height
