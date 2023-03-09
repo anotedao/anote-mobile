@@ -316,8 +316,27 @@ func saveTelegram(ctx *macaron.Context) {
 }
 
 func inviteView(ctx *macaron.Context) {
+	var referred []*Miner
 	mr := &MineResponse{Success: true}
 	ap := ctx.Params("addr")
+	height := getHeight()
+
+	m := &Miner{}
+	db.First(m, &Miner{Address: ap})
+
+	db.Where("referral_id = ? AND mining_height < ?", m.ID, height-1440).Find(&referred)
+	if time.Since(m.LastInvite) > (time.Hour * 24) {
+		go func() {
+			for _, r := range referred {
+				log.Println(r)
+			}
+		}()
+		m.LastInvite = time.Now()
+		db.Save(m)
+	} else {
+		mr.Success = false
+		mr.Error = 1
+	}
 
 	ctx.JSON(200, mr)
 }

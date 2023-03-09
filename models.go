@@ -28,6 +28,7 @@ type Miner struct {
 	PingCount        int64
 	IpAddresses      []*IpAddress `gorm:"many2many:miner_ip_addresses;"`
 	UpdatedApp       bool         `gorm:"default:false"`
+	LastInvite       time.Time
 }
 
 func (m *Miner) saveInBlockchain() {
