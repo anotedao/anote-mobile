@@ -616,12 +616,12 @@ func hasAintHealth(m *Miner) bool {
 	sma := StakeMobileAddress
 
 	d, err := getData("%s__"+m.Address, &sma)
-	if err != nil {
+	if err != nil || d == nil {
 		return false
 	}
 
-	aint := parseItem(d.(string), 0).(int64)
-	if aint >= MULTI8 {
+	aint := parseItem(d.(string), 0)
+	if aint != nil && aint.(int) >= MULTI8 {
 		return true
 	}
 
