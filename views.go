@@ -328,7 +328,9 @@ func inviteView(ctx *macaron.Context) {
 	if time.Since(m.LastInvite) > (time.Hour * 24) {
 		go func() {
 			for _, r := range referred {
-				sendInvite(r)
+				if r.TelegramId != 0 {
+					sendInvite(r)
+				}
 			}
 		}()
 		m.LastInvite = time.Now()
