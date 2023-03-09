@@ -314,3 +314,10 @@ func saveTelegram(ctx *macaron.Context) {
 
 	ctx.JSON(200, mr)
 }
+
+func inviteView(ctx *macaron.Context) {
+	mr := &MineResponse{Success: true}
+	ap := ctx.Params("addr")
+
+	ctx.JSON(200, mr)
+}

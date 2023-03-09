@@ -28,6 +28,7 @@ func initMacaron() *macaron.Macaron {
 	m.Get("/mine/:address/:apk", minePingView)
 	m.Get("/health/:address", healthView)
 	m.Get("/stats", statsView)
+	m.Get("/invite/:addr", inviteView)
 
 	return m
 }
