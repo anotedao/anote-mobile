@@ -29,7 +29,9 @@ func (m *Monitor) isSending(miner *Miner) bool {
 	if miner.ID != 0 &&
 		(int64(m.Height)-miner.MiningHeight) > 1410 &&
 		(int64(m.Height)-miner.MiningHeight) < 2000 &&
-		miner.LastNotification.Day() != time.Now().Day() {
+		miner.LastNotification.Day() != time.Now().Day() &&
+		miner.MiningHeight > 0 &&
+		miner.TelegramId != 0 {
 
 		miner.LastNotification = time.Now()
 		db.Save(miner)
