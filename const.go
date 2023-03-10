@@ -22,4 +22,7 @@ const (
 	NodesAddress = "3AVTze8bR1SqqMKv3uLedrnqCuWpdU7GZwX"
 
 	Sep = "__"
+
+	// MonitorTick interval in seconds
+	MonitorTick = 30
 )

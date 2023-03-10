@@ -638,3 +638,10 @@ func sendInvite(m *Miner) {
 		log.Println(err)
 	}
 }
+
+func sendNotificationEnd(m *Miner) {
+	_, err := http.Get(fmt.Sprintf("http://localhost:5002/notification-end/%s", strconv.Itoa(int(m.TelegramId))))
+	if err != nil {
+		log.Println(err)
+	}
+}
