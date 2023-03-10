@@ -22,6 +22,8 @@ func main() {
 
 	m = initMacaron()
 
+	initMonitor()
+
 	// val := "%d%s__34000__3A9Rb3t91eHg1ypsmBiRth4Ld9ZytGwZe9p"
 	// dataTransaction("3AShXVgRcRis82CwD7o9pz1Ac9vmRYMqELT", &val, nil, nil)
 
