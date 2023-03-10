@@ -55,13 +55,14 @@ func (m *Monitor) start() {
 
 	go func() {
 		for {
-			m.Height = getHeight()
 			m.loadMiners()
-			time.Sleep(time.Second * 30)
+			time.Sleep(time.Second * 3600)
 		}
 	}()
 
 	for {
+		m.Height = getHeight()
+
 		m.sendNotifications()
 
 		time.Sleep(time.Second * MonitorTick)
