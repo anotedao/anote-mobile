@@ -277,6 +277,7 @@ func sendAsset(amount uint64, assetId string, recipient string) error {
 
 func sendMined(address string, heightDif int64) {
 	var amount uint64
+	var amountBasic uint64
 	var referralIndex float64
 	miner := getMiner(address)
 	stats := getStats()
@@ -311,12 +312,13 @@ func sendMined(address string, heightDif int64) {
 		}
 
 		amount = (total.Balance / (uint64(stats.ActiveUnits) + uint64(stats.ActiveReferred/4))) - Fee
+		amountBasic = amount
 
 		if getRefCount(miner) >= 3 {
 			amount *= 10
 		}
 
-		referralIndex = 1 + (float64(getRefCount(miner)) * 0.25)
+		referralIndex = float64(getRefCount(miner)) * 0.25
 
 		if heightDif > 2880 {
 			times := int(heightDif / 1440)
@@ -328,15 +330,15 @@ func sendMined(address string, heightDif int64) {
 			referralIndex = 1.0
 		}
 
-		fa := uint64(float64(amount) * referralIndex)
+		fa := amount + uint64(float64(amountBasic)*referralIndex)
 		if fa > MULTI8 {
 			fa = MULTI8
 		}
 
 		log.Println(fa)
-		log.Println(getIpFactor(miner))
+		log.Println(getIpFactor(miner, true))
 
-		fa = uint64(float64(fa) * getIpFactor(miner))
+		fa = uint64(float64(fa) * getIpFactor(miner, true))
 
 		sendAsset(fa, "", address)
 
@@ -605,7 +607,7 @@ func checkConfirmation(addr string) {
 	}
 }
 
-func getIpFactor(m *Miner) float64 {
+func getIpFactor(m *Miner, checkReferred bool) float64 {
 	ipf := float64(0)
 
 	if hasAintHealth(m) {
@@ -617,6 +619,20 @@ func getIpFactor(m *Miner) float64 {
 		ipf = float64(m.PingCount+10) / math.Floor(min)
 	} else {
 		ipf = float64(m.PingCount+10) / 1410
+	}
+
+	if checkReferred {
+		var referred []*Miner
+		height := getHeight()
+		db.Where("referral_id = ? AND mining_height > ?", m.ID, height-2880).Find(&referred)
+
+		for _, m := range referred {
+			ipfr := getIpFactor(m, false)
+
+			if ipfr > ipf {
+				ipf = ipfr
+			}
+		}
 	}
 
 	log.Println(ipf)
