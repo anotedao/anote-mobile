@@ -310,7 +310,12 @@ func sendMined(address string, heightDif int64) {
 			logTelegram(err.Error())
 		}
 
-		amount = (total.Balance / (uint64(stats.PayoutMiners) + uint64(stats.ActiveReferred/4))) - Fee
+		amount = (total.Balance / (uint64(stats.ActiveUnits) + uint64(stats.ActiveReferred/4))) - Fee
+
+		if getRefCount(miner) >= 3 {
+			amount *= 10
+		}
+
 		referralIndex = 1 + (float64(getRefCount(miner)) * 0.25)
 
 		if heightDif > 2880 {
@@ -528,6 +533,12 @@ func getStats() *Stats {
 		if height-uint64(m.MiningHeight) <= 2880 {
 			sr.PayoutMiners++
 			pc += int(m.PingCount)
+
+			if getRefCount(m) >= 3 {
+				sr.ActiveUnits += 10
+			} else {
+				sr.ActiveUnits++
+			}
 		}
 	}
 
@@ -543,6 +554,7 @@ type Stats struct {
 	PayoutMiners   int `json:"payout_miners"`
 	InactiveMiners int `json:"inactive_miners"`
 	PingCount      int `json:"ping_count"`
+	ActiveUnits    int `json:"active_units"`
 }
 
 func getRefCount(m *Miner) uint64 {
