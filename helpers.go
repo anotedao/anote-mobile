@@ -336,9 +336,9 @@ func sendMined(address string, heightDif int64) {
 		}
 
 		log.Println(fa)
-		log.Println(getIpFactor(miner, true))
+		log.Println(getIpFactor(miner, true, uint64(height)))
 
-		fa = uint64(float64(fa) * getIpFactor(miner, true))
+		fa = uint64(float64(fa) * getIpFactor(miner, true, uint64(height)))
 
 		sendAsset(fa, "", address)
 
@@ -607,7 +607,7 @@ func checkConfirmation(addr string) {
 	}
 }
 
-func getIpFactor(m *Miner, checkReferred bool) float64 {
+func getIpFactor(m *Miner, checkReferred bool, height uint64) float64 {
 	ipf := float64(0)
 
 	if hasAintHealth(m) {
@@ -623,11 +623,10 @@ func getIpFactor(m *Miner, checkReferred bool) float64 {
 
 	if checkReferred {
 		var referred []*Miner
-		height := getHeight()
 		db.Where("referral_id = ? AND mining_height > ?", m.ID, height-2880).Find(&referred)
 
 		for _, m := range referred {
-			ipfr := getIpFactor(m, false)
+			ipfr := getIpFactor(m, false, height)
 
 			if ipfr > ipf {
 				ipf = ipfr

@@ -187,7 +187,7 @@ func minePingView(ctx *macaron.Context) {
 	}
 
 	// m := time.Since(miner.MiningTime).Minutes()
-	mr.Health = int(getIpFactor(miner, true) * 100)
+	mr.Health = int(getIpFactor(miner, true, uint64(height)) * 100)
 
 	if mr.Health > 100 {
 		mr.Health = 100
@@ -195,19 +195,20 @@ func minePingView(ctx *macaron.Context) {
 		mr.Health = 0
 	}
 
-	log.Println("Ping: " + a + " " + ip + " Health: " + strconv.Itoa(int(getIpFactor(miner, true)*100)) + " IPs: " + strconv.Itoa(int(db.Model(miner).Association("IpAddresses").Count())) + " Pings: " + strconv.Itoa(int(miner.PingCount)))
+	log.Println("Ping: " + a + " " + ip + " Health: " + strconv.Itoa(int(getIpFactor(miner, true, uint64(height))*100)) + " IPs: " + strconv.Itoa(int(db.Model(miner).Association("IpAddresses").Count())) + " Pings: " + strconv.Itoa(int(miner.PingCount)))
 
 	ctx.JSON(200, mr)
 }
 
 func healthView(ctx *macaron.Context) {
 	a := ctx.Params("address")
+	height := getHeight()
 
 	hr := &HealthResponse{}
 
 	miner := getMiner(a)
 
-	hr.Health = int(getIpFactor(miner, true) * 100)
+	hr.Health = int(getIpFactor(miner, true, height) * 100)
 
 	if hr.Health > 100 {
 		hr.Health = 100
