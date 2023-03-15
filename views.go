@@ -195,7 +195,7 @@ func minePingView(ctx *macaron.Context) {
 		mr.Health = 0
 	}
 
-	log.Println("Ping: " + a + " " + ip + " Health: " + strconv.Itoa(int(getIpFactor(miner, true, uint64(height))*100)) + " IPs: " + strconv.Itoa(int(db.Model(miner).Association("IpAddresses").Count())) + " Pings: " + strconv.Itoa(int(miner.PingCount)))
+	log.Println("Ping: " + a + " " + ip + " Health: " + strconv.Itoa(mr.Health) + " IPs: " + strconv.Itoa(int(db.Model(miner).Association("IpAddresses").Count())) + " Pings: " + strconv.Itoa(int(miner.PingCount)))
 
 	ctx.JSON(200, mr)
 }
