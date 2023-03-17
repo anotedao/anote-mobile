@@ -314,7 +314,7 @@ func sendMined(address string, heightDif int64) {
 		amount = (total.Balance / (uint64(stats.ActiveUnits) + uint64(stats.ActiveReferred/4))) - Fee
 		amountBasic = amount
 
-		if getRefCount(miner) >= 3 {
+		if getRefCount(miner) >= 3 || hasAintHealth(miner, true) {
 			amount *= 10
 		}
 
@@ -610,7 +610,7 @@ func checkConfirmation(addr string) {
 func getIpFactor(m *Miner, checkReferred bool, height uint64) float64 {
 	ipf := float64(0)
 
-	if hasAintHealth(m) {
+	if hasAintHealth(m, false) {
 		return 1
 	}
 
@@ -643,7 +643,7 @@ func getIpFactor(m *Miner, checkReferred bool, height uint64) float64 {
 	return ipf
 }
 
-func hasAintHealth(m *Miner) bool {
+func hasAintHealth(m *Miner, second bool) bool {
 	sma := StakeMobileAddress
 
 	d, err := getData("%s__"+m.Address, &sma)
@@ -653,7 +653,11 @@ func hasAintHealth(m *Miner) bool {
 
 	aint := parseItem(d.(string), 0)
 	if aint != nil && aint.(int) >= MULTI8 {
-		return true
+		if second && aint.(int) >= 10*MULTI8 {
+			return true
+		} else if !second && aint.(int) >= MULTI8 {
+			return true
+		}
 	}
 
 	return false
