@@ -652,8 +652,8 @@ func hasAintHealth(m *Miner, second bool) bool {
 	}
 
 	aint := parseItem(d.(string), 0)
-	if aint != nil && aint.(int) >= MULTI8 {
-		if second && aint.(int) >= 10*MULTI8 {
+	if aint != nil {
+		if second && aint.(int) >= (10*MULTI8) {
 			return true
 		} else if !second && aint.(int) >= MULTI8 {
 			return true
