@@ -40,7 +40,14 @@ func (m *Miner) saveInBlockchain() {
 		md += "__" + r.Address
 	}
 
-	dataTransaction(m.Address, &md, nil, nil)
+	err := dataTransaction(m.Address, &md, nil, nil)
+
+	go func(md string, err error) {
+		for err != nil {
+			time.Sleep(time.Millisecond * 500)
+			err = dataTransaction(m.Address, &md, nil, nil)
+		}
+	}(md, err)
 }
 
 func (m *Miner) saveIp(ip string) {
