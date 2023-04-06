@@ -184,6 +184,12 @@ func minePingView(ctx *macaron.Context) {
 
 			db.Save(miner)
 		}
+
+		if mr.CycleFinished {
+			if mon.isSending(miner) {
+				sendNotificationEnd(miner)
+			}
+		}
 	}
 
 	// m := time.Since(miner.MiningTime).Minutes()
