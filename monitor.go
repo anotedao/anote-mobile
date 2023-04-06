@@ -20,6 +20,11 @@ func (m *Monitor) sendNotifications() {
 			sendNotificationEnd(miner)
 			log.Printf("Notification: %s", miner.Address)
 		}
+
+		if m.isSendingBattery(miner) {
+			sendNotificationBattery(miner)
+			log.Printf("Notification battery: %s", miner.Address)
+		}
 	}
 }
 
@@ -32,6 +37,30 @@ func (m *Monitor) isSending(miner *Miner) bool {
 		miner.TelegramId != 0 {
 
 		miner.LastNotification = time.Now()
+		db.Save(miner)
+
+		return true
+	}
+
+	return false
+}
+
+func (m *Monitor) isSendingBattery(miner *Miner) bool {
+	height := getHeight()
+	health := int(getIpFactor(miner, true, uint64(height)) * 100)
+
+	if health > 100 {
+		health = 100
+	} else if health < 0 {
+		health = 0
+	}
+
+	if miner.ID != 0 &&
+		miner.LastNotificationBattery.Day() != time.Now().Day() &&
+		health < 100 &&
+		miner.TelegramId != 0 {
+
+		miner.LastNotificationBattery = time.Now()
 		db.Save(miner)
 
 		return true

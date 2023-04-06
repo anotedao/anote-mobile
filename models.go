@@ -16,19 +16,20 @@ type KeyValue struct {
 
 type Miner struct {
 	gorm.Model
-	Address          string `gorm:"size:255;uniqueIndex"`
-	LastNotification time.Time
-	TelegramId       int64
-	MiningHeight     int64
-	MiningTime       time.Time
-	ReferralID       uint `gorm:"index"`
-	Confirmed        bool `gorm:"default:false"`
-	Balance          uint64
-	LastPing         time.Time
-	PingCount        int64
-	IpAddresses      []*IpAddress `gorm:"many2many:miner_ip_addresses;"`
-	UpdatedApp       bool         `gorm:"default:false"`
-	LastInvite       time.Time
+	Address                 string `gorm:"size:255;uniqueIndex"`
+	LastNotification        time.Time
+	TelegramId              int64
+	MiningHeight            int64
+	MiningTime              time.Time
+	ReferralID              uint `gorm:"index"`
+	Confirmed               bool `gorm:"default:false"`
+	Balance                 uint64
+	LastPing                time.Time
+	PingCount               int64
+	IpAddresses             []*IpAddress `gorm:"many2many:miner_ip_addresses;"`
+	UpdatedApp              bool         `gorm:"default:false"`
+	LastInvite              time.Time
+	LastNotificationBattery time.Time
 }
 
 func (m *Miner) saveInBlockchain() {

@@ -676,3 +676,10 @@ func sendNotificationEnd(m *Miner) {
 		log.Println(err)
 	}
 }
+
+func sendNotificationBattery(m *Miner) {
+	_, err := http.Get(fmt.Sprintf("http://localhost:5002/notification-bo/%s", strconv.Itoa(int(m.TelegramId))))
+	if err != nil {
+		log.Println(err)
+	}
+}
