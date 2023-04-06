@@ -158,21 +158,6 @@ func minePingView(ctx *macaron.Context) {
 		}
 
 		if time.Since(miner.LastPing) > time.Second*55 {
-			// if ip == miner.IP {
-			// 	minerPing(miner)
-			// } else if len(miner.IP2) == 0 || miner.IP2 == ip {
-			// 	miner.IP2 = ip
-			// 	minerPing(miner)
-			// } else if len(miner.IP3) == 0 || miner.IP3 == ip {
-			// 	miner.IP3 = ip
-			// 	minerPing(miner)
-			// } else if len(miner.IP4) == 0 || miner.IP4 == ip {
-			// 	miner.IP4 = ip
-			// 	minerPing(miner)
-			// } else if len(miner.IP5) == 0 || miner.IP5 == ip {
-			// 	miner.IP5 = ip
-			// 	minerPing(miner)
-			// }
 			miner.saveIp(ip)
 			minerPing(miner)
 
