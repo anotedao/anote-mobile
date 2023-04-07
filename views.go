@@ -117,6 +117,7 @@ type MinerResponse struct {
 	Address     string `json:"address"`
 	Referred    int64  `json:"referred"`
 	Active      int64  `json:"active"`
+	Confirmed   int64  `json:"confirmed"`
 	HasTelegram bool   `json:"has_telegram"`
 }
 
@@ -275,6 +276,8 @@ func minerView(ctx *macaron.Context) {
 	db.Where("referral_id = ?", u.ID).Find(&miners).Count(&mr.Referred)
 
 	db.Where("referral_id = ? AND mining_height > ?", u.ID, height-2880).Find(&miners).Count(&mr.Active)
+
+	db.Where("referral_id = ? AND mining_height > ? AND confirmed = true", u.ID, height-2880).Find(&miners).Count(&mr.Confirmed)
 
 	ctx.JSON(200, mr)
 }
