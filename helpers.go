@@ -621,7 +621,7 @@ func getIpFactor(m *Miner, checkReferred bool, height uint64) float64 {
 	}
 
 	if min <= 282 {
-		ipf = float64(m.PingCount) / math.Floor(min)
+		ipf = float64(m.PingCount-1) / math.Floor(min)
 	} else {
 		ipf = float64(m.PingCount) / 282
 	}
