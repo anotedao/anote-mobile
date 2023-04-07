@@ -184,7 +184,7 @@ func minePingView(ctx *macaron.Context) {
 	}
 
 	// m := time.Since(miner.MiningTime).Minutes()
-	mr.Health = int((math.Floor(getIpFactor(miner, true, uint64(height))*100) / 100) * 100)
+	mr.Health = int((math.Floor(getIpFactor(miner, true, uint64(height), 0)*100) / 100) * 100)
 
 	if mr.Health > 100 {
 		mr.Health = 100
@@ -205,7 +205,7 @@ func healthView(ctx *macaron.Context) {
 
 	miner := getMiner(a)
 
-	hr.Health = int((math.Floor(getIpFactor(miner, true, uint64(height))*100) / 100) * 100)
+	hr.Health = int((math.Floor(getIpFactor(miner, true, uint64(height), 2)*100) / 100) * 100)
 
 	if hr.Health > 100 {
 		hr.Health = 100
