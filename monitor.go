@@ -56,7 +56,7 @@ func (m *Monitor) isSendingBattery(miner *Miner) bool {
 	}
 
 	if miner.ID != 0 &&
-		miner.LastNotificationBattery.Day() != time.Now().Day() &&
+		time.Since(miner.LastNotificationBattery) > (time.Hour*24) &&
 		health < 100 &&
 		miner.TelegramId != 0 {
 
@@ -85,7 +85,7 @@ func (m *Monitor) start() {
 	go func() {
 		for {
 			m.loadMiners()
-			time.Sleep(time.Second * 3600)
+			time.Sleep(time.Second * 60)
 		}
 	}()
 

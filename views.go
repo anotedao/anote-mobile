@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"math"
 	"regexp"
 	"strconv"
 	"strings"
@@ -78,7 +79,11 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 			miner.MiningTime = time.Now()
 			miner.MiningHeight = height
 			miner.UpdatedApp = true
-			db.Save(miner)
+			err := db.Save(miner).Error
+			for err != nil {
+				time.Sleep(time.Millisecond * 500)
+				err = db.Save(miner).Error
+			}
 			miner.saveInBlockchain()
 		}
 	}
@@ -178,7 +183,7 @@ func minePingView(ctx *macaron.Context) {
 	}
 
 	// m := time.Since(miner.MiningTime).Minutes()
-	mr.Health = int(getIpFactor(miner, true, uint64(height)) * 100)
+	mr.Health = int((math.Floor(getIpFactor(miner, true, uint64(height))*100) / 100) * 100)
 
 	if mr.Health > 100 {
 		mr.Health = 100
@@ -199,7 +204,7 @@ func healthView(ctx *macaron.Context) {
 
 	miner := getMiner(a)
 
-	hr.Health = int(getIpFactor(miner, true, height) * 100)
+	hr.Health = int((math.Floor(getIpFactor(miner, true, uint64(height))*100) / 100) * 100)
 
 	if hr.Health > 100 {
 		hr.Health = 100
