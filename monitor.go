@@ -16,7 +16,7 @@ func (m *Monitor) loadMiners() {
 
 func (m *Monitor) sendNotifications() {
 	for _, miner := range m.Miners {
-		if m.isSending(miner) {
+		if m.isSending(miner, 1415) {
 			sendNotificationEnd(miner)
 			log.Printf("Notification: %s", miner.Address)
 		}
@@ -28,9 +28,9 @@ func (m *Monitor) sendNotifications() {
 	}
 }
 
-func (m *Monitor) isSending(miner *Miner) bool {
+func (m *Monitor) isSending(miner *Miner, limit int64) bool {
 	if miner.ID != 0 &&
-		(int64(m.Height)-miner.MiningHeight) > 1415 &&
+		(int64(m.Height)-miner.MiningHeight) > limit &&
 		(int64(m.Height)-miner.MiningHeight) < 2000 &&
 		miner.LastNotification.Day() != time.Now().Day() &&
 		miner.MiningHeight > 0 &&

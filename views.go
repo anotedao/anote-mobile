@@ -176,7 +176,7 @@ func minePingView(ctx *macaron.Context) {
 		}
 
 		if mr.CycleFinished {
-			if mon.isSending(miner) {
+			if mon.isSending(miner, 1410) {
 				sendNotificationEnd(miner)
 			}
 		}
