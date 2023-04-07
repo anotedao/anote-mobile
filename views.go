@@ -158,7 +158,7 @@ func minePingView(ctx *macaron.Context) {
 		mr.Error = 2
 		mr.CycleFinished = true
 	} else {
-		if height-miner.MiningHeight > 1410 {
+		if height-miner.MiningHeight >= 1410 {
 			mr.CycleFinished = true
 		}
 
