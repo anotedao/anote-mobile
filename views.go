@@ -86,6 +86,7 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 				err = db.Save(miner).Error
 			}
 			miner.saveInBlockchain()
+			sendNotificationFirst(miner)
 		}
 	}
 
