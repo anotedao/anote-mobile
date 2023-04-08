@@ -673,6 +673,7 @@ func sendInvite(m *Miner) {
 	_, err := http.Get(fmt.Sprintf("http://localhost:5002/invite/%s", strconv.Itoa(int(m.TelegramId))))
 	if err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 	}
 }
 
@@ -680,6 +681,7 @@ func sendNotificationEnd(m *Miner) {
 	_, err := http.Get(fmt.Sprintf("http://localhost:5002/notification-end/%s", strconv.Itoa(int(m.TelegramId))))
 	if err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 	}
 }
 
@@ -687,5 +689,6 @@ func sendNotificationBattery(m *Miner) {
 	_, err := http.Get(fmt.Sprintf("http://localhost:5002/notification-bo/%s", strconv.Itoa(int(m.TelegramId))))
 	if err != nil {
 		log.Println(err)
+		logTelegram(err.Error())
 	}
 }
