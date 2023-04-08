@@ -345,6 +345,7 @@ func sendMined(address string, heightDif int64) {
 		miner.PingCount = 1
 		miner.MiningTime = time.Now()
 		miner.MiningHeight = height
+		miner.BatteryNotification = true
 		db.Save(miner)
 		miner.saveInBlockchain()
 	}
