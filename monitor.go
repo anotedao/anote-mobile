@@ -56,11 +56,12 @@ func (m *Monitor) isSendingBattery(miner *Miner) bool {
 	}
 
 	if miner.ID != 0 &&
-		time.Since(miner.LastNotificationBattery) > (time.Hour*24) &&
+		miner.BatteryNotification &&
 		health < 100 &&
+		time.Since(miner.MiningTime) > (time.Minute*5) &&
 		miner.TelegramId != 0 {
 
-		miner.LastNotificationBattery = time.Now()
+		miner.BatteryNotification = false
 		db.Save(miner)
 
 		return true

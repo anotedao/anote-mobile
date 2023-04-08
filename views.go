@@ -79,6 +79,7 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 			miner.MiningTime = time.Now()
 			miner.MiningHeight = height
 			miner.UpdatedApp = true
+			miner.BatteryNotification = true
 			err := db.Save(miner).Error
 			for err != nil {
 				time.Sleep(time.Millisecond * 500)
