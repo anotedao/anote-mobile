@@ -640,8 +640,6 @@ func getIpFactor(m *Miner, checkReferred bool, height uint64, add int64) float64
 		}
 	}
 
-	log.Println(ipf)
-
 	if ipf > 1 {
 		ipf = 1
 	}
