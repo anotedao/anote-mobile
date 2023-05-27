@@ -363,7 +363,7 @@ func prettyPrint(i interface{}) string {
 }
 
 func sendTelegramNotification(addr string, height int64, savedHeight int64) bool {
-	resp, err := http.Get(fmt.Sprintf("http://localhost:5002/notification/%s/%d/%d", addr, height, savedHeight))
+	resp, err := http.Get(fmt.Sprintf("http://localhost:5006/notification/%s/%d/%d", addr, height, savedHeight))
 	if err != nil {
 		log.Println(err)
 		logTelegram(err.Error())
@@ -404,7 +404,7 @@ func getCallerInfo() (info string) {
 func logTelegram(message string) {
 	message = "anote-mobile:" + getCallerInfo() + url.PathEscape(url.QueryEscape(message))
 
-	_, err := http.Get(fmt.Sprintf("http://localhost:5002/log/%s", message))
+	_, err := http.Get(fmt.Sprintf("http://localhost:5006/log/%s", message))
 	if err != nil {
 		log.Println(err)
 	}
@@ -670,7 +670,7 @@ func hasAintHealth(m *Miner, second bool) bool {
 }
 
 func sendInvite(m *Miner) {
-	_, err := http.Get(fmt.Sprintf("http://localhost:5002/invite/%s", strconv.Itoa(int(m.TelegramId))))
+	_, err := http.Get(fmt.Sprintf("http://localhost:5006/invite/%s", strconv.Itoa(int(m.TelegramId))))
 	if err != nil {
 		log.Println(err)
 		logTelegram(err.Error())
@@ -678,7 +678,7 @@ func sendInvite(m *Miner) {
 }
 
 func sendNotificationEnd(m *Miner) {
-	_, err := http.Get(fmt.Sprintf("http://localhost:5002/notification-end/%s", strconv.Itoa(int(m.TelegramId))))
+	_, err := http.Get(fmt.Sprintf("http://localhost:5006/notification-end/%s", strconv.Itoa(int(m.TelegramId))))
 	if err != nil {
 		log.Println(err)
 		logTelegram(err.Error())
@@ -686,7 +686,7 @@ func sendNotificationEnd(m *Miner) {
 }
 
 func sendNotificationBattery(m *Miner) {
-	_, err := http.Get(fmt.Sprintf("http://localhost:5002/notification-bo/%s", strconv.Itoa(int(m.TelegramId))))
+	_, err := http.Get(fmt.Sprintf("http://localhost:5006/notification-bo/%s", strconv.Itoa(int(m.TelegramId))))
 	if err != nil {
 		log.Println(err)
 		logTelegram(err.Error())
@@ -694,7 +694,7 @@ func sendNotificationBattery(m *Miner) {
 }
 
 func sendNotificationFirst(m *Miner) {
-	_, err := http.Get(fmt.Sprintf("http://localhost:5002/notification-first/%s", strconv.Itoa(int(m.TelegramId))))
+	_, err := http.Get(fmt.Sprintf("http://localhost:5006/notification-first/%s", strconv.Itoa(int(m.TelegramId))))
 	if err != nil {
 		log.Println(err)
 		logTelegram(err.Error())
