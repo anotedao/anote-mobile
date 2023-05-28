@@ -148,7 +148,7 @@ func minePingView(ctx *macaron.Context) {
 	mr := &MinePingResponse{Success: true}
 	mr.CycleFinished = false
 
-	height := int64(getHeight())
+	height := int64(mon.Height)
 
 	miner := getMiner(a)
 
