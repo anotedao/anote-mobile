@@ -24,5 +24,5 @@ const (
 	Sep = "__"
 
 	// MonitorTick interval in seconds
-	MonitorTick = 30
+	MonitorTick = 60
 )
