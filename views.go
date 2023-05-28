@@ -239,7 +239,10 @@ func newUserView(ctx *macaron.Context) {
 	rp := ctx.Params("ref")
 
 	if len(ap) > 0 {
-		db.FirstOrCreate(u, &Miner{Address: ap})
+		result := db.FirstOrCreate(u, &Miner{Address: ap})
+		if result.RowsAffected == 1 {
+			mon.Miners = append(mon.Miners, u)
+		}
 	}
 
 	val := "%d%s__0"
@@ -295,7 +298,10 @@ func saveTelegram(ctx *macaron.Context) {
 	}
 
 	m := &Miner{}
-	db.FirstOrCreate(m, &Miner{Address: ap})
+	result := db.FirstOrCreate(m, &Miner{Address: ap})
+	if result.RowsAffected == 1 {
+		mon.Miners = append(mon.Miners, m)
+	}
 
 	if strings.Contains(ctx.Req.RemoteAddr, "127.0.0.1") {
 		// if m.ID == 0 {

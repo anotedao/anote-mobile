@@ -70,7 +70,10 @@ func getMiner(addr string) *Miner {
 
 func getMinerOrCreate(addr string) *Miner {
 	m := &Miner{}
-	db.FirstOrCreate(m, &Miner{Address: addr})
+	result := db.FirstOrCreate(m, &Miner{Address: addr})
+	if result.RowsAffected == 1 {
+		mon.Miners = append(mon.Miners, m)
+	}
 
 	return m
 }
