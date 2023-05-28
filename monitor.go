@@ -46,8 +46,7 @@ func (m *Monitor) isSending(miner *Miner, limit int64) bool {
 }
 
 func (m *Monitor) isSendingBattery(miner *Miner) bool {
-	height := getHeight()
-	health := int(getIpFactor(miner, true, uint64(height), 2) * 100)
+	health := int(getIpFactor(miner, true, uint64(m.Height), 2) * 100)
 
 	if health > 100 {
 		health = 100
