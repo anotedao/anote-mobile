@@ -82,16 +82,14 @@ func (m *Monitor) minerExists(telId int64) bool {
 func (m *Monitor) start() {
 	m.loadMiners()
 
-	// go func() {
-	// 	for {
-	// 		m.loadMiners()
-	// 		time.Sleep(time.Second * 60)
-	// 	}
-	// }()
+	go func() {
+		for {
+			m.Height = getHeight()
+			time.Sleep(time.Second * 30)
+		}
+	}()
 
 	for {
-		m.Height = getHeight()
-
 		m.sendNotifications()
 
 		time.Sleep(time.Second * MonitorTick)
