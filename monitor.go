@@ -46,25 +46,25 @@ func (m *Monitor) isSending(miner *Miner, limit int64) bool {
 }
 
 func (m *Monitor) isSendingBattery(miner *Miner) bool {
-	health := int(getIpFactor(miner, true, uint64(m.Height), 2) * 100)
+	// health := int(getIpFactor(miner, true, uint64(m.Height), 2) * 100)
 
-	if health > 100 {
-		health = 100
-	} else if health < 0 {
-		health = 0
-	}
+	// if health > 100 {
+	// 	health = 100
+	// } else if health < 0 {
+	// 	health = 0
+	// }
 
-	if miner.ID != 0 &&
-		miner.BatteryNotification &&
-		health < 100 &&
-		time.Since(miner.MiningTime) > (time.Minute*5) &&
-		miner.TelegramId != 0 {
+	// if miner.ID != 0 &&
+	// 	miner.BatteryNotification &&
+	// 	health < 100 &&
+	// 	time.Since(miner.MiningTime) > (time.Minute*5) &&
+	// 	miner.TelegramId != 0 {
 
-		miner.BatteryNotification = false
-		db.Save(miner)
+	// 	miner.BatteryNotification = false
+	// 	db.Save(miner)
 
-		return true
-	}
+	// 	return true
+	// }
 
 	return false
 }
