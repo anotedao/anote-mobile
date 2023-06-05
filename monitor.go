@@ -89,6 +89,13 @@ func (m *Monitor) start() {
 		}
 	}()
 
+	go func() {
+		for {
+			m.loadMiners()
+			time.Sleep(time.Minute * 10)
+		}
+	}()
+
 	for {
 		m.sendNotifications()
 
