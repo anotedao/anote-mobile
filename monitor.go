@@ -31,7 +31,7 @@ func (m *Monitor) sendNotifications() {
 func (m *Monitor) isSending(miner *Miner, limit int64) bool {
 	if miner.ID != 0 &&
 		(int64(m.Height)-miner.MiningHeight) >= limit &&
-		(int64(m.Height)-miner.MiningHeight) < 2000 &&
+		(int64(m.Height)-miner.MiningHeight) < limit+30 &&
 		miner.LastNotification.Day() != time.Now().Day() &&
 		miner.MiningHeight > 0 &&
 		miner.TelegramId != 0 {
