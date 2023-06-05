@@ -121,7 +121,7 @@ type MinerResponse struct {
 	Active       int64  `json:"active"`
 	Confirmed    int64  `json:"confirmed"`
 	HasTelegram  bool   `json:"has_telegram"`
-	MiningHeight int64  `json:"has_telegram"`
+	MiningHeight int64  `json:"mining_height"`
 }
 
 type MinePingResponse struct {
