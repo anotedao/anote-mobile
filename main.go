@@ -26,7 +26,7 @@ func main() {
 
 	mon = initMonitor()
 
-	// val := "%d%s__230711"
+	// val := "%d%s__230721"
 	// dataTransaction("3A9Rb3t91eHg1ypsmBiRth4Ld9ZytGwZe9p", &val, nil, nil)
 
 	m.Run("127.0.0.1", Port)
