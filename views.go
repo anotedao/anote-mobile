@@ -274,20 +274,22 @@ func minerView(ctx *macaron.Context) {
 
 	if len(ap) > 0 {
 		db.First(u, &Miner{Address: ap})
-		mr.Address = u.Address
-		mr.MiningHeight = u.MiningHeight
-		mr.Height = height
+		if u.ID != 0 {
+			mr.Address = u.Address
+			mr.MiningHeight = u.MiningHeight
+			mr.Height = height
+
+			if u.TelegramId != 0 {
+				mr.HasTelegram = true
+			}
+
+			db.Where("referral_id = ?", u.ID).Find(&miners).Count(&mr.Referred)
+
+			db.Where("referral_id = ? AND mining_height > ?", u.ID, height-2880).Find(&miners).Count(&mr.Active)
+
+			db.Where("referral_id = ? AND mining_height > ? AND confirmed = true", u.ID, height-2880).Find(&miners).Count(&mr.Confirmed)
+		}
 	}
-
-	if u.TelegramId != 0 {
-		mr.HasTelegram = true
-	}
-
-	db.Where("referral_id = ?", u.ID).Find(&miners).Count(&mr.Referred)
-
-	db.Where("referral_id = ? AND mining_height > ?", u.ID, height-2880).Find(&miners).Count(&mr.Active)
-
-	db.Where("referral_id = ? AND mining_height > ? AND confirmed = true", u.ID, height-2880).Find(&miners).Count(&mr.Confirmed)
 
 	ctx.JSON(200, mr)
 }
