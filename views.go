@@ -123,6 +123,7 @@ type MinerResponse struct {
 	HasTelegram  bool   `json:"has_telegram"`
 	MiningHeight int64  `json:"mining_height"`
 	Height       uint64 `json:"height"`
+	Exists       bool   `json:"exists"`
 }
 
 type MinePingResponse struct {
@@ -275,6 +276,7 @@ func minerView(ctx *macaron.Context) {
 	if len(ap) > 0 {
 		db.First(u, &Miner{Address: ap})
 		if u.ID != 0 {
+			mr.Exists = true
 			mr.Address = u.Address
 			mr.MiningHeight = u.MiningHeight
 			mr.Height = height
