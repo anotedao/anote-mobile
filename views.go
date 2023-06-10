@@ -362,7 +362,10 @@ func inviteView(ctx *macaron.Context) {
 }
 
 func telegramMineView(ctx *macaron.Context) {
-	mr := &MineResponse{}
+	mr := &MineResponse{
+		Success: true,
+		Error:   0,
+	}
 
 	t := ctx.Params("tid")
 	c := ctx.Params("code")
