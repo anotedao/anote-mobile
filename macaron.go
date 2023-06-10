@@ -29,7 +29,7 @@ func initMacaron() *macaron.Macaron {
 	m.Get("/health/:address", healthView)
 	m.Get("/stats", statsView)
 	m.Get("/invite/:addr", inviteView)
-	m.Get("/telegram-mine/:addr/:code", telegramMineView)
+	m.Get("/telegram-mine/:tid/:code", telegramMineView)
 
 	return m
 }

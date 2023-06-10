@@ -364,10 +364,10 @@ func inviteView(ctx *macaron.Context) {
 func telegramMineView(ctx *macaron.Context) {
 	mr := &MineResponse{}
 
-	a := ctx.Params("addr")
+	t := ctx.Params("tid")
 	c := ctx.Params("code")
 
-	log.Println(a)
+	log.Println(t)
 	log.Println(c)
 
 	ctx.JSON(200, mr)
