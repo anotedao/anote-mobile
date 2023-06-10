@@ -360,3 +360,11 @@ func inviteView(ctx *macaron.Context) {
 
 	ctx.JSON(200, mr)
 }
+
+func telegramMineView(ctx *macaron.Context) {
+	a := ctx.Params("addr")
+	c := ctx.Params("code")
+
+	log.Println(a)
+	log.Println(c)
+}
