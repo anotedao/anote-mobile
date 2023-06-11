@@ -16,7 +16,7 @@ func (m *Monitor) loadMiners() {
 
 func (m *Monitor) sendNotifications() {
 	for _, miner := range m.Miners {
-		if m.isSending(miner, 1415) {
+		if m.isSending(miner, 1410) {
 			sendNotificationEnd(miner)
 			log.Printf("Notification: %s", miner.Address)
 		}

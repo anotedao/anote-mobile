@@ -158,16 +158,10 @@ func minePingView(ctx *macaron.Context) {
 	if miner.ID == 0 {
 		mr.Success = false
 		mr.Error = 1
-		mr.CycleFinished = true
 	} else if !strings.HasPrefix(a, "3A") {
 		mr.Success = false
 		mr.Error = 2
-		mr.CycleFinished = true
 	} else {
-		if height-miner.MiningHeight >= 1410 {
-			mr.CycleFinished = true
-		}
-
 		if time.Since(miner.LastPing) > time.Second*55 {
 			miner.saveIp(ip)
 			minerPing(miner)
@@ -179,13 +173,6 @@ func minePingView(ctx *macaron.Context) {
 			}
 
 			db.Save(miner)
-		}
-
-		if mr.CycleFinished {
-			if mon.isSending(miner, 1410) {
-				sendNotificationEnd(miner)
-				log.Printf("Notification: %s", miner.Address)
-			}
 		}
 	}
 
