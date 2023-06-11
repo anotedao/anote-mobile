@@ -375,7 +375,23 @@ func telegramMineView(ctx *macaron.Context) {
 	log.Println(c)
 
 	if strings.Contains(ip, "127.0.0.1") {
+		code := strings.TrimSpace(c)
+		code = regexp.MustCompile(`[^0-9]+`).ReplaceAllString(code, "")
 
+		codeInt, err := strconv.Atoi(code)
+		if err != nil {
+			log.Println(err)
+			logTelegram(err.Error())
+			mr.Success = false
+			mr.Error = 2
+		} else {
+			if int(codeInt) == getMiningCode() {
+
+			} else {
+				mr.Success = false
+				mr.Error = 3
+			}
+		}
 	} else {
 		mr.Success = false
 		mr.Error = 1
