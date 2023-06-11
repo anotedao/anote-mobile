@@ -373,5 +373,12 @@ func telegramMineView(ctx *macaron.Context) {
 	log.Println(t)
 	log.Println(c)
 
+	if strings.Contains(ctx.Req.RemoteAddr, "127.0.0.1") {
+
+	} else {
+		mr.Success = false
+		mr.Error = 1
+	}
+
 	ctx.JSON(200, mr)
 }
