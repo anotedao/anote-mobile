@@ -392,10 +392,15 @@ func telegramMineView(ctx *macaron.Context) {
 			} else {
 				if int(codeInt) == getMiningCode() {
 					m := getMinerTel(int64(tid))
-					m.MiningHeight = int64(h)
-					m.MiningTime = time.Now()
-					db.Save(m)
-					m.saveInBlockchain()
+					if int64(h)-m.MiningHeight > 1410 {
+						m.MiningHeight = int64(h)
+						m.MiningTime = time.Now()
+						db.Save(m)
+						m.saveInBlockchain()
+					} else {
+						mr.Success = false
+						mr.Error = 4
+					}
 				} else {
 					mr.Success = false
 					mr.Error = 3
