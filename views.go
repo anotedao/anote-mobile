@@ -362,6 +362,7 @@ func inviteView(ctx *macaron.Context) {
 }
 
 func telegramMineView(ctx *macaron.Context) {
+	ip := GetRealIP(ctx.Req.Request)
 	mr := &MineResponse{
 		Success: true,
 		Error:   0,
@@ -373,7 +374,7 @@ func telegramMineView(ctx *macaron.Context) {
 	log.Println(t)
 	log.Println(c)
 
-	if strings.Contains(ctx.Req.RemoteAddr, "127.0.0.1") {
+	if strings.Contains(ip, "127.0.0.1") {
 
 	} else {
 		mr.Success = false
