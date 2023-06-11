@@ -68,6 +68,13 @@ func getMiner(addr string) *Miner {
 	return m
 }
 
+func getMinerTel(tid int64) *Miner {
+	m := &Miner{}
+	db.First(m, &Miner{TelegramId: tid})
+
+	return m
+}
+
 func getMinerOrCreate(addr string) *Miner {
 	m := &Miner{}
 	result := db.FirstOrCreate(m, &Miner{Address: addr})

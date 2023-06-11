@@ -363,6 +363,7 @@ func inviteView(ctx *macaron.Context) {
 
 func telegramMineView(ctx *macaron.Context) {
 	ip := GetRealIP(ctx.Req.Request)
+	h := getHeight()
 	mr := &MineResponse{
 		Success: true,
 		Error:   0,
@@ -370,9 +371,6 @@ func telegramMineView(ctx *macaron.Context) {
 
 	t := ctx.Params("tid")
 	c := ctx.Params("code")
-
-	log.Println(t)
-	log.Println(c)
 
 	if strings.Contains(ip, "127.0.0.1") {
 		code := strings.TrimSpace(c)
@@ -385,11 +383,23 @@ func telegramMineView(ctx *macaron.Context) {
 			mr.Success = false
 			mr.Error = 2
 		} else {
-			if int(codeInt) == getMiningCode() {
-
-			} else {
+			tid, err := strconv.Atoi(t)
+			if err != nil {
+				log.Println(err)
+				logTelegram(err.Error())
 				mr.Success = false
-				mr.Error = 3
+				mr.Error = 2
+			} else {
+				if int(codeInt) == getMiningCode() {
+					m := getMinerTel(int64(tid))
+					m.MiningHeight = int64(h)
+					m.MiningTime = time.Now()
+					db.Save(m)
+					m.saveInBlockchain()
+				} else {
+					mr.Success = false
+					mr.Error = 3
+				}
 			}
 		}
 	} else {
