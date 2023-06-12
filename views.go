@@ -283,6 +283,40 @@ func minerView(ctx *macaron.Context) {
 	ctx.JSON(200, mr)
 }
 
+func telegramMinerView(ctx *macaron.Context) {
+	height := getHeight()
+	mr := &MinerResponse{}
+	u := &Miner{}
+	var miners []*Miner
+	tid := ctx.Params("tid")
+	tidi, err := strconv.Atoi(tid)
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+	}
+
+	u = getMinerTel(int64(tidi))
+
+	if u.ID != 0 {
+		mr.Exists = true
+		mr.Address = u.Address
+		mr.MiningHeight = u.MiningHeight
+		mr.Height = height
+
+		if u.TelegramId != 0 {
+			mr.HasTelegram = true
+		}
+
+		db.Where("referral_id = ?", u.ID).Find(&miners).Count(&mr.Referred)
+
+		db.Where("referral_id = ? AND mining_height > ?", u.ID, height-2880).Find(&miners).Count(&mr.Active)
+
+		db.Where("referral_id = ? AND mining_height > ? AND confirmed = true", u.ID, height-2880).Find(&miners).Count(&mr.Confirmed)
+	}
+
+	ctx.JSON(200, mr)
+}
+
 func saveTelegram(ctx *macaron.Context) {
 	mr := &MineResponse{Success: true}
 	ap := ctx.Params("addr")
