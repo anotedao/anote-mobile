@@ -117,15 +117,17 @@ type MineResponse struct {
 }
 
 type MinerResponse struct {
-	ID           uint   `json:"id"`
-	Address      string `json:"address"`
-	Referred     int64  `json:"referred"`
-	Active       int64  `json:"active"`
-	Confirmed    int64  `json:"confirmed"`
-	HasTelegram  bool   `json:"has_telegram"`
-	MiningHeight int64  `json:"mining_height"`
-	Height       uint64 `json:"height"`
-	Exists       bool   `json:"exists"`
+	ID            uint   `json:"id"`
+	Address       string `json:"address"`
+	Referred      int64  `json:"referred"`
+	Active        int64  `json:"active"`
+	Confirmed     int64  `json:"confirmed"`
+	HasTelegram   bool   `json:"has_telegram"`
+	MiningHeight  int64  `json:"mining_height"`
+	Height        uint64 `json:"height"`
+	Exists        bool   `json:"exists"`
+	MinedMobile   uint64 `json:"mined_mobile"`
+	MinedTelegram uint64 `json:"mined_telegram"`
 }
 
 type MinePingResponse struct {
@@ -270,6 +272,8 @@ func minerView(ctx *macaron.Context) {
 			mr.Address = u.Address
 			mr.MiningHeight = u.MiningHeight
 			mr.Height = height
+			mr.MinedMobile = u.MinedMobile
+			mr.MinedTelegram = u.MinedTelegram
 
 			if u.TelegramId != 0 {
 				mr.HasTelegram = true
@@ -306,6 +310,8 @@ func telegramMinerView(ctx *macaron.Context) {
 		mr.Address = u.Address
 		mr.MiningHeight = u.MiningHeight
 		mr.Height = height
+		mr.MinedMobile = u.MinedMobile
+		mr.MinedTelegram = u.MinedTelegram
 
 		if u.TelegramId != 0 {
 			mr.HasTelegram = true

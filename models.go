@@ -24,6 +24,8 @@ type Miner struct {
 	ReferralID          uint `gorm:"index"`
 	Confirmed           bool `gorm:"default:false"`
 	Balance             uint64
+	MinedTelegram       uint64
+	MinedMobile         uint64
 	LastPing            time.Time
 	PingCount           int64
 	IpAddresses         []*IpAddress `gorm:"many2many:miner_ip_addresses;"`
