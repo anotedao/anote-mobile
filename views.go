@@ -329,27 +329,28 @@ func saveTelegram(ctx *macaron.Context) {
 		mr.Error = 1
 	}
 
-	m := &Miner{}
-	if ap == "none" {
-		result = db.FirstOrCreate(m, &Miner{Address: tids})
-	} else {
-		result = db.FirstOrCreate(m, &Miner{Address: ap})
-	}
-	if result.RowsAffected == 1 {
-		mon.Miners = append(mon.Miners, m)
-	}
-
 	if strings.Contains(ctx.Req.RemoteAddr, "127.0.0.1") {
-		// if m.ID == 0 {
-		// 	mr.Success = false
-		// 	mr.Error = 2
-		// } else if m.TelegramId != 0 {
-		// 	mr.Success = false
-		// 	mr.Error = 3
-		// } else {
-		// 	m.TelegramId = int64(tid)
-		// 	db.Save(m)
-		// }
+		m := &Miner{}
+
+		if ap == "none" {
+			result = db.FirstOrCreate(m, &Miner{Address: tids})
+		} else if strings.HasPrefix(ap, "3A") {
+			result = db.FirstOrCreate(m, &Miner{Address: ap})
+		} else {
+			refid, err := strconv.Atoi(ap)
+			if err != nil {
+				log.Println(err)
+				logTelegram(err.Error())
+				result = db.FirstOrCreate(m, &Miner{Address: tids})
+			} else {
+				result = db.FirstOrCreate(m, &Miner{Address: tids, ReferralID: uint(refid)})
+			}
+		}
+
+		if result.RowsAffected == 1 {
+			mon.Miners = append(mon.Miners, m)
+		}
+
 		m.TelegramId = int64(tid)
 		db.Save(m)
 	} else {
