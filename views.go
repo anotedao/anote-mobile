@@ -117,6 +117,7 @@ type MineResponse struct {
 }
 
 type MinerResponse struct {
+	ID           uint   `json:"id"`
 	Address      string `json:"address"`
 	Referred     int64  `json:"referred"`
 	Active       int64  `json:"active"`
@@ -264,6 +265,7 @@ func minerView(ctx *macaron.Context) {
 	if len(ap) > 0 {
 		db.First(u, &Miner{Address: ap})
 		if u.ID != 0 {
+			mr.ID = u.ID
 			mr.Exists = true
 			mr.Address = u.Address
 			mr.MiningHeight = u.MiningHeight
@@ -299,6 +301,7 @@ func telegramMinerView(ctx *macaron.Context) {
 	u = getMinerTel(int64(tidi))
 
 	if u.ID != 0 {
+		mr.ID = u.ID
 		mr.Exists = true
 		mr.Address = u.Address
 		mr.MiningHeight = u.MiningHeight
