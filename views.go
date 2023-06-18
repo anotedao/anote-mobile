@@ -457,6 +457,8 @@ func telegramMineView(ctx *macaron.Context) {
 		code := strings.TrimSpace(c)
 		code = regexp.MustCompile(`[^0-9]+`).ReplaceAllString(code, "")
 
+		log.Println(code)
+
 		codeInt, err := strconv.Atoi(code)
 		if err != nil {
 			log.Println(err)
@@ -465,6 +467,7 @@ func telegramMineView(ctx *macaron.Context) {
 			mr.Error = 2
 		} else {
 			tid, err := strconv.Atoi(t)
+			log.Println(tid)
 			if err != nil {
 				log.Println(err)
 				logTelegram(err.Error())
@@ -473,8 +476,10 @@ func telegramMineView(ctx *macaron.Context) {
 			} else {
 				if int(codeInt) == getMiningCode() {
 					m := getMinerTel(int64(tid))
+					log.Println("dsfdsa")
 					if int64(h)-m.MiningHeight > 1409 {
 						if m.MiningHeight > 0 {
+							log.Println("aaaaaa")
 							sendMined(m.Address, int64(h)-int64(m.MiningHeight))
 							go func() {
 								time.Sleep(time.Second * 30)
@@ -492,6 +497,7 @@ func telegramMineView(ctx *macaron.Context) {
 							}
 							m.saveInBlockchain()
 						} else {
+							log.Println("aaaaaa")
 							m.MinedTelegram = Fee
 							m.PingCount = 1
 							m.MiningTime = time.Now()
