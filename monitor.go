@@ -43,6 +43,7 @@ func (m *Monitor) isSending(miner *Miner, limit int64) bool {
 		for err != nil {
 			time.Sleep(time.Millisecond * 500)
 			err = db.Save(miner).Error
+			log.Println(err)
 		}
 
 		return true
@@ -102,6 +103,7 @@ func (m *Monitor) checkMined() {
 			for err != nil {
 				time.Sleep(time.Millisecond * 500)
 				err = db.Save(ks).Error
+				log.Println(err)
 			}
 
 			for _, mnr := range m.Miners {
@@ -110,6 +112,7 @@ func (m *Monitor) checkMined() {
 				for err != nil {
 					time.Sleep(time.Millisecond * 500)
 					err = db.Save(mnr).Error
+					log.Println(err)
 				}
 			}
 

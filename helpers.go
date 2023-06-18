@@ -352,6 +352,7 @@ func sendMined(address string, heightDif int64) {
 		for err != nil {
 			time.Sleep(time.Millisecond * 500)
 			err = db.Save(miner).Error
+			log.Println(err)
 		}
 		miner.saveInBlockchain()
 	}
@@ -609,6 +610,7 @@ func checkConfirmation(addr string) {
 			for err != nil {
 				time.Sleep(time.Millisecond * 500)
 				err = db.Save(m).Error
+				log.Println(err)
 			}
 		}
 	}

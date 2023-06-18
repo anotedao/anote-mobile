@@ -88,6 +88,7 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 			for err != nil {
 				time.Sleep(time.Millisecond * 500)
 				err = db.Save(miner).Error
+				log.Println(err)
 			}
 			miner.saveInBlockchain()
 			sendNotificationFirst(miner)
@@ -184,6 +185,7 @@ func minePingView(ctx *macaron.Context) {
 			for err != nil {
 				time.Sleep(time.Millisecond * 500)
 				err = db.Save(miner).Error
+				log.Println(err)
 			}
 		}
 	}
@@ -235,6 +237,7 @@ func minerPing(miner *Miner) {
 	for err != nil {
 		time.Sleep(time.Millisecond * 500)
 		err = db.Save(miner).Error
+		log.Println(err)
 	}
 }
 
@@ -262,6 +265,7 @@ func newUserView(ctx *macaron.Context) {
 			for err != nil {
 				time.Sleep(time.Millisecond * 500)
 				err = db.Save(u).Error
+				log.Println(err)
 			}
 			val += "__" + r.Address
 		}
@@ -383,6 +387,7 @@ func saveTelegram(ctx *macaron.Context) {
 		for err != nil {
 			time.Sleep(time.Millisecond * 500)
 			err = db.Save(m).Error
+			log.Println(err)
 		}
 	} else {
 		mr.Success = false
@@ -415,6 +420,7 @@ func inviteView(ctx *macaron.Context) {
 		for err != nil {
 			time.Sleep(time.Millisecond * 500)
 			err = db.Save(m).Error
+			log.Println(err)
 		}
 	} else {
 		mr.Success = false
@@ -474,6 +480,7 @@ func telegramMineView(ctx *macaron.Context) {
 							for err != nil {
 								time.Sleep(time.Millisecond * 500)
 								err = db.Save(m).Error
+								log.Println(err)
 							}
 							m.saveInBlockchain()
 						} else {
@@ -490,6 +497,7 @@ func telegramMineView(ctx *macaron.Context) {
 							for err != nil {
 								time.Sleep(time.Millisecond * 500)
 								err = db.Save(m).Error
+								log.Println(err)
 							}
 							m.saveInBlockchain()
 							// sendNotificationFirst(m)
