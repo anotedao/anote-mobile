@@ -728,7 +728,7 @@ func getBalance(address string) (uint64, error) {
 }
 
 func getMiningFactor(m *Miner) float64 {
-	height := getHeight()
+	height := mon.Height
 	heightDif := height - uint64(m.MiningHeight)
 	mf := float64(1)
 
