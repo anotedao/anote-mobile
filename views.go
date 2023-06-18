@@ -69,11 +69,23 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 		miner.saveIp(ip)
 
 		if savedHeight > 0 {
-			go sendMined(addr, height-savedHeight)
+			sendMined(addr, height-savedHeight)
 			go func() {
 				time.Sleep(time.Second * 30)
 				checkConfirmation(addr)
 			}()
+
+			miner.PingCount = 1
+			miner.MiningTime = time.Now()
+			miner.MiningHeight = height
+			miner.BatteryNotification = true
+			err = db.Save(miner).Error
+			for err != nil {
+				time.Sleep(time.Millisecond * 500)
+				err = db.Save(miner).Error
+				log.Println(err)
+			}
+			miner.saveInBlockchain()
 		} else {
 			miner.MinedTelegram = Fee
 			miner.PingCount = 1
@@ -462,16 +474,12 @@ func telegramMineView(ctx *macaron.Context) {
 				if int(codeInt) == getMiningCode() {
 					m := getMinerTel(int64(tid))
 					if int64(h)-m.MiningHeight > 1409 {
-						// m.MiningHeight = int64(h)
-						// m.MiningTime = time.Now()
-						// db.Save(m)
-						// m.saveInBlockchain()
 						if m.MiningHeight > 0 {
-							// go sendMined(m.Address, int64(h)-int64(m.MiningHeight))
-							// go func() {
-							// 	time.Sleep(time.Second * 30)
-							// 	checkConfirmation(m.Address)
-							// }()
+							sendMined(m.Address, int64(h)-int64(m.MiningHeight))
+							go func() {
+								time.Sleep(time.Second * 30)
+								checkConfirmation(m.Address)
+							}()
 							m.PingCount = 1
 							m.MiningTime = time.Now()
 							m.MiningHeight = int64(h)

@@ -343,18 +343,6 @@ func sendMined(address string, heightDif int64) {
 		fa = uint64(float64(fa) * getIpFactor(miner, true, uint64(height), 2))
 
 		sendAsset(fa, "", address)
-
-		miner.PingCount = 1
-		miner.MiningTime = time.Now()
-		miner.MiningHeight = height
-		miner.BatteryNotification = true
-		err = db.Save(miner).Error
-		for err != nil {
-			time.Sleep(time.Millisecond * 500)
-			err = db.Save(miner).Error
-			log.Println(err)
-		}
-		miner.saveInBlockchain()
 	}
 }
 
