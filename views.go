@@ -105,6 +105,7 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 			miner.saveInBlockchain()
 			sendNotificationFirst(miner)
 		}
+		mon.loadMiners()
 	}
 
 	ctx.Resp.Header().Add("Access-Control-Allow-Origin", "*")
@@ -516,6 +517,7 @@ func telegramMineView(ctx *macaron.Context) {
 							m.saveInBlockchain()
 							// sendNotificationFirst(m)
 						}
+						mon.loadMiners()
 					} else {
 						mr.Success = false
 						mr.Error = 4
