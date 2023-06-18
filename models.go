@@ -72,7 +72,7 @@ func getMiner(addr string) *Miner {
 
 func getMinerTel(tid int64) *Miner {
 	m := &Miner{}
-	db.First(m, &Miner{TelegramId: tid})
+	db.FirstOrCreate(m, &Miner{TelegramId: tid})
 
 	return m
 }

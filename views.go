@@ -75,12 +75,15 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 				checkConfirmation(addr)
 			}()
 		} else {
-			go sendMinedFirst(addr)
+			miner.MinedTelegram = Fee
 			miner.PingCount = 1
 			miner.MiningTime = time.Now()
 			miner.MiningHeight = height
 			miner.UpdatedApp = true
 			miner.BatteryNotification = true
+			if miner.Address == "" {
+				miner.Address = strconv.Itoa(int(miner.TelegramId))
+			}
 			err := db.Save(miner).Error
 			for err != nil {
 				time.Sleep(time.Millisecond * 500)
@@ -438,25 +441,34 @@ func telegramMineView(ctx *macaron.Context) {
 						// db.Save(m)
 						// m.saveInBlockchain()
 						if m.MiningHeight > 0 {
-							go sendMined(m.Address, int64(h)-int64(m.MiningHeight))
-							go func() {
-								time.Sleep(time.Second * 30)
-								checkConfirmation(m.Address)
-							}()
+							// go sendMined(m.Address, int64(h)-int64(m.MiningHeight))
+							// go func() {
+							// 	time.Sleep(time.Second * 30)
+							// 	checkConfirmation(m.Address)
+							// }()
+							m.PingCount = 1
+							m.MiningTime = time.Now()
+							m.MiningHeight = int64(h)
+							m.BatteryNotification = true
+							db.Save(m)
+							m.saveInBlockchain()
 						} else {
-							go sendMinedFirst(m.Address)
+							m.MinedTelegram = Fee
 							m.PingCount = 1
 							m.MiningTime = time.Now()
 							m.MiningHeight = int64(h)
 							m.UpdatedApp = true
 							m.BatteryNotification = true
+							if m.Address == "" {
+								m.Address = strconv.Itoa(int(m.TelegramId))
+							}
 							err := db.Save(m).Error
 							for err != nil {
 								time.Sleep(time.Millisecond * 500)
 								err = db.Save(m).Error
 							}
 							m.saveInBlockchain()
-							sendNotificationFirst(m)
+							// sendNotificationFirst(m)
 						}
 					} else {
 						mr.Success = false

@@ -19,6 +19,8 @@ const (
 
 	MobileAddress = "3ANzidsKXn9a1s9FEbWA19hnMgV9zZ2RB9a"
 
+	TelegramAddress = "3AFnfAsxMsJdF9UF3JLVAzx3hjJcK5pguXd"
+
 	NodesAddress = "3AVTze8bR1SqqMKv3uLedrnqCuWpdU7GZwX"
 
 	Sep = "__"

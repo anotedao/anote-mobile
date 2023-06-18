@@ -353,10 +353,6 @@ func sendMined(address string, heightDif int64) {
 	}
 }
 
-func sendMinedFirst(addr string) {
-	sendAsset(Fee, "", addr)
-}
-
 func prettyPrint(i interface{}) string {
 	s, _ := json.MarshalIndent(i, "", "\t")
 	return string(s)
@@ -539,7 +535,7 @@ func getStats() *Stats {
 			sr.PayoutMiners++
 			pc += int(m.PingCount)
 
-			if getRefCount(m) >= 3 {
+			if getRefCount(m) >= 3 || hasAintHealth(m, true) {
 				sr.ActiveUnits += 10
 			} else {
 				sr.ActiveUnits++
@@ -699,4 +695,67 @@ func sendNotificationFirst(m *Miner) {
 		log.Println(err)
 		logTelegram(err.Error())
 	}
+}
+
+func getBalance(address string) (uint64, error) {
+	addr, err := proto.NewAddressFromString(address)
+	if err != nil {
+		return 0, err
+	}
+
+	cl, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{}})
+	if err != nil {
+		return 0, err
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	total, _, err := cl.Addresses.Balance(ctx, addr)
+	if err != nil {
+		return 0, err
+	}
+
+	return total.Balance, nil
+}
+
+func getMiningFactor(m *Miner) float64 {
+	height := getHeight()
+	heightDif := height - uint64(m.MiningHeight)
+	mf := float64(1)
+
+	if m.MiningHeight == 0 {
+		return 0
+	}
+
+	if getRefCount(m) >= 3 || hasAintHealth(m, true) {
+		mf *= 10
+	}
+
+	referralIndex := 1 + float64(getRefCount(m))*0.25
+
+	if heightDif > 2880 {
+		times := int(heightDif / 1440)
+		for i := 0; i < times; i++ {
+			if mf > 0.000001 {
+				mf /= 2
+			}
+		}
+		referralIndex = 1.0
+	}
+
+	mf *= referralIndex
+
+	// mf *= getIpFactor(m, true, uint64(height), 2)
+
+	return mf
+}
+
+func getBasicAmount(amount uint64) uint64 {
+	ba := uint64(0)
+	stats := getStats()
+
+	ba = uint64(float64(amount) / float64((float64(stats.ActiveUnits) + float64(stats.ActiveReferred)/4)))
+
+	return ba
 }

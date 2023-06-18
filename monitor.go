@@ -6,8 +6,10 @@ import (
 )
 
 type Monitor struct {
-	Miners []*Miner
-	Height uint64
+	Miners             []*Miner
+	Height             uint64
+	OldBalanceTelegram uint64
+	NewBalanceTelegram uint64
 }
 
 func (m *Monitor) loadMiners() {
@@ -79,12 +81,43 @@ func (m *Monitor) minerExists(telId int64) bool {
 	return false
 }
 
+func (m *Monitor) checkMined() {
+	var err error
+	m.NewBalanceTelegram, err = getBalance(TelegramAddress)
+	if err == nil && m.NewBalanceTelegram > m.OldBalanceTelegram {
+		diff := m.NewBalanceTelegram - m.OldBalanceTelegram
+		if diff > 0 {
+			ba := getBasicAmount(diff)
+
+			m.OldBalanceTelegram = m.NewBalanceTelegram
+
+			ks := &KeyValue{Key: "oldBalanceTelegram"}
+			db.FirstOrCreate(ks, ks)
+			ks.ValueInt = m.OldBalanceTelegram
+			db.Save(ks)
+
+			for _, mnr := range m.Miners {
+				mnr.MinedTelegram += uint64(float64(ba) * getMiningFactor(mnr))
+				db.Save(mnr)
+			}
+
+			log.Printf("New Telegram Amount: %d", diff)
+		}
+	}
+}
+
 func (m *Monitor) start() {
 	m.loadMiners()
+
+	ks := &KeyValue{Key: "oldBalanceTelegram"}
+	db.FirstOrCreate(ks, ks)
+
+	m.OldBalanceTelegram = uint64(ks.ValueInt)
 
 	go func() {
 		for {
 			m.Height = getHeight()
+			m.checkMined()
 			time.Sleep(time.Second * 30)
 		}
 	}()
