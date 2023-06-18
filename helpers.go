@@ -732,7 +732,7 @@ func getMiningFactor(m *Miner) float64 {
 		mf *= 10
 	}
 
-	referralIndex := 1 + float64(getRefCount(m))*0.25
+	referralIndex := float64(getRefCount(m)) * 0.25
 
 	if heightDif > 2880 {
 		times := int(heightDif / 1440)
@@ -744,7 +744,7 @@ func getMiningFactor(m *Miner) float64 {
 		referralIndex = 1.0
 	}
 
-	mf *= referralIndex
+	mf += referralIndex
 
 	// mf *= getIpFactor(m, true, uint64(height), 2)
 
