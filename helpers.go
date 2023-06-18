@@ -348,7 +348,11 @@ func sendMined(address string, heightDif int64) {
 		miner.MiningTime = time.Now()
 		miner.MiningHeight = height
 		miner.BatteryNotification = true
-		db.Save(miner)
+		err = db.Save(miner).Error
+		for err != nil {
+			time.Sleep(time.Millisecond * 500)
+			err = db.Save(miner).Error
+		}
 		miner.saveInBlockchain()
 	}
 }
@@ -601,7 +605,11 @@ func checkConfirmation(addr string) {
 		if balance.Balance > Fee {
 			m.Confirmed = true
 			m.Balance = balance.Balance
-			db.Save(m)
+			err := db.Save(m).Error
+			for err != nil {
+				time.Sleep(time.Millisecond * 500)
+				err = db.Save(m).Error
+			}
 		}
 	}
 }

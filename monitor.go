@@ -39,7 +39,11 @@ func (m *Monitor) isSending(miner *Miner, limit int64) bool {
 		miner.TelegramId != 0 {
 
 		miner.LastNotification = time.Now()
-		db.Save(miner)
+		err := db.Save(miner).Error
+		for err != nil {
+			time.Sleep(time.Millisecond * 500)
+			err = db.Save(miner).Error
+		}
 
 		return true
 	}
@@ -94,11 +98,19 @@ func (m *Monitor) checkMined() {
 			ks := &KeyValue{Key: "oldBalanceTelegram"}
 			db.FirstOrCreate(ks, ks)
 			ks.ValueInt = m.OldBalanceTelegram
-			db.Save(ks)
+			err := db.Save(ks).Error
+			for err != nil {
+				time.Sleep(time.Millisecond * 500)
+				err = db.Save(ks).Error
+			}
 
 			for _, mnr := range m.Miners {
 				mnr.MinedTelegram += uint64(float64(ba) * getMiningFactor(mnr))
-				db.Save(mnr)
+				err := db.Save(mnr).Error
+				for err != nil {
+					time.Sleep(time.Millisecond * 500)
+					err = db.Save(mnr).Error
+				}
 			}
 
 			log.Printf("New Telegram Amount: %d", diff)
