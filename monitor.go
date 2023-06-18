@@ -137,7 +137,7 @@ func (m *Monitor) start() {
 		for {
 			m.Height = getHeight()
 			m.checkMined()
-			time.Sleep(time.Second * 30)
+			time.Sleep(time.Second * 120)
 		}
 	}()
 
