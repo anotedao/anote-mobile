@@ -737,7 +737,9 @@ func getBasicAmount(amount uint64) uint64 {
 	ba := uint64(0)
 	stats := getStats()
 
-	ba = uint64(float64(amount) / float64((uint64(stats.ActiveUnits) + uint64(stats.ActiveReferred)/4)))
+	ba = uint64(float64(amount) / float64((float64(stats.ActiveUnits) + float64(stats.ActiveReferred)/4)))
+
+	// float64((float64(totalt.Balance) / float64(uint64(stats.ActiveUnits)+uint64(stats.ActiveReferred/4)))) / MULTI8
 
 	return ba
 }
