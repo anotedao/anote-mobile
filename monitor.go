@@ -107,12 +107,14 @@ func (m *Monitor) checkMined() {
 			}
 
 			for _, mnr := range m.Miners {
-				mnr.MinedTelegram += uint64(float64(ba) * getMiningFactor(mnr))
-				err := db.Save(mnr).Error
-				for err != nil {
-					time.Sleep(time.Millisecond * 500)
-					err = db.Save(mnr).Error
-					log.Println(err)
+				if m.Height-uint64(mnr.MiningHeight) <= 1410 {
+					mnr.MinedTelegram += uint64(float64(ba) * getMiningFactor(mnr))
+					err := db.Save(mnr).Error
+					for err != nil {
+						time.Sleep(time.Millisecond * 500)
+						err = db.Save(mnr).Error
+						log.Println(err)
+					}
 				}
 			}
 
