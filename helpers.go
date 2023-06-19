@@ -718,32 +718,15 @@ func getBalance(address string) (uint64, error) {
 }
 
 func getMiningFactor(m *Miner) float64 {
-	// height := mon.Height
-	// heightDif := height - uint64(m.MiningHeight)
 	mf := float64(1)
 
-	if m.MiningHeight == 0 {
-		return 0
-	}
-
-	referralIndex := 1 + float64(getRefCount(m))*0.25
-	rfadd := mf * referralIndex
+	referralIndex := float64(getRefCount(m)) * 0.25
 
 	if getRefCount(m) >= 3 || hasAintHealth(m, true) {
 		mf *= 10
 	}
 
-	// if heightDif > 2880 {
-	// 	times := int(heightDif / 1440)
-	// 	for i := 0; i < times; i++ {
-	// 		if mf > 0.000001 {
-	// 			mf /= 2
-	// 		}
-	// 	}
-	// 	referralIndex = 1.0
-	// }
-
-	mf += rfadd
+	mf += referralIndex
 
 	// mf *= getIpFactor(m, true, uint64(height), 2)
 
