@@ -524,7 +524,7 @@ func getStats() *Stats {
 			}
 		}
 
-		if height-uint64(m.MiningHeight) <= 2880 {
+		if height-uint64(m.MiningHeight) <= 1440 {
 			sr.PayoutMiners++
 			pc += int(m.PingCount)
 
