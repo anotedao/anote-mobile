@@ -94,6 +94,8 @@ func (m *Monitor) checkMined() {
 		if diff > 0 {
 			ba := getBasicAmount(diff)
 
+			log.Printf("Telegram Basic: %d", ba)
+
 			m.OldBalanceTelegram = m.NewBalanceTelegram
 
 			ks := &KeyValue{Key: "oldBalanceTelegram"}
