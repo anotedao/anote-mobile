@@ -127,13 +127,6 @@ func (m *Monitor) checkMined() {
 
 func (m *Monitor) start() {
 	m.loadMiners()
-	total := 0
-
-	for _, mnr := range m.Miners {
-		total += int(mnr.MinedTelegram)
-	}
-
-	log.Printf("Total Telegram: %d", total)
 
 	ks := &KeyValue{Key: "oldBalanceTelegram"}
 	db.FirstOrCreate(ks, ks)
@@ -154,6 +147,14 @@ func (m *Monitor) start() {
 			time.Sleep(time.Minute * 2)
 		}
 	}()
+
+	total := 0
+
+	for _, mnr := range m.Miners {
+		total += int(mnr.MinedTelegram)
+	}
+
+	log.Printf("Total Telegram: %d", total)
 
 	for {
 		m.sendNotifications()
