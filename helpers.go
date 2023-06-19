@@ -733,15 +733,15 @@ func getMiningFactor(m *Miner) float64 {
 		mf *= 10
 	}
 
-	if heightDif > 2880 {
-		times := int(heightDif / 1440)
-		for i := 0; i < times; i++ {
-			if mf > 0.000001 {
-				mf /= 2
-			}
-		}
-		referralIndex = 1.0
-	}
+	// if heightDif > 2880 {
+	// 	times := int(heightDif / 1440)
+	// 	for i := 0; i < times; i++ {
+	// 		if mf > 0.000001 {
+	// 			mf /= 2
+	// 		}
+	// 	}
+	// 	referralIndex = 1.0
+	// }
 
 	mf += rfadd
 
