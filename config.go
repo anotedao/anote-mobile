@@ -8,11 +8,13 @@ import (
 
 // Config struct holds all our configuration
 type Config struct {
-	PublicKey  string `json:"public_key"`
-	PrivateKey string `json:"private_key"`
-	Host       string `json:"host"`
-	Password   []byte `json:"password"`
-	APK        string `json:"apk"`
+	PublicKey          string `json:"public_key"`
+	PrivateKey         string `json:"private_key"`
+	PublicKeyTelegram  string `json:"public_key_telegram"`
+	PrivateKeyTelegram string `json:"private_key_telegram"`
+	Host               string `json:"host"`
+	Password           []byte `json:"password"`
+	APK                string `json:"apk"`
 }
 
 // Load method loads configuration file to Config struct

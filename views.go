@@ -374,7 +374,7 @@ func withdrawView(ctx *macaron.Context) {
 
 	u = getMinerTel(int64(tidi))
 
-	sendAsset(u.MinedTelegram-Fee, "", u.Address)
+	sendAsset2(u.MinedTelegram-Fee, "", u.Address)
 
 	u.MinedTelegram = 0
 	db.Save(u)
