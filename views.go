@@ -362,6 +362,26 @@ func telegramMinerView(ctx *macaron.Context) {
 	ctx.JSON(200, mr)
 }
 
+func withdrawView(ctx *macaron.Context) {
+	mr := &MineResponse{}
+	u := &Miner{}
+	tid := ctx.Params("tid")
+	tidi, err := strconv.Atoi(tid)
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+	}
+
+	u = getMinerTel(int64(tidi))
+
+	sendAsset(u.MinedTelegram, "", u.Address)
+
+	u.MinedTelegram = 0
+	db.Save(u)
+
+	ctx.JSON(200, mr)
+}
+
 func saveTelegram(ctx *macaron.Context) {
 	var result *gorm.DB
 	mr := &MineResponse{Success: true}
