@@ -379,6 +379,23 @@ func withdrawView(ctx *macaron.Context) {
 	u.MinedTelegram = 0
 	db.Save(u)
 
+	mon.NewBalanceTelegram, err = getBalance(TelegramAddress)
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+	}
+	mon.OldBalanceTelegram = mon.NewBalanceTelegram
+
+	ks := &KeyValue{Key: "oldBalanceTelegram"}
+	db.FirstOrCreate(ks, ks)
+	ks.ValueInt = mon.OldBalanceTelegram
+	err = db.Save(ks).Error
+	for err != nil {
+		time.Sleep(time.Millisecond * 500)
+		err = db.Save(ks).Error
+		log.Println(err)
+	}
+
 	ctx.JSON(200, mr)
 }
 
