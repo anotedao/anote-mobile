@@ -18,7 +18,7 @@ type Miner struct {
 	gorm.Model
 	Address                string `gorm:"size:255;uniqueIndex"`
 	LastNotification       time.Time
-	LastNotificationWeekly time.Time `gorm:"default:2023-06-17 23:00:00.797487649+00:00"`
+	LastNotificationWeekly time.Time `gorm:"default:'2023-06-17 23:00:00.797487649+00:00'"`
 	TelegramId             int64
 	MiningHeight           int64
 	MiningTime             time.Time
