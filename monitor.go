@@ -38,27 +38,6 @@ func (m *Monitor) sendNotifications() {
 func (m *Monitor) isSending(miner *Miner, limit int64) bool {
 	if miner.ID != 0 &&
 		(int64(m.Height)-miner.MiningHeight) >= limit &&
-		miner.MiningTime.Hour() == time.Now().Hour() &&
-		time.Since(miner.LastNotificationWeekly) > time.Hour*165 &&
-		miner.TelegramId != 0 {
-
-		// miner.LastNotification = time.Now()
-		// err := db.Save(miner).Error
-		// for err != nil {
-		// 	time.Sleep(time.Millisecond * 500)
-		// 	err = db.Save(miner).Error
-		// 	log.Println(err)
-		// }
-
-		return true
-	}
-
-	return false
-}
-
-func (m *Monitor) isSendingWeekly(miner *Miner, limit int64) bool {
-	if miner.ID != 0 &&
-		(int64(m.Height)-miner.MiningHeight) >= limit &&
 		(int64(m.Height)-miner.MiningHeight) < limit+30 &&
 		miner.LastNotification.Day() != time.Now().Day() &&
 		miner.MiningHeight > 0 &&
@@ -71,6 +50,27 @@ func (m *Monitor) isSendingWeekly(miner *Miner, limit int64) bool {
 			err = db.Save(miner).Error
 			log.Println(err)
 		}
+
+		return true
+	}
+
+	return false
+}
+
+func (m *Monitor) isSendingWeekly(miner *Miner, limit int64) bool {
+	if miner.ID != 0 &&
+		(int64(m.Height)-miner.MiningHeight) >= limit &&
+		miner.MiningTime.Hour() == time.Now().Hour() &&
+		time.Since(miner.LastNotificationWeekly) > time.Hour*165 &&
+		miner.TelegramId != 0 {
+
+		// miner.LastNotification = time.Now()
+		// err := db.Save(miner).Error
+		// for err != nil {
+		// 	time.Sleep(time.Millisecond * 500)
+		// 	err = db.Save(miner).Error
+		// 	log.Println(err)
+		// }
 
 		return true
 	}
