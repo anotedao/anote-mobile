@@ -23,6 +23,11 @@ func (m *Monitor) sendNotifications() {
 			log.Printf("Notification: %s", miner.Address)
 		}
 
+		// if m.isSendingWeekly(miner, 1410) {
+		// 	sendNotificationWeekly(miner)
+		// 	log.Printf("Notification Weekly: %s", miner.Address)
+		// }
+
 		// if m.isSendingBattery(miner) {
 		// 	sendNotificationBattery(miner)
 		// 	log.Printf("Notification battery: %s", miner.Address)
