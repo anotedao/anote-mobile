@@ -24,7 +24,7 @@ func (m *Monitor) sendNotifications() {
 		}
 
 		if m.isSendingWeekly(miner, 10080) {
-			sendNotificationWeekly(miner)
+			// sendNotificationWeekly(miner)
 			log.Printf("Notification Weekly: %s", miner.Address)
 		}
 
@@ -61,10 +61,10 @@ func (m *Monitor) isSendingWeekly(miner *Miner, limit int64) bool {
 	if miner.ID != 0 &&
 		(int64(m.Height)-miner.MiningHeight) >= limit &&
 		miner.MiningTime.Hour() == time.Now().Hour() &&
-		time.Since(miner.LastNotificationWeekly) > time.Hour*165 &&
+		// time.Since(miner.LastNotificationWeekly) > time.Hour*165 &&
 		miner.TelegramId != 0 {
 
-		// miner.LastNotification = time.Now()
+		// miner.LastNotificationWeekly = time.Now()
 		// err := db.Save(miner).Error
 		// for err != nil {
 		// 	time.Sleep(time.Millisecond * 500)
