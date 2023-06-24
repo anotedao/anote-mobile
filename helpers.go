@@ -758,6 +758,14 @@ func sendNotificationEnd(m *Miner) {
 	}
 }
 
+func sendNotificationWeekly(m *Miner) {
+	_, err := http.Get(fmt.Sprintf("http://localhost:5006/notification-weekly/%s", strconv.Itoa(int(m.TelegramId))))
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+	}
+}
+
 func sendNotificationBattery(m *Miner) {
 	_, err := http.Get(fmt.Sprintf("http://localhost:5006/notification-bo/%s", strconv.Itoa(int(m.TelegramId))))
 	if err != nil {
