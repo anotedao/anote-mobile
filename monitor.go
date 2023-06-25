@@ -62,7 +62,7 @@ func (m *Monitor) isSendingWeekly(miner *Miner, limit int64) bool {
 		(int64(m.Height)-miner.MiningHeight) >= limit &&
 		(miner.MiningTime.Hour() == time.Now().Hour() ||
 			miner.MiningTime.IsZero()) &&
-		// time.Since(miner.LastNotificationWeekly) > time.Hour*165 &&
+		time.Since(miner.LastNotificationWeekly) > time.Hour*168 &&
 		miner.TelegramId != 0 {
 
 		// miner.LastNotificationWeekly = time.Now()
