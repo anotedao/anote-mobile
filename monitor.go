@@ -17,6 +17,7 @@ func (m *Monitor) loadMiners() {
 }
 
 func (m *Monitor) sendNotifications() {
+	counter := 1
 	for _, miner := range m.Miners {
 		if m.isSending(miner, 1410) {
 			sendNotificationEnd(miner)
@@ -25,7 +26,8 @@ func (m *Monitor) sendNotifications() {
 
 		if m.isSendingWeekly(miner, 10080) {
 			// sendNotificationWeekly(miner)
-			log.Printf("Notification Weekly: %s", miner.Address)
+			log.Printf("Notification Weekly: %s %d", miner.Address, counter)
+			counter++
 		}
 
 		// if m.isSendingBattery(miner) {
