@@ -424,10 +424,11 @@ func saveTelegram(ctx *macaron.Context) {
 			if err != nil {
 				log.Println(err)
 				logTelegram(err.Error())
-				result = db.FirstOrCreate(m, &Miner{Address: tids})
+				result = db.FirstOrCreate(m, &Miner{TelegramId: int64(tid)})
 			} else {
-				result = db.FirstOrCreate(m, &Miner{Address: tids, ReferralID: uint(refid)})
+				result = db.FirstOrCreate(m, &Miner{TelegramId: int64(tid), ReferralID: uint(refid)})
 			}
+			m.Address = tids
 		}
 
 		if result.RowsAffected == 1 {
