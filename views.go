@@ -440,6 +440,7 @@ func saveTelegram(ctx *macaron.Context) {
 			err = db.Save(m).Error
 			log.Println(err)
 		}
+		mon.loadMiners()
 	} else {
 		mr.Success = false
 		mr.Error = 4
