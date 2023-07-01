@@ -421,10 +421,7 @@ func saveTelegram(ctx *macaron.Context) {
 			m.Address = ap
 		} else {
 			refid, err := strconv.Atoi(ap)
-			if err != nil {
-				log.Println(err)
-				logTelegram(err.Error())
-			} else {
+			if err == nil {
 				// result = db.FirstOrCreate(m, &Miner{TelegramId: int64(tid), Address: tids, ReferralID: uint(refid)})
 				m.ReferralID = uint(refid)
 			}
