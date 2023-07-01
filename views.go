@@ -11,7 +11,6 @@ import (
 
 	"github.com/go-macaron/captcha"
 	macaron "gopkg.in/macaron.v1"
-	"gorm.io/gorm"
 )
 
 func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
@@ -400,7 +399,7 @@ func withdrawView(ctx *macaron.Context) {
 }
 
 func saveTelegram(ctx *macaron.Context) {
-	var result *gorm.DB
+	// var result *gorm.DB
 	mr := &MineResponse{Success: true}
 	ap := ctx.Params("addr")
 	tids := ctx.Params("telegramid")
@@ -415,7 +414,7 @@ func saveTelegram(ctx *macaron.Context) {
 		db.First(m, &Miner{TelegramId: int64(tid)})
 
 		if m.ID == 0 {
-			result = db.FirstOrCreate(m, &Miner{TelegramId: int64(tid), Address: tids})
+			db.FirstOrCreate(m, &Miner{TelegramId: int64(tid), Address: tids})
 		}
 
 		if strings.HasPrefix(ap, "3A") {
@@ -429,10 +428,6 @@ func saveTelegram(ctx *macaron.Context) {
 				// result = db.FirstOrCreate(m, &Miner{TelegramId: int64(tid), Address: tids, ReferralID: uint(refid)})
 				m.ReferralID = uint(refid)
 			}
-		}
-
-		if result.RowsAffected == 1 {
-			mon.Miners = append(mon.Miners, m)
 		}
 
 		err := db.Save(m).Error
