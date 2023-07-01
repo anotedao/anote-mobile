@@ -414,19 +414,17 @@ func saveTelegram(ctx *macaron.Context) {
 		m := &Miner{}
 
 		if ap == "none" {
-			result = db.FirstOrCreate(m, &Miner{TelegramId: int64(tid)})
-			m.Address = tids
+			result = db.FirstOrCreate(m, &Miner{TelegramId: int64(tid), Address: tids})
 		} else if strings.HasPrefix(ap, "3A") {
-			result = db.FirstOrCreate(m, &Miner{TelegramId: int64(tid)})
-			m.Address = ap
+			result = db.FirstOrCreate(m, &Miner{TelegramId: int64(tid), Address: ap})
 		} else {
 			refid, err := strconv.Atoi(ap)
 			if err != nil {
 				log.Println(err)
 				logTelegram(err.Error())
-				result = db.FirstOrCreate(m, &Miner{TelegramId: int64(tid)})
+				result = db.FirstOrCreate(m, &Miner{TelegramId: int64(tid), Address: tids})
 			} else {
-				result = db.FirstOrCreate(m, &Miner{TelegramId: int64(tid), ReferralID: uint(refid)})
+				result = db.FirstOrCreate(m, &Miner{TelegramId: int64(tid), Address: tids, ReferralID: uint(refid)})
 			}
 			m.Address = tids
 		}
