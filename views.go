@@ -395,6 +395,8 @@ func withdrawView(ctx *macaron.Context) {
 		log.Println(err)
 	}
 
+	mon.loadMiners()
+
 	ctx.JSON(200, mr)
 }
 
