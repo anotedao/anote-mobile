@@ -435,10 +435,11 @@ func saveTelegram(ctx *macaron.Context) {
 
 		m.TelegramId = int64(tid)
 		err := db.Save(m).Error
-		for err != nil {
-			time.Sleep(time.Millisecond * 500)
-			err = db.Save(m).Error
+		if err != nil {
+			// time.Sleep(time.Millisecond * 500)
+			// err = db.Save(m).Error
 			log.Println(err)
+			logTelegram(err.Error())
 		}
 		mon.loadMiners()
 	} else {
