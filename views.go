@@ -438,7 +438,7 @@ func saveTelegram(ctx *macaron.Context) {
 			// time.Sleep(time.Millisecond * 500)
 			// err = db.Save(m).Error
 			log.Println(err)
-			logTelegram(err.Error())
+			// logTelegram(err.Error())
 			mr.Success = false
 			mr.Error = 3
 		}
