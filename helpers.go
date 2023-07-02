@@ -596,14 +596,14 @@ func getStats() *Stats {
 	pc := 0
 
 	for _, m := range miners {
-		if height-uint64(m.MiningHeight) <= 1410 {
+		if height-uint64(m.MiningHeight) <= 1440 {
 			sr.ActiveMiners++
 			if m.ReferralID != 0 && m.Confirmed {
 				sr.ActiveReferred++
 			}
 		}
 
-		if height-uint64(m.MiningHeight) <= 1410 {
+		if height-uint64(m.MiningHeight) <= 1440 {
 			sr.PayoutMiners++
 			pc += int(m.PingCount)
 
