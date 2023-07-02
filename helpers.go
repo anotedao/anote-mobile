@@ -679,7 +679,7 @@ func checkConfirmation(addr string) {
 				err = db.Save(m).Error
 				log.Println(err)
 			}
-			mon.loadMiners()
+			// mon.loadMiners()
 		}
 	}
 }

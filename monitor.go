@@ -169,12 +169,12 @@ func (m *Monitor) start() {
 		}
 	}()
 
-	go func() {
-		for {
-			m.loadMiners()
-			time.Sleep(time.Minute * 2)
-		}
-	}()
+	// go func() {
+	// 	for {
+	// 		m.loadMiners()
+	// 		time.Sleep(time.Minute * 2)
+	// 	}
+	// }()
 
 	total := 0
 
@@ -185,6 +185,8 @@ func (m *Monitor) start() {
 	log.Printf("Total Telegram: %d", total)
 
 	for {
+		m.loadMiners()
+
 		m.sendNotifications()
 
 		time.Sleep(time.Second * MonitorTick)
