@@ -145,6 +145,7 @@ type MinerResponse struct {
 	MinedMobile   uint64 `json:"mined_mobile"`
 	MinedTelegram uint64 `json:"mined_telegram"`
 	TelegramId    int64  `json:"telegram_id"`
+	AlphaSent     bool   `json:"alpha_sent"`
 }
 
 type MinePingResponse struct {
@@ -307,6 +308,7 @@ func minerView(ctx *macaron.Context) {
 			mr.MinedMobile = u.MinedMobile
 			mr.MinedTelegram = u.MinedTelegram
 			mr.TelegramId = u.TelegramId
+			mr.AlphaSent = getAlphaSent(mr.Address)
 
 			if u.TelegramId != 0 {
 				mr.HasTelegram = true

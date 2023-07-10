@@ -831,3 +831,28 @@ func getBasicAmount(amount uint64) uint64 {
 
 	return ba
 }
+
+type AlphaSentResponse struct {
+	Sent bool `json:"sent"`
+}
+
+func getAlphaSent(addr string) bool {
+	alr := &AlphaSentResponse{Sent: true}
+	resp, err := http.Get(fmt.Sprintf("http://localhost:5006/alpha-sent/%s", addr))
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+		return true
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+
+	if err := json.Unmarshal(body, alr); err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+		return true
+	}
+
+	return alr.Sent
+}
