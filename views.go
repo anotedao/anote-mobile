@@ -69,10 +69,6 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 
 		if savedHeight > 0 {
 			sendMined(addr, height-savedHeight)
-			go func() {
-				time.Sleep(time.Second * 30)
-				checkConfirmation(addr)
-			}()
 
 			miner.PingCount = 1
 			miner.MiningTime = time.Now()
@@ -137,7 +133,6 @@ type MinerResponse struct {
 	Address       string `json:"address"`
 	Referred      int64  `json:"referred"`
 	Active        int64  `json:"active"`
-	Confirmed     int64  `json:"confirmed"`
 	HasTelegram   bool   `json:"has_telegram"`
 	MiningHeight  int64  `json:"mining_height"`
 	Height        uint64 `json:"height"`
@@ -317,8 +312,6 @@ func minerView(ctx *macaron.Context) {
 			db.Where("referral_id = ?", u.ID).Find(&miners).Count(&mr.Referred)
 
 			db.Where("referral_id = ? AND mining_height > ?", u.ID, height-2880).Find(&miners).Count(&mr.Active)
-
-			db.Where("referral_id = ? AND mining_height > ? AND confirmed = true", u.ID, height-2880).Find(&miners).Count(&mr.Confirmed)
 		}
 	}
 
@@ -356,8 +349,6 @@ func telegramMinerView(ctx *macaron.Context) {
 		db.Where("referral_id = ?", u.ID).Find(&miners).Count(&mr.Referred)
 
 		db.Where("referral_id = ? AND mining_height > ?", u.ID, height-2880).Find(&miners).Count(&mr.Active)
-
-		db.Where("referral_id = ? AND mining_height > ? AND confirmed = true", u.ID, height-2880).Find(&miners).Count(&mr.Confirmed)
 	}
 
 	ctx.JSON(200, mr)
@@ -525,10 +516,6 @@ func telegramMineView(ctx *macaron.Context) {
 						if m.MiningHeight > 0 {
 							log.Println("aaaaaa")
 							sendMined(m.Address, int64(h)-int64(m.MiningHeight))
-							go func() {
-								time.Sleep(time.Second * 30)
-								checkConfirmation(m.Address)
-							}()
 							m.PingCount = 1
 							m.MiningTime = time.Now()
 							m.MiningHeight = int64(h)

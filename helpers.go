@@ -598,7 +598,7 @@ func getStats() *Stats {
 	for _, m := range miners {
 		if height-uint64(m.MiningHeight) <= 1440 {
 			sr.ActiveMiners++
-			if m.ReferralID != 0 && m.Confirmed {
+			if m.ReferralID != 0 {
 				sr.ActiveReferred++
 			}
 		}
@@ -635,7 +635,7 @@ func getRefCount(m *Miner) uint64 {
 
 	height := getHeight()
 
-	db.Where("referral_id = ? AND mining_height > ? AND confirmed = true", m.ID, height-2880).Find(&miners)
+	db.Where("referral_id = ? AND mining_height > ?", m.ID, height-2880).Find(&miners)
 	count := len(miners)
 
 	return uint64(count)
@@ -646,42 +646,6 @@ func countIP(ip string) int64 {
 	count := db.Model(&ipa).Association("Miners").Count()
 
 	return count
-}
-
-func checkConfirmation(addr string) {
-	m := &Miner{}
-	db.First(m, &Miner{Address: addr})
-
-	cl, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{}})
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
-
-	c, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	a, err := proto.NewAddressFromString(addr)
-
-	if err == nil {
-		balance, _, err := cl.Addresses.Balance(c, a)
-		if err != nil {
-			log.Println(err)
-			logTelegram(err.Error())
-		}
-
-		if balance.Balance > Fee {
-			m.Confirmed = true
-			m.Balance = balance.Balance
-			err := db.Save(m).Error
-			for err != nil {
-				time.Sleep(time.Millisecond * 500)
-				err = db.Save(m).Error
-				log.Println(err)
-			}
-			// mon.loadMiners()
-		}
-	}
 }
 
 func getIpFactor(m *Miner, checkReferred bool, height uint64, add int64) float64 {

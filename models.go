@@ -23,7 +23,6 @@ type Miner struct {
 	MiningHeight           int64
 	MiningTime             time.Time
 	ReferralID             uint `gorm:"index"`
-	Confirmed              bool `gorm:"default:false"`
 	Balance                uint64
 	MinedTelegram          uint64
 	MinedMobile            uint64
