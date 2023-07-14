@@ -70,6 +70,7 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 		if savedHeight > 0 {
 			sendMined(addr, height-savedHeight)
 
+			miner.Cycles++
 			miner.PingCount = 1
 			miner.MiningTime = time.Now()
 			miner.MiningHeight = height
@@ -84,6 +85,7 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 		} else {
 			miner.MinedTelegram = Fee
 			miner.PingCount = 1
+			miner.Cycles = 1
 			miner.MiningTime = time.Now()
 			miner.MiningHeight = height
 			miner.UpdatedApp = true
@@ -141,6 +143,7 @@ type MinerResponse struct {
 	MinedTelegram uint64 `json:"mined_telegram"`
 	TelegramId    int64  `json:"telegram_id"`
 	AlphaSent     bool   `json:"alpha_sent"`
+	Cycles        uint64 `json:"cycles"`
 }
 
 type MinePingResponse struct {
@@ -304,6 +307,7 @@ func minerView(ctx *macaron.Context) {
 			mr.MinedTelegram = u.MinedTelegram
 			mr.TelegramId = u.TelegramId
 			mr.AlphaSent = getAlphaSent(mr.Address)
+			mr.Cycles = u.Cycles
 
 			if u.TelegramId != 0 {
 				mr.HasTelegram = true
@@ -517,6 +521,7 @@ func telegramMineView(ctx *macaron.Context) {
 							log.Println("aaaaaa")
 							sendMined(m.Address, int64(h)-int64(m.MiningHeight))
 							m.PingCount = 1
+							m.Cycles++
 							m.MiningTime = time.Now()
 							m.MiningHeight = int64(h)
 							m.BatteryNotification = true
@@ -532,6 +537,7 @@ func telegramMineView(ctx *macaron.Context) {
 							m.MinedTelegram = Fee
 							m.PingCount = 1
 							m.MiningTime = time.Now()
+							m.Cycles = 1
 							m.MiningHeight = int64(h)
 							m.UpdatedApp = true
 							m.BatteryNotification = true

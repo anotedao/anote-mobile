@@ -32,6 +32,7 @@ type Miner struct {
 	UpdatedApp             bool         `gorm:"default:false"`
 	LastInvite             time.Time
 	BatteryNotification    bool `gorm:"default:false"`
+	Cycles                 uint64
 }
 
 func (m *Miner) saveInBlockchain() {
