@@ -27,4 +27,10 @@ const (
 
 	// MonitorTick interval in seconds
 	MonitorTick = 60
+
+	PricesURL = "https://min-api.cryptocompare.com/data/price?fsym=WAVES&tsyms=BTC,ETH,USD,EUR"
+
+	OrderbookStatusURL = "https://matcher.waves.exchange/matcher/orderbook/HqieNeUxTqzMufgF49QvK99h2ShsAuJAGYKvYZrvRejN/WAVES/status#getOrderBookStatus"
+
+	AggregatorURL = "https://wavescup.world/aggregator/calc?token0=HqieNeUxTqzMufgF49QvK99h2ShsAuJAGYKvYZrvRejN&token1=9wc3LXNA4TEBsXyKtoLE9mrbDD7WMHXvXrCjZvabLAsi&amountIn=10000"
 )

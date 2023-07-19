@@ -131,19 +131,20 @@ type MineResponse struct {
 }
 
 type MinerResponse struct {
-	ID            uint   `json:"id"`
-	Address       string `json:"address"`
-	Referred      int64  `json:"referred"`
-	Active        int64  `json:"active"`
-	HasTelegram   bool   `json:"has_telegram"`
-	MiningHeight  int64  `json:"mining_height"`
-	Height        uint64 `json:"height"`
-	Exists        bool   `json:"exists"`
-	MinedMobile   uint64 `json:"mined_mobile"`
-	MinedTelegram uint64 `json:"mined_telegram"`
-	TelegramId    int64  `json:"telegram_id"`
-	AlphaSent     bool   `json:"alpha_sent"`
-	Cycles        uint64 `json:"cycles"`
+	ID            uint    `json:"id"`
+	Address       string  `json:"address"`
+	Referred      int64   `json:"referred"`
+	Active        int64   `json:"active"`
+	HasTelegram   bool    `json:"has_telegram"`
+	MiningHeight  int64   `json:"mining_height"`
+	Height        uint64  `json:"height"`
+	Exists        bool    `json:"exists"`
+	MinedMobile   uint64  `json:"mined_mobile"`
+	MinedTelegram uint64  `json:"mined_telegram"`
+	TelegramId    int64   `json:"telegram_id"`
+	AlphaSent     bool    `json:"alpha_sent"`
+	Cycles        uint64  `json:"cycles"`
+	Price         float64 `json:"price"`
 }
 
 type MinePingResponse struct {
@@ -308,6 +309,7 @@ func minerView(ctx *macaron.Context) {
 			mr.TelegramId = u.TelegramId
 			mr.AlphaSent = getAlphaSent(mr.Address)
 			mr.Cycles = u.Cycles
+			mr.Price = getPriceAggregator()
 
 			if u.TelegramId != 0 {
 				mr.HasTelegram = true
