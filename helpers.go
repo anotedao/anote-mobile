@@ -421,7 +421,9 @@ func sendMined(address string, heightDif int64) {
 
 		fa = uint64(float64(fa) * getIpFactor(miner, true, uint64(height), 2))
 
-		sendAsset(fa, "", address)
+		if strings.HasPrefix(address, "3A") {
+			sendAsset(fa, "", address)
+		}
 	}
 }
 
