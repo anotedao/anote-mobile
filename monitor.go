@@ -150,6 +150,8 @@ func (m *Monitor) checkMined() {
 
 			log.Printf("New Telegram Amount: %d", diff)
 		}
+	} else if err != nil {
+		log.Println(err)
 	}
 }
 
