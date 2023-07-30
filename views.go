@@ -309,7 +309,7 @@ func minerView(ctx *macaron.Context) {
 			mr.TelegramId = u.TelegramId
 			mr.AlphaSent = getAlphaSent(mr.Address)
 			mr.Cycles = u.Cycles
-			mr.Price = getPriceAggregator()
+			mr.Price = getPriceCoinGecko()
 
 			if u.TelegramId != 0 {
 				mr.HasTelegram = true
