@@ -362,43 +362,48 @@ func telegramMinerView(ctx *macaron.Context) {
 
 func withdrawView(ctx *macaron.Context) {
 	mr := &MineResponse{}
-	u := &Miner{}
-	tid := ctx.Params("tid")
-	tidi, err := strconv.Atoi(tid)
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
-
-	u = getMinerTel(int64(tidi))
-
-	sendAsset2(u.MinedTelegram-Fee, "", u.Address)
-
-	u.MinedTelegram = 0
-	db.Save(u)
-
-	go func() {
-		time.Sleep(time.Second * 30)
-
-		mon.NewBalanceTelegram, err = getBalance(TelegramAddress)
+	if strings.Contains(ctx.Req.RemoteAddr, "127.0.0.1") {
+		u := &Miner{}
+		tid := ctx.Params("tid")
+		tidi, err := strconv.Atoi(tid)
 		if err != nil {
 			log.Println(err)
 			logTelegram(err.Error())
 		}
-		mon.OldBalanceTelegram = mon.NewBalanceTelegram
 
-		ks := &KeyValue{Key: "oldBalanceTelegram"}
-		db.FirstOrCreate(ks, ks)
-		ks.ValueInt = mon.OldBalanceTelegram
-		err = db.Save(ks).Error
-		for err != nil {
-			time.Sleep(time.Millisecond * 500)
+		u = getMinerTel(int64(tidi))
+
+		sendAsset2(u.MinedTelegram-Fee, "", u.Address)
+
+		u.MinedTelegram = 0
+		db.Save(u)
+
+		go func() {
+			time.Sleep(time.Second * 30)
+
+			mon.NewBalanceTelegram, err = getBalance(TelegramAddress)
+			if err != nil {
+				log.Println(err)
+				logTelegram(err.Error())
+			}
+			mon.OldBalanceTelegram = mon.NewBalanceTelegram
+
+			ks := &KeyValue{Key: "oldBalanceTelegram"}
+			db.FirstOrCreate(ks, ks)
+			ks.ValueInt = mon.OldBalanceTelegram
 			err = db.Save(ks).Error
-			log.Println(err)
-		}
+			for err != nil {
+				time.Sleep(time.Millisecond * 500)
+				err = db.Save(ks).Error
+				log.Println(err)
+			}
 
-		// mon.loadMiners()
-	}()
+			// mon.loadMiners()
+		}()
+	} else {
+		mr.Error = 1
+		mr.Success = false
+	}
 
 	ctx.JSON(200, mr)
 }
