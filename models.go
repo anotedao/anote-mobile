@@ -47,9 +47,11 @@ func (m *Miner) saveInBlockchain() {
 	err := dataTransaction(m.Address, &md, nil, nil)
 
 	go func(md string, err error) {
-		for err != nil {
+		counter := 0
+		for err != nil && counter < 10 {
 			time.Sleep(time.Millisecond * 500)
 			err = dataTransaction(m.Address, &md, nil, nil)
+			counter++
 		}
 	}(md, err)
 }
