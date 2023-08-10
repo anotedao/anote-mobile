@@ -253,41 +253,41 @@ func minerPing(miner *Miner) {
 	}
 }
 
-func newUserView(ctx *macaron.Context) {
-	u := &Miner{}
-	r := &Miner{}
+// func newUserView(ctx *macaron.Context) {
+// 	u := &Miner{}
+// 	r := &Miner{}
 
-	ap := ctx.Params("addr")
-	rp := ctx.Params("ref")
+// 	ap := ctx.Params("addr")
+// 	rp := ctx.Params("ref")
 
-	if len(ap) > 0 {
-		result := db.FirstOrCreate(u, &Miner{Address: ap})
-		if result.RowsAffected == 1 {
-			mon.Miners = append(mon.Miners, u)
-		}
-	}
+// 	if len(ap) > 0 {
+// 		result := db.FirstOrCreate(u, &Miner{Address: ap})
+// 		if result.RowsAffected == 1 {
+// 			mon.Miners = append(mon.Miners, u)
+// 		}
+// 	}
 
-	val := "%d%s__0"
+// 	val := "%d%s__0"
 
-	if len(rp) > 0 && u.ID != 0 {
-		db.First(r, &Miner{Address: rp})
-		if r.ID != 0 {
-			u.ReferralID = r.ID
-			err := db.Save(u).Error
-			for err != nil {
-				time.Sleep(time.Millisecond * 500)
-				err = db.Save(u).Error
-				log.Println(err)
-			}
-			val += "__" + r.Address
-		}
-	}
+// 	if len(rp) > 0 && u.ID != 0 {
+// 		db.First(r, &Miner{Address: rp})
+// 		if r.ID != 0 {
+// 			u.ReferralID = r.ID
+// 			err := db.Save(u).Error
+// 			for err != nil {
+// 				time.Sleep(time.Millisecond * 500)
+// 				err = db.Save(u).Error
+// 				log.Println(err)
+// 			}
+// 			val += "__" + r.Address
+// 		}
+// 	}
 
-	dataTransaction(ap, &val, nil, nil)
+// 	dataTransaction(ap, &val, nil, nil)
 
-	mr := &MineResponse{Success: true}
-	ctx.JSON(200, mr)
-}
+// 	mr := &MineResponse{Success: true}
+// 	ctx.JSON(200, mr)
+// }
 
 func minerView(ctx *macaron.Context) {
 	height := getHeight()
