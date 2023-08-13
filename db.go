@@ -11,10 +11,11 @@ import (
 func initDb() *gorm.DB {
 	var db *gorm.DB
 	var err error
-	dbconf := gorm.Config{
-		SkipDefaultTransaction: true,
-		PrepareStmt:            true,
-	}
+	// dbconf := gorm.Config{
+	// 	SkipDefaultTransaction: true,
+	// 	PrepareStmt:            true,
+	// }
+	dbconf := gorm.Config{}
 
 	dbconf.Logger = logger.Default.LogMode(logger.Error)
 
