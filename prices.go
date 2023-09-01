@@ -111,8 +111,10 @@ func (pc *PriceClient) doRequestOrderbook() {
 
 func (pc *PriceClient) start() {
 	go func() {
+		var p *Prices
+		var err error
 		for {
-			if p, err := pc.doRequest(); err != nil {
+			if p, err = pc.doRequest(); err != nil {
 				log.Println(err)
 				logTelegram(err.Error())
 			} else {

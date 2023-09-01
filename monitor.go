@@ -145,8 +145,8 @@ func (m *Monitor) checkMined() {
 			for _, mnr := range m.Miners {
 				if m.Height-uint64(mnr.MiningHeight) <= 1410 {
 					mnr.MinedTelegram += uint64(float64(ba) * getMiningFactor(mnr))
-					err := db.Save(mnr).Error
-					counter := 0
+					err = db.Save(mnr).Error
+					counter = 0
 					for err != nil && counter < 10 {
 						time.Sleep(time.Millisecond * 500)
 						err = db.Save(mnr).Error
