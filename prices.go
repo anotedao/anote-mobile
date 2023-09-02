@@ -118,6 +118,7 @@ func (pc *PriceClient) start() {
 				log.Println(err)
 				logTelegram(err.Error())
 			} else {
+				pc.Prices = nil
 				pc.Prices = p
 			}
 
