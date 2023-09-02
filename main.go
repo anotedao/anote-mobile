@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
-	// _ "net/http/pprof"
+	"net/http"
+	_ "net/http/pprof"
 
 	"gopkg.in/macaron.v1"
 	"gorm.io/gorm"
@@ -22,9 +24,9 @@ var pc *PriceClient
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
-	// go func() {
-	// 	fmt.Println(http.ListenAndServe("localhost:6060", nil))
-	// }()
+	go func() {
+		fmt.Println(http.ListenAndServe("localhost:6060", nil))
+	}()
 
 	conf = initConfig()
 
