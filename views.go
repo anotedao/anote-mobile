@@ -534,10 +534,8 @@ func telegramMineView(ctx *macaron.Context) {
 			} else {
 				if int(codeInt) == getMiningCode() {
 					m := getMinerTel(int64(tid))
-					log.Println("dsfdsa")
 					if int64(h)-m.MiningHeight > 1409 {
 						if m.MiningHeight > 0 {
-							log.Println("aaaaaa")
 							sendMined(m.Address, int64(h)-int64(m.MiningHeight))
 							m.PingCount = 1
 							m.Cycles++
@@ -554,7 +552,6 @@ func telegramMineView(ctx *macaron.Context) {
 							}
 							m.saveInBlockchain()
 						} else {
-							log.Println("aaaaaa")
 							m.MinedTelegram = Fee
 							m.PingCount = 1
 							m.MiningTime = time.Now()

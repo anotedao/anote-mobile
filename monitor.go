@@ -13,6 +13,7 @@ type Monitor struct {
 }
 
 func (m *Monitor) loadMiners() {
+	m.Miners = nil
 	db.Find(&m.Miners)
 }
 
