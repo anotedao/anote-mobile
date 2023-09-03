@@ -8,7 +8,7 @@ require (
 	github.com/ip2location/ip2location-go/v9 v9.5.0
 	github.com/wavesplatform/gowaves v0.10.1
 	gopkg.in/macaron.v1 v1.4.0
-	gorm.io/driver/sqlite v1.3.6
+	gorm.io/driver/sqlite v1.5.3
 	gorm.io/gorm v1.23.10
 )
 
