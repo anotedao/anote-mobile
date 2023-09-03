@@ -76,12 +76,9 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 			miner.MiningHeight = height
 			miner.BatteryNotification = true
 			err = db.Save(miner).Error
-			counter := 0
-			for err != nil && counter < 10 {
-				time.Sleep(time.Millisecond * 500)
-				err = db.Save(miner).Error
+			if err != nil {
 				log.Println(err)
-				counter++
+				logTelegram(err.Error())
 			}
 			miner.saveInBlockchain()
 		} else {
@@ -96,12 +93,9 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 				miner.Address = strconv.Itoa(int(miner.TelegramId))
 			}
 			err := db.Save(miner).Error
-			counter := 0
-			for err != nil && counter < 10 {
-				time.Sleep(time.Millisecond * 500)
-				err = db.Save(miner).Error
+			if err != nil {
 				log.Println(err)
-				counter++
+				logTelegram(err.Error())
 			}
 			miner.saveInBlockchain()
 			sendNotificationFirst(miner)
@@ -198,12 +192,9 @@ func minePingView(ctx *macaron.Context) {
 			}
 
 			err := db.Save(miner).Error
-			counter := 0
-			for err != nil && counter < 10 {
-				time.Sleep(time.Millisecond * 500)
-				err = db.Save(miner).Error
+			if err != nil {
 				log.Println(err)
-				counter++
+				logTelegram(err.Error())
 			}
 		}
 	}
@@ -252,12 +243,9 @@ func minerPing(miner *Miner) {
 	miner.PingCount++
 	miner.LastPing = time.Now()
 	err := db.Save(miner).Error
-	counter := 0
-	for err != nil && counter < 10 {
-		time.Sleep(time.Millisecond * 500)
-		err = db.Save(miner).Error
+	if err != nil {
 		log.Println(err)
-		counter++
+		logTelegram(err.Error())
 	}
 }
 
@@ -400,12 +388,9 @@ func withdrawView(ctx *macaron.Context) {
 			db.FirstOrCreate(ks, ks)
 			ks.ValueInt = mon.OldBalanceTelegram
 			err = db.Save(ks).Error
-			counter := 0
-			for err != nil && counter < 10 {
-				time.Sleep(time.Millisecond * 500)
-				err = db.Save(ks).Error
+			if err != nil {
 				log.Println(err)
-				counter++
+				logTelegram(err.Error())
 			}
 
 			// mon.loadMiners()
@@ -485,12 +470,9 @@ func inviteView(ctx *macaron.Context) {
 		}()
 		m.LastInvite = time.Now()
 		err := db.Save(m).Error
-		counter := 0
-		for err != nil && counter < 10 {
-			time.Sleep(time.Millisecond * 500)
-			err = db.Save(m).Error
+		if err != nil {
 			log.Println(err)
-			counter++
+			logTelegram(err.Error())
 		}
 	} else {
 		mr.Success = false
@@ -543,12 +525,9 @@ func telegramMineView(ctx *macaron.Context) {
 							m.MiningHeight = int64(h)
 							m.BatteryNotification = true
 							err := db.Save(m).Error
-							counter := 0
-							for err != nil && counter < 10 {
-								time.Sleep(time.Millisecond * 500)
-								err = db.Save(m).Error
+							if err != nil {
 								log.Println(err)
-								counter++
+								logTelegram(err.Error())
 							}
 							m.saveInBlockchain()
 						} else {
@@ -563,12 +542,9 @@ func telegramMineView(ctx *macaron.Context) {
 								m.Address = strconv.Itoa(int(m.TelegramId))
 							}
 							err := db.Save(m).Error
-							counter := 0
-							for err != nil && counter < 10 {
-								time.Sleep(time.Millisecond * 500)
-								err = db.Save(m).Error
+							if err != nil {
 								log.Println(err)
-								counter++
+								logTelegram(err.Error())
 							}
 							m.saveInBlockchain()
 							// sendNotificationFirst(m)

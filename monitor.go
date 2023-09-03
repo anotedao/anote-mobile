@@ -48,12 +48,9 @@ func (m *Monitor) isSending(miner *Miner, limit int64) bool {
 
 		miner.LastNotification = time.Now()
 		err := db.Save(miner).Error
-		counter := 0
-		for err != nil && counter < 10 {
-			time.Sleep(time.Millisecond * 500)
-			err = db.Save(miner).Error
+		if err != nil {
 			log.Println(err)
-			counter++
+			logTelegram(err.Error())
 		}
 
 		return true
@@ -72,12 +69,9 @@ func (m *Monitor) isSendingWeekly(miner *Miner, limit int64) bool {
 
 		miner.LastNotificationWeekly = time.Now()
 		err := db.Save(miner).Error
-		counter := 0
-		for err != nil && counter < 10 {
-			time.Sleep(time.Millisecond * 500)
-			err = db.Save(miner).Error
+		if err != nil {
 			log.Println(err)
-			counter++
+			logTelegram(err.Error())
 		}
 
 		return true
@@ -135,24 +129,18 @@ func (m *Monitor) checkMined() {
 			db.FirstOrCreate(ks, ks)
 			ks.ValueInt = m.OldBalanceTelegram
 			err := db.Save(ks).Error
-			counter := 0
-			for err != nil && counter < 10 {
-				time.Sleep(time.Millisecond * 500)
-				err = db.Save(ks).Error
+			if err != nil {
 				log.Println(err)
-				counter++
+				logTelegram(err.Error())
 			}
 
 			for _, mnr := range m.Miners {
 				if m.Height-uint64(mnr.MiningHeight) <= 1410 {
 					mnr.MinedTelegram += uint64(float64(ba) * getMiningFactor(mnr))
 					err = db.Save(mnr).Error
-					counter = 0
-					for err != nil && counter < 10 {
-						time.Sleep(time.Millisecond * 500)
-						err = db.Save(mnr).Error
+					if err != nil {
 						log.Println(err)
-						counter++
+						logTelegram(err.Error())
 					}
 				}
 			}
