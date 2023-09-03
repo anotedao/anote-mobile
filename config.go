@@ -15,6 +15,7 @@ type Config struct {
 	Host               string `json:"host"`
 	Password           []byte `json:"password"`
 	APK                string `json:"apk"`
+	DSN                string `json:"dsn"`
 }
 
 // Load method loads configuration file to Config struct
