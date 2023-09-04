@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -55,6 +56,7 @@ func (pc *PriceClient) doRequest() (*Prices, error) {
 		return nil, err
 	}
 
+	pc.Prices = nil
 	pc.Prices = p
 
 	// pc.doRequestOrderbook()
@@ -87,7 +89,7 @@ func (pc *PriceClient) doRequestOrderbook() {
 	res, err := cl.Do(req)
 
 	if err == nil {
-		body, err := ioutil.ReadAll(res.Body)
+		body, err := io.ReadAll(res.Body)
 		if err != nil {
 			log.Println(err)
 			logTelegram(err.Error())
