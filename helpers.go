@@ -361,7 +361,7 @@ func sendMined(address string, heightDif int64) {
 	var amountBasic uint64
 	var referralIndex float64
 	miner := getMiner(address)
-	stats := getStats()
+	stats := cch.StatsCache
 	height := int64(getHeight())
 
 	if miner.ID != 0 {
@@ -789,7 +789,7 @@ func getMiningFactor(m *Miner) float64 {
 
 func getBasicAmount(amount uint64) uint64 {
 	ba := uint64(0)
-	stats := getStats()
+	stats := cch.StatsCache
 
 	ba = uint64(float64(amount) / float64((float64(stats.ActiveUnits) + float64(stats.ActiveReferred)/4)))
 
