@@ -371,30 +371,20 @@ func withdrawView(ctx *macaron.Context) {
 
 		sendAsset2(u.MinedTelegram-Fee, "", u.Address)
 
+		mon.NewBalanceTelegram -= u.MinedTelegram
+		mon.OldBalanceTelegram = mon.NewBalanceTelegram
+
+		ks := &KeyValue{Key: "oldBalanceTelegram"}
+		db.FirstOrCreate(ks, ks)
+		ks.ValueInt = mon.OldBalanceTelegram
+		err = db.Save(ks).Error
+		if err != nil {
+			log.Println(err)
+			logTelegram(err.Error())
+		}
+
 		u.MinedTelegram = 0
 		db.Save(u)
-
-		go func() {
-			time.Sleep(time.Second * 30)
-
-			mon.NewBalanceTelegram, err = getBalance(TelegramAddress)
-			if err != nil {
-				log.Println(err)
-				logTelegram(err.Error())
-			}
-			mon.OldBalanceTelegram = mon.NewBalanceTelegram
-
-			ks := &KeyValue{Key: "oldBalanceTelegram"}
-			db.FirstOrCreate(ks, ks)
-			ks.ValueInt = mon.OldBalanceTelegram
-			err = db.Save(ks).Error
-			if err != nil {
-				log.Println(err)
-				logTelegram(err.Error())
-			}
-
-			// mon.loadMiners()
-		}()
 	} else {
 		mr.Error = 1
 		mr.Success = false
@@ -461,13 +451,11 @@ func inviteView(ctx *macaron.Context) {
 
 	db.Where("referral_id = ? AND mining_height < ?", m.ID, height-1440).Find(&referred)
 	if time.Since(m.LastInvite) > (time.Hour * 24) {
-		go func() {
-			for _, r := range referred {
-				if r.TelegramId != 0 {
-					sendInvite(r)
-				}
+		for _, r := range referred {
+			if r.TelegramId != 0 {
+				sendInvite(r)
 			}
-		}()
+		}
 		m.LastInvite = time.Now()
 		err := db.Save(m).Error
 		if err != nil {
