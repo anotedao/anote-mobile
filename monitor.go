@@ -153,21 +153,6 @@ func (m *Monitor) checkMined() {
 }
 
 func (m *Monitor) start() {
-	m.loadMiners()
-
-	ks := &KeyValue{Key: "oldBalanceTelegram"}
-	db.FirstOrCreate(ks, ks)
-
-	m.OldBalanceTelegram = uint64(ks.ValueInt)
-
-	go func() {
-		for {
-			m.Height = getHeight()
-			m.checkMined()
-			time.Sleep(time.Second * 120)
-		}
-	}()
-
 	total := 0
 
 	for _, mnr := range m.Miners {
@@ -185,8 +170,24 @@ func (m *Monitor) start() {
 	}
 }
 
+func (m *Monitor) start2() {
+	m.loadMiners()
+
+	ks := &KeyValue{Key: "oldBalanceTelegram"}
+	db.FirstOrCreate(ks, ks)
+
+	m.OldBalanceTelegram = uint64(ks.ValueInt)
+
+	for {
+		m.Height = getHeight()
+		m.checkMined()
+		time.Sleep(time.Second * 120)
+	}
+}
+
 func initMonitor() *Monitor {
 	m := &Monitor{}
 	go m.start()
+	go m.start2()
 	return m
 }
