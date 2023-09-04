@@ -235,7 +235,7 @@ func healthView(ctx *macaron.Context) {
 }
 
 func statsView(ctx *macaron.Context) {
-	sr := getStats()
+	sr := cch.StatsCache
 	ctx.JSON(200, sr)
 }
 

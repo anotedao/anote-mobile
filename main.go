@@ -21,6 +21,8 @@ var db *gorm.DB
 
 var pc *PriceClient
 
+var cch *Cache
+
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
@@ -37,6 +39,8 @@ func main() {
 	mon = initMonitor()
 
 	pc = initPriceClient()
+
+	cch = initCache()
 
 	// val := "%d%s__239395"
 	// dataTransaction("3A9Rb3t91eHg1ypsmBiRth4Ld9ZytGwZe9p", &val, nil, nil)

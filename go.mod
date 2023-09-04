@@ -3,6 +3,8 @@ module anote-mobile
 go 1.19
 
 require (
+	github.com/anonutopia/gowaves v1.0.27
+	github.com/dustin/go-humanize v1.0.1
 	github.com/go-macaron/cache v0.0.0-20200329073519-53bb48172687
 	github.com/go-macaron/captcha v0.2.0
 	github.com/ip2location/ip2location-go/v9 v9.5.0
