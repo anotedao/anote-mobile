@@ -168,13 +168,6 @@ func (m *Monitor) start() {
 		}
 	}()
 
-	// go func() {
-	// 	for {
-	// 		m.loadMiners()
-	// 		time.Sleep(time.Minute * 2)
-	// 	}
-	// }()
-
 	total := 0
 
 	for _, mnr := range m.Miners {
