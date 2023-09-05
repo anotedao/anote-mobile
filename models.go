@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"strconv"
 	"time"
 
@@ -81,8 +82,10 @@ func getMinerTel(tid int64) *Miner {
 func getMinerOrCreate(addr string) *Miner {
 	mnr := &Miner{}
 	result := db.FirstOrCreate(m, &Miner{Address: addr})
-	if result.RowsAffected == 1 {
-		// mon.Miners = append(mon.Miners, mnr)
+	if result.Error != nil {
+		log.Println(result.Error)
+		logTelegram(result.Error.Error())
+		log.Println(addr)
 	}
 
 	return mnr
