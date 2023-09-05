@@ -22,7 +22,7 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 	}
 
 	addr := ctx.Params("address")
-	if len(addr) > 0 {
+	if len(addr) > 0 && addr != "0" {
 		cpid := ctx.Params("captchaid")
 		cp := ctx.Params("captcha")
 		code := ctx.Params("code")
