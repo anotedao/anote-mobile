@@ -29,79 +29,84 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 		ip := GetRealIP(ctx.Req.Request)
 
 		miner := getMinerOrCreate(addr)
-		savedHeight := miner.MiningHeight
+		if miner != nil {
+			savedHeight := miner.MiningHeight
 
-		code = strings.TrimSpace(code)
-		code = regexp.MustCompile(`[^0-9]+`).ReplaceAllString(code, "")
+			code = strings.TrimSpace(code)
+			code = regexp.MustCompile(`[^0-9]+`).ReplaceAllString(code, "")
 
-		codeInt, err := strconv.Atoi(code)
-		if err != nil {
-			log.Println(err)
-			logTelegram(err.Error())
-			pr.Success = false
-			pr.Error = 2
-		}
-
-		if !cpt.Verify(cpid, cp) {
-			pr.Success = false
-			pr.Error = 1
-		}
-
-		if int(codeInt) != getMiningCode() {
-			pr.Success = false
-			pr.Error = 2
-		}
-
-		if pr.Error == 0 && countIP(ip) > 3 {
-			pr.Success = false
-			pr.Error = 4
-		}
-
-		if !strings.HasPrefix(addr, "3A") {
-			pr.Success = false
-			pr.Error = 5
-		}
-
-		if pr.Error == 0 && (height-miner.MiningHeight > 1410) {
-			log.Println(fmt.Sprintf("%s %s", addr, ip))
-
-			miner.clearIps()
-			miner.saveIp(ip)
-
-			if savedHeight > 0 {
-				sendMined(addr, height-savedHeight)
-
-				miner.Cycles++
-				miner.PingCount = 1
-				miner.MiningTime = time.Now()
-				miner.MiningHeight = height
-				miner.BatteryNotification = true
-				err = db.Save(miner).Error
-				if err != nil {
-					log.Println(err)
-					logTelegram(err.Error())
-				}
-				miner.saveInBlockchain()
-			} else {
-				miner.MinedTelegram = Fee
-				miner.PingCount = 1
-				miner.Cycles = 1
-				miner.MiningTime = time.Now()
-				miner.MiningHeight = height
-				miner.UpdatedApp = true
-				miner.BatteryNotification = true
-				if miner.Address == "" {
-					miner.Address = strconv.Itoa(int(miner.TelegramId))
-				}
-				err := db.Save(miner).Error
-				if err != nil {
-					log.Println(err)
-					logTelegram(err.Error())
-				}
-				miner.saveInBlockchain()
-				sendNotificationFirst(miner)
+			codeInt, err := strconv.Atoi(code)
+			if err != nil {
+				log.Println(err)
+				logTelegram(err.Error())
+				pr.Success = false
+				pr.Error = 2
 			}
-			// mon.loadMiners()
+
+			if !cpt.Verify(cpid, cp) {
+				pr.Success = false
+				pr.Error = 1
+			}
+
+			if int(codeInt) != getMiningCode() {
+				pr.Success = false
+				pr.Error = 2
+			}
+
+			if pr.Error == 0 && countIP(ip) > 3 {
+				pr.Success = false
+				pr.Error = 4
+			}
+
+			if !strings.HasPrefix(addr, "3A") {
+				pr.Success = false
+				pr.Error = 5
+			}
+
+			if pr.Error == 0 && (height-miner.MiningHeight > 1410) {
+				log.Println(fmt.Sprintf("%s %s", addr, ip))
+
+				miner.clearIps()
+				miner.saveIp(ip)
+
+				if savedHeight > 0 {
+					sendMined(addr, height-savedHeight)
+
+					miner.Cycles++
+					miner.PingCount = 1
+					miner.MiningTime = time.Now()
+					miner.MiningHeight = height
+					miner.BatteryNotification = true
+					err = db.Save(miner).Error
+					if err != nil {
+						log.Println(err)
+						logTelegram(err.Error())
+					}
+					miner.saveInBlockchain()
+				} else {
+					miner.MinedTelegram = Fee
+					miner.PingCount = 1
+					miner.Cycles = 1
+					miner.MiningTime = time.Now()
+					miner.MiningHeight = height
+					miner.UpdatedApp = true
+					miner.BatteryNotification = true
+					if miner.Address == "" {
+						miner.Address = strconv.Itoa(int(miner.TelegramId))
+					}
+					err := db.Save(miner).Error
+					if err != nil {
+						log.Println(err)
+						logTelegram(err.Error())
+					}
+					miner.saveInBlockchain()
+					sendNotificationFirst(miner)
+				}
+				// mon.loadMiners()
+			}
+		} else {
+			pr.Success = false
+			pr.Error = 7
 		}
 	} else {
 		pr.Success = false

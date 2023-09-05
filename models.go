@@ -84,8 +84,8 @@ func getMinerOrCreate(addr string) *Miner {
 	result := db.FirstOrCreate(m, &Miner{Address: addr})
 	if result.Error != nil {
 		log.Println(result.Error)
-		logTelegram(result.Error.Error())
 		log.Println(addr)
+		return nil
 	}
 
 	return mnr
