@@ -81,7 +81,7 @@ func getMinerTel(tid int64) *Miner {
 
 func getMinerOrCreate(addr string) *Miner {
 	mnr := &Miner{}
-	result := db.Table("miners").FirstOrCreate(m, &Miner{Address: addr})
+	result := db.FirstOrCreate(mnr, &Miner{Address: addr})
 	if result.Error != nil {
 		log.Println(result.Error)
 		logTelegram(result.Error.Error())
