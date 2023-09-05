@@ -790,7 +790,7 @@ func getMiningFactor(m *Miner) float64 {
 func getBasicAmount(amount uint64) uint64 {
 	ba := uint64(0)
 
-	if cch.StatsCache != nil {
+	if cch != nil && cch.StatsCache != nil {
 		stats := cch.StatsCache
 		ba = uint64(float64(amount) / float64((float64(stats.ActiveUnits) + float64(stats.ActiveReferred)/4)))
 	}
