@@ -103,6 +103,8 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 		// mon.loadMiners()
 	}
 
+	miner = nil
+
 	ctx.Resp.Header().Add("Access-Control-Allow-Origin", "*")
 	ctx.JSON(200, pr)
 }
