@@ -65,27 +65,27 @@ func (m *Miner) clearIps() {
 }
 
 func getMiner(addr string) *Miner {
-	m := &Miner{}
-	db.First(m, &Miner{Address: addr})
+	mnr := &Miner{}
+	db.First(mnr, &Miner{Address: addr})
 
-	return m
+	return mnr
 }
 
 func getMinerTel(tid int64) *Miner {
-	m := &Miner{}
-	db.FirstOrCreate(m, &Miner{TelegramId: tid})
+	mnr := &Miner{}
+	db.FirstOrCreate(mnr, &Miner{TelegramId: tid})
 
-	return m
+	return mnr
 }
 
 func getMinerOrCreate(addr string) *Miner {
-	m := &Miner{}
+	mnr := &Miner{}
 	result := db.FirstOrCreate(m, &Miner{Address: addr})
 	if result.RowsAffected == 1 {
-		mon.Miners = append(mon.Miners, m)
+		// mon.Miners = append(mon.Miners, mnr)
 	}
 
-	return m
+	return mnr
 }
 
 type IpAddress struct {

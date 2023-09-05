@@ -7,31 +7,31 @@ import (
 )
 
 func initMacaron() *macaron.Macaron {
-	m := macaron.Classic()
+	mac := macaron.Classic()
 
-	m.Use(macaron.Renderer())
-	m.Use(cache.Cacher())
-	m.Use(captcha.Captchaer(
+	mac.Use(macaron.Renderer())
+	mac.Use(cache.Cacher())
+	mac.Use(captcha.Captchaer(
 		captcha.Options{
 			ChallengeNums: 5,
 		},
 	))
 
-	m.Get("/save-telegram/:addr/:telegramid", saveTelegram)
-	m.Get("/mine/:address/:captchaid/:captcha/:code", mineView)
-	m.Get("/mine/:address/:captchaid/:captcha/:code/:ref", mineView)
-	m.Get("/new-captcha/:addr", newCaptchaView)
-	// m.Get("/new-user/:addr", newUserView)
-	// m.Get("/new-user/:addr/:ref", newUserView)
-	m.Get("/mine/:address", minePingView)
-	m.Get("/miner/:addr", minerView)
-	m.Get("/tminer/:tid", telegramMinerView)
-	m.Get("/withdraw/:tid", withdrawView)
-	m.Get("/mine/:address/:apk", minePingView)
-	m.Get("/health/:address", healthView)
-	m.Get("/stats", statsView)
-	m.Get("/invite/:addr", inviteView)
-	m.Get("/telegram-mine/:tid/:code", telegramMineView)
+	mac.Get("/save-telegram/:addr/:telegramid", saveTelegram)
+	mac.Get("/mine/:address/:captchaid/:captcha/:code", mineView)
+	mac.Get("/mine/:address/:captchaid/:captcha/:code/:ref", mineView)
+	mac.Get("/new-captcha/:addr", newCaptchaView)
+	// mac.Get("/new-user/:addr", newUserView)
+	// mac.Get("/new-user/:addr/:ref", newUserView)
+	mac.Get("/mine/:address", minePingView)
+	mac.Get("/miner/:addr", minerView)
+	mac.Get("/tminer/:tid", telegramMinerView)
+	mac.Get("/withdraw/:tid", withdrawView)
+	mac.Get("/mine/:address/:apk", minePingView)
+	mac.Get("/health/:address", healthView)
+	mac.Get("/stats", statsView)
+	mac.Get("/invite/:addr", inviteView)
+	mac.Get("/telegram-mine/:tid/:code", telegramMineView)
 
-	return m
+	return mac
 }
