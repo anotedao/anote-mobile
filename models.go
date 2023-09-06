@@ -76,6 +76,7 @@ func getMinerTel(tid int64) *Miner {
 	mnr := &Miner{}
 	if db.First(mnr, &Miner{TelegramId: tid}).Error != nil {
 		db.FirstOrCreate(mnr, &Miner{TelegramId: tid, Address: strconv.Itoa(int(tid))})
+		log.Println(prettyPrint(mnr))
 	}
 
 	return mnr
