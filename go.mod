@@ -9,7 +9,7 @@ require (
 	github.com/go-macaron/captcha v0.2.0
 	github.com/ip2location/ip2location-go/v9 v9.5.0
 	github.com/wavesplatform/gowaves v0.10.1
-	gopkg.in/macaron.v1 v1.4.0
+	gopkg.in/macaron.v1 v1.5.0
 	gorm.io/driver/postgres v1.5.2
 	gorm.io/driver/sqlite v1.5.3
 	gorm.io/gorm v1.25.4
@@ -43,5 +43,5 @@ require (
 	google.golang.org/genproto v0.0.0-20210226172003-ab064af71705 // indirect
 	google.golang.org/grpc v1.48.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
-	gopkg.in/ini.v1 v1.46.0 // indirect
+	gopkg.in/ini.v1 v1.66.6 // indirect
 )

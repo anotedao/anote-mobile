@@ -9,7 +9,9 @@ type Cache struct {
 }
 
 func (c *Cache) loadStatsCache() {
-	c.StatsCache = getStats()
+	stats := getStats()
+	c.StatsCache = nil
+	c.StatsCache = stats
 }
 
 func (c *Cache) start() {
