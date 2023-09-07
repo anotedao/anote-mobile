@@ -23,22 +23,9 @@ import (
 	"github.com/wavesplatform/gowaves/pkg/client"
 	"github.com/wavesplatform/gowaves/pkg/crypto"
 	"github.com/wavesplatform/gowaves/pkg/proto"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 )
 
 func getMiningCode() int {
-	dbconf := gorm.Config{}
-	dbconf.Logger = logger.Default.LogMode(logger.Error)
-
-	db, err := gorm.Open(postgres.Open(conf.DSN), &dbconf)
-
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
-
 	ks := &KeyValue{Key: "dailyCode"}
 	db.FirstOrCreate(ks, ks)
 
