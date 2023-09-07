@@ -8,10 +8,11 @@ import (
 )
 
 func initDb() *gorm.DB {
-	db, err := gorm.Open(postgres.Open(conf.DSN), &gorm.Config{
-		SkipDefaultTransaction: true,
-		PrepareStmt:            true,
-	})
+	// db, err := gorm.Open(postgres.Open(conf.DSN), &gorm.Config{
+	// 	SkipDefaultTransaction: true,
+	// 	PrepareStmt:            true,
+	// })
+	db, err := gorm.Open(postgres.Open(conf.DSN), &gorm.Config{})
 
 	if err != nil {
 		log.Println(err)
