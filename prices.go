@@ -129,7 +129,7 @@ func (pc *PriceClient) start() {
 
 		pc.Loaded = true
 
-		time.Sleep(time.Minute * 5)
+		time.Sleep(time.Minute * 1)
 	}
 }
 
