@@ -13,7 +13,7 @@ import (
 
 var conf *Config
 
-var m *macaron.Macaron
+var mac *macaron.Macaron
 
 var mon *Monitor
 
@@ -34,7 +34,7 @@ func main() {
 
 	db = initDb()
 
-	m = initMacaron()
+	mac = initMacaron()
 
 	mon = initMonitor()
 
@@ -42,5 +42,5 @@ func main() {
 
 	cch = initCache()
 
-	m.Run("127.0.0.1", Port)
+	mac.Run("127.0.0.1", Port)
 }
