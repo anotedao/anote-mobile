@@ -173,52 +173,54 @@ type ImageResponse struct {
 }
 
 func minePingView(ctx *macaron.Context) {
-	a := ctx.Params("address")
-	apk := ctx.Params("apk")
-	ip := GetRealIP(ctx.Req.Request)
-
 	mr := &MinePingResponse{Success: true}
-	mr.CycleFinished = false
+	a := ctx.Params("address")
+	if len(a) > 0 && strings.HasPrefix(a, "3A") {
+		apk := ctx.Params("apk")
+		ip := GetRealIP(ctx.Req.Request)
 
-	height := int64(mon.Height)
+		mr.CycleFinished = false
 
-	miner := getMiner(a)
+		height := int64(mon.Height)
 
-	if miner.ID == 0 {
-		mr.Success = false
-		mr.Error = 1
-	} else if !strings.HasPrefix(a, "3A") {
-		mr.Success = false
-		mr.Error = 2
-	} else {
-		if time.Since(miner.LastPing) > time.Second*55 {
-			miner.saveIp(ip)
-			minerPing(miner)
+		miner := getMiner(a)
 
-			if apk == conf.APK {
-				miner.UpdatedApp = true
-			} else {
-				miner.UpdatedApp = false
-			}
+		if miner.ID == 0 {
+			mr.Success = false
+			mr.Error = 1
+		} else if !strings.HasPrefix(a, "3A") {
+			mr.Success = false
+			mr.Error = 2
+		} else {
+			if time.Since(miner.LastPing) > time.Second*55 {
+				miner.saveIp(ip)
+				minerPing(miner)
 
-			err := db.Save(miner).Error
-			if err != nil {
-				log.Println(err)
-				logTelegram(err.Error())
+				if apk == conf.APK {
+					miner.UpdatedApp = true
+				} else {
+					miner.UpdatedApp = false
+				}
+
+				err := db.Save(miner).Error
+				if err != nil {
+					log.Println(err)
+					logTelegram(err.Error())
+				}
 			}
 		}
+
+		// m := time.Since(miner.MiningTime).Minutes()
+		mr.Health = int((math.Floor(getIpFactor(miner, true, uint64(height), 0)*100) / 100) * 100)
+
+		if mr.Health > 100 {
+			mr.Health = 100
+		} else if mr.Health < 0 {
+			mr.Health = 0
+		}
+
+		log.Println("Ping: " + a + " " + ip + " Health: " + strconv.Itoa(mr.Health) + " IPs: " + strconv.Itoa(int(db.Model(miner).Association("IpAddresses").Count())) + " Pings: " + strconv.Itoa(int(miner.PingCount)))
 	}
-
-	// m := time.Since(miner.MiningTime).Minutes()
-	mr.Health = int((math.Floor(getIpFactor(miner, true, uint64(height), 0)*100) / 100) * 100)
-
-	if mr.Health > 100 {
-		mr.Health = 100
-	} else if mr.Health < 0 {
-		mr.Health = 0
-	}
-
-	log.Println("Ping: " + a + " " + ip + " Health: " + strconv.Itoa(mr.Health) + " IPs: " + strconv.Itoa(int(db.Model(miner).Association("IpAddresses").Count())) + " Pings: " + strconv.Itoa(int(miner.PingCount)))
 
 	ctx.JSON(200, mr)
 }
