@@ -383,11 +383,13 @@ func sendMined(address string, heightDif int64) {
 		amount = (total.Balance / (uint64(stats.ActiveUnits) + uint64(stats.ActiveReferred/4))) - Fee
 		amountBasic = amount
 
-		if getRefCount(miner) >= 3 || hasAintHealth(miner, true) {
+		rc := getRefCount(miner)
+
+		if rc >= 3 || hasAintHealth(miner, true) {
 			amount *= 10
 		}
 
-		referralIndex = float64(getRefCount(miner)) * 0.25
+		referralIndex = float64(rc) * 0.25
 
 		if heightDif > 2880 {
 			times := int(heightDif / 1440)
@@ -628,6 +630,8 @@ func getRefCount(m *Miner) uint64 {
 	db.Where("referral_id = ? AND mining_height > ?", m.ID, height-2880).Find(&miners)
 	count := len(miners)
 
+	miners = nil
+
 	return uint64(count)
 }
 
@@ -762,9 +766,11 @@ func getBalance(address string) (uint64, error) {
 func getMiningFactor(m *Miner) float64 {
 	mf := float64(1)
 
-	referralIndex := float64(getRefCount(m)) * 0.25
+	rc := getRefCount(m)
 
-	if getRefCount(m) >= 3 || hasAintHealth(m, true) {
+	referralIndex := float64(rc) * 0.25
+
+	if rc >= 3 || hasAintHealth(m, true) {
 		mf *= 10
 	}
 
