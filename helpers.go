@@ -506,10 +506,12 @@ func getCallerInfo() (info string) {
 func logTelegram(message string) {
 	message = "anote-mobile:" + getCallerInfo() + url.PathEscape(url.QueryEscape(message))
 
-	_, err := http.Get(fmt.Sprintf("http://localhost:5006/log/%s", message))
+	resp, err := http.Get(fmt.Sprintf("http://localhost:5006/log/%s", message))
 	if err != nil {
 		log.Println(err)
 	}
+
+	defer resp.Body.Close()
 }
 
 func parseItem(value string, index int) interface{} {
@@ -744,43 +746,48 @@ func hasAintHealth(m *Miner, second bool) bool {
 }
 
 func sendInvite(m *Miner) {
-	_, err := http.Get(fmt.Sprintf("http://localhost:5006/invite/%s", strconv.Itoa(int(m.TelegramId))))
+	resp, err := http.Get(fmt.Sprintf("http://localhost:5006/invite/%s", strconv.Itoa(int(m.TelegramId))))
 	if err != nil {
 		log.Println(err)
 		logTelegram(err.Error())
 	}
+	defer resp.Body.Close()
 }
 
 func sendNotificationEnd(m *Miner) {
-	_, err := http.Get(fmt.Sprintf("http://localhost:5006/notification-end/%s", strconv.Itoa(int(m.TelegramId))))
+	resp, err := http.Get(fmt.Sprintf("http://localhost:5006/notification-end/%s", strconv.Itoa(int(m.TelegramId))))
 	if err != nil {
 		log.Println(err)
 		logTelegram(err.Error())
 	}
+	defer resp.Body.Close()
 }
 
 func sendNotificationWeekly(m *Miner) {
-	_, err := http.Get(fmt.Sprintf("http://localhost:5006/notification-weekly/%s", strconv.Itoa(int(m.TelegramId))))
+	resp, err := http.Get(fmt.Sprintf("http://localhost:5006/notification-weekly/%s", strconv.Itoa(int(m.TelegramId))))
 	if err != nil {
 		log.Println(err)
 		logTelegram(err.Error())
 	}
+	defer resp.Body.Close()
 }
 
 func sendNotificationBattery(m *Miner) {
-	_, err := http.Get(fmt.Sprintf("http://localhost:5006/notification-bo/%s", strconv.Itoa(int(m.TelegramId))))
+	resp, err := http.Get(fmt.Sprintf("http://localhost:5006/notification-bo/%s", strconv.Itoa(int(m.TelegramId))))
 	if err != nil {
 		log.Println(err)
 		logTelegram(err.Error())
 	}
+	defer resp.Body.Close()
 }
 
 func sendNotificationFirst(m *Miner) {
-	_, err := http.Get(fmt.Sprintf("http://localhost:5006/notification-first/%s", strconv.Itoa(int(m.TelegramId))))
+	resp, err := http.Get(fmt.Sprintf("http://localhost:5006/notification-first/%s", strconv.Itoa(int(m.TelegramId))))
 	if err != nil {
 		log.Println(err)
 		logTelegram(err.Error())
 	}
+	defer resp.Body.Close()
 }
 
 func getBalance(address string) (uint64, error) {
