@@ -26,7 +26,13 @@ type PriceClient struct {
 
 func (pc *PriceClient) doRequest() (*Prices, error) {
 	p := &Prices{}
-	cl := http.Client{}
+	cl := http.Client{
+		Transport: &http.Transport{
+			ForceAttemptHTTP2: true,
+			MaxConnsPerHost:   -1,
+			DisableKeepAlives: true,
+		},
+	}
 
 	var req *http.Request
 	var err error
@@ -71,7 +77,13 @@ func (pc *PriceClient) loadPrice() {
 
 func (pc *PriceClient) doRequestOrderbook() {
 	or := &OrderbookStatusResponse{}
-	cl := http.Client{}
+	cl := http.Client{
+		Transport: &http.Transport{
+			ForceAttemptHTTP2: true,
+			MaxConnsPerHost:   -1,
+			DisableKeepAlives: true,
+		},
+	}
 
 	var req *http.Request
 	var err error
@@ -266,7 +278,13 @@ func getPriceCoinGecko() float64 {
 	price := float64(1.5)
 
 	cgr := &CoinGeckoResponse{}
-	cl := http.Client{}
+	cl := http.Client{
+		Transport: &http.Transport{
+			ForceAttemptHTTP2: true,
+			MaxConnsPerHost:   -1,
+			DisableKeepAlives: true,
+		},
+	}
 
 	var req *http.Request
 	var err error

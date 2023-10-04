@@ -97,7 +97,13 @@ func dataTransaction(key string, valueStr *string, valueInt *int64, valueBool *b
 	}
 
 	// Create new HTTP client to send the transaction to public TestNet nodes
-	cl, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{}})
+	cl, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{
+		Transport: &http.Transport{
+			ForceAttemptHTTP2: true,
+			MaxConnsPerHost:   -1,
+			DisableKeepAlives: true,
+		},
+	}})
 	if err != nil {
 		log.Println(err)
 		logTelegram(err.Error())
@@ -122,7 +128,13 @@ func dataTransaction(key string, valueStr *string, valueInt *int64, valueBool *b
 func getData(key string, address *string) (interface{}, error) {
 	var a proto.WavesAddress
 
-	wc, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{}})
+	wc, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{
+		Transport: &http.Transport{
+			ForceAttemptHTTP2: true,
+			MaxConnsPerHost:   -1,
+			DisableKeepAlives: true,
+		},
+	}})
 	if err != nil {
 		log.Println(err)
 		logTelegram(err.Error())
@@ -168,7 +180,13 @@ func getData(key string, address *string) (interface{}, error) {
 func getHeight() uint64 {
 	height := uint64(0)
 
-	cl, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{}})
+	cl, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{
+		Transport: &http.Transport{
+			ForceAttemptHTTP2: true,
+			MaxConnsPerHost:   -1,
+			DisableKeepAlives: true,
+		},
+	}})
 	if err != nil {
 		log.Println(err)
 		logTelegram(err.Error())
@@ -243,7 +261,13 @@ func sendAsset(amount uint64, assetId string, recipient string) error {
 	}
 
 	// Create new HTTP client to send the transaction to public TestNet nodes
-	client, err := client.NewClient(client.Options{BaseUrl: nodeURL, Client: &http.Client{}})
+	client, err := client.NewClient(client.Options{BaseUrl: nodeURL, Client: &http.Client{
+		Transport: &http.Transport{
+			ForceAttemptHTTP2: true,
+			MaxConnsPerHost:   -1,
+			DisableKeepAlives: true,
+		},
+	}})
 	if err != nil {
 		log.Println(err)
 		logTelegram(err.Error())
@@ -322,7 +346,13 @@ func sendAsset2(amount uint64, assetId string, recipient string) error {
 	}
 
 	// Create new HTTP client to send the transaction to public TestNet nodes
-	client, err := client.NewClient(client.Options{BaseUrl: nodeURL, Client: &http.Client{}})
+	client, err := client.NewClient(client.Options{BaseUrl: nodeURL, Client: &http.Client{
+		Transport: &http.Transport{
+			ForceAttemptHTTP2: true,
+			MaxConnsPerHost:   -1,
+			DisableKeepAlives: true,
+		},
+	}})
 	if err != nil {
 		log.Println(err)
 		logTelegram(err.Error())
@@ -365,7 +395,13 @@ func sendMined(address string, heightDif int64) {
 			logTelegram(err.Error())
 		}
 
-		cl, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{}})
+		cl, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{
+			Transport: &http.Transport{
+				ForceAttemptHTTP2: true,
+				MaxConnsPerHost:   -1,
+				DisableKeepAlives: true,
+			},
+		}})
 		if err != nil {
 			log.Println(err)
 			logTelegram(err.Error())
@@ -747,7 +783,13 @@ func getBalance(address string) (uint64, error) {
 		return 0, err
 	}
 
-	cl, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{}})
+	cl, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{
+		Transport: &http.Transport{
+			ForceAttemptHTTP2: true,
+			MaxConnsPerHost:   -1,
+			DisableKeepAlives: true,
+		},
+	}})
 	if err != nil {
 		return 0, err
 	}
