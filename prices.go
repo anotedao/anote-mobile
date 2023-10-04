@@ -29,7 +29,7 @@ func (pc *PriceClient) doRequest() (*Prices, error) {
 	cl := http.Client{
 		Transport: &http.Transport{
 			ForceAttemptHTTP2: true,
-			MaxConnsPerHost:   -1,
+			// MaxConnsPerHost:   -1,
 			DisableKeepAlives: true,
 		},
 	}
@@ -80,7 +80,7 @@ func (pc *PriceClient) doRequestOrderbook() {
 	cl := http.Client{
 		Transport: &http.Transport{
 			ForceAttemptHTTP2: true,
-			MaxConnsPerHost:   -1,
+			// MaxConnsPerHost:   -1,
 			DisableKeepAlives: true,
 		},
 	}
@@ -281,7 +281,7 @@ func getPriceCoinGecko() float64 {
 	cl := http.Client{
 		Transport: &http.Transport{
 			ForceAttemptHTTP2: true,
-			MaxConnsPerHost:   -1,
+			// MaxConnsPerHost:   -1,
 			DisableKeepAlives: true,
 		},
 	}

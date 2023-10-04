@@ -100,7 +100,7 @@ func dataTransaction(key string, valueStr *string, valueInt *int64, valueBool *b
 	cl, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{
 		Transport: &http.Transport{
 			ForceAttemptHTTP2: true,
-			MaxConnsPerHost:   -1,
+			// MaxConnsPerHost:   -1,
 			DisableKeepAlives: true,
 		},
 	}})
@@ -131,7 +131,7 @@ func getData(key string, address *string) (interface{}, error) {
 	wc, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{
 		Transport: &http.Transport{
 			ForceAttemptHTTP2: true,
-			MaxConnsPerHost:   -1,
+			// MaxConnsPerHost:   -1,
 			DisableKeepAlives: true,
 		},
 	}})
@@ -183,7 +183,7 @@ func getHeight() uint64 {
 	cl, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{
 		Transport: &http.Transport{
 			ForceAttemptHTTP2: true,
-			MaxConnsPerHost:   -1,
+			// MaxConnsPerHost:   -1,
 			DisableKeepAlives: true,
 		},
 	}})
@@ -264,7 +264,7 @@ func sendAsset(amount uint64, assetId string, recipient string) error {
 	client, err := client.NewClient(client.Options{BaseUrl: nodeURL, Client: &http.Client{
 		Transport: &http.Transport{
 			ForceAttemptHTTP2: true,
-			MaxConnsPerHost:   -1,
+			// MaxConnsPerHost:   -1,
 			DisableKeepAlives: true,
 		},
 	}})
@@ -349,7 +349,7 @@ func sendAsset2(amount uint64, assetId string, recipient string) error {
 	client, err := client.NewClient(client.Options{BaseUrl: nodeURL, Client: &http.Client{
 		Transport: &http.Transport{
 			ForceAttemptHTTP2: true,
-			MaxConnsPerHost:   -1,
+			// MaxConnsPerHost:   -1,
 			DisableKeepAlives: true,
 		},
 	}})
@@ -398,7 +398,7 @@ func sendMined(address string, heightDif int64) {
 		cl, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{
 			Transport: &http.Transport{
 				ForceAttemptHTTP2: true,
-				MaxConnsPerHost:   -1,
+				// MaxConnsPerHost:   -1,
 				DisableKeepAlives: true,
 			},
 		}})
@@ -786,7 +786,7 @@ func getBalance(address string) (uint64, error) {
 	cl, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{
 		Transport: &http.Transport{
 			ForceAttemptHTTP2: true,
-			MaxConnsPerHost:   -1,
+			// MaxConnsPerHost:   -1,
 			DisableKeepAlives: true,
 		},
 	}})
