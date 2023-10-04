@@ -101,7 +101,8 @@ func dataTransaction(key string, valueStr *string, valueInt *int64, valueBool *b
 		Transport: &http.Transport{
 			ForceAttemptHTTP2: true,
 			// MaxConnsPerHost:   -1,
-			DisableKeepAlives: true,
+			MaxIdleConnsPerHost: -1,
+			DisableKeepAlives:   true,
 		},
 	}})
 	if err != nil {
@@ -132,7 +133,8 @@ func getData(key string, address *string) (interface{}, error) {
 		Transport: &http.Transport{
 			ForceAttemptHTTP2: true,
 			// MaxConnsPerHost:   -1,
-			DisableKeepAlives: true,
+			MaxIdleConnsPerHost: -1,
+			DisableKeepAlives:   true,
 		},
 	}})
 	if err != nil {
@@ -184,7 +186,8 @@ func getHeight() uint64 {
 		Transport: &http.Transport{
 			ForceAttemptHTTP2: true,
 			// MaxConnsPerHost:   -1,
-			DisableKeepAlives: true,
+			MaxIdleConnsPerHost: -1,
+			DisableKeepAlives:   true,
 		},
 	}})
 	if err != nil {
@@ -265,7 +268,8 @@ func sendAsset(amount uint64, assetId string, recipient string) error {
 		Transport: &http.Transport{
 			ForceAttemptHTTP2: true,
 			// MaxConnsPerHost:   -1,
-			DisableKeepAlives: true,
+			MaxIdleConnsPerHost: -1,
+			DisableKeepAlives:   true,
 		},
 	}})
 	if err != nil {
@@ -350,7 +354,8 @@ func sendAsset2(amount uint64, assetId string, recipient string) error {
 		Transport: &http.Transport{
 			ForceAttemptHTTP2: true,
 			// MaxConnsPerHost:   -1,
-			DisableKeepAlives: true,
+			MaxIdleConnsPerHost: -1,
+			DisableKeepAlives:   true,
 		},
 	}})
 	if err != nil {
@@ -399,7 +404,8 @@ func sendMined(address string, heightDif int64) {
 			Transport: &http.Transport{
 				ForceAttemptHTTP2: true,
 				// MaxConnsPerHost:   -1,
-				DisableKeepAlives: true,
+				MaxIdleConnsPerHost: -1,
+				DisableKeepAlives:   true,
 			},
 		}})
 		if err != nil {
@@ -787,7 +793,8 @@ func getBalance(address string) (uint64, error) {
 		Transport: &http.Transport{
 			ForceAttemptHTTP2: true,
 			// MaxConnsPerHost:   -1,
-			DisableKeepAlives: true,
+			MaxIdleConnsPerHost: -1,
+			DisableKeepAlives:   true,
 		},
 	}})
 	if err != nil {
