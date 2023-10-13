@@ -427,7 +427,7 @@ func sendMined(address string, heightDif int64) {
 
 		rc := getRefCount(miner)
 
-		if rc >= 3 || hasAintHealth(miner, true) {
+		if hasAintHealth(miner, true) {
 			amount *= 10
 		}
 
@@ -643,7 +643,7 @@ func getStats() *Stats {
 			sr.PayoutMiners++
 			pc += int(m.PingCount)
 
-			if getRefCount(m) >= 3 || hasAintHealth(m, true) {
+			if hasAintHealth(m, true) {
 				sr.ActiveUnits += 10
 			} else {
 				sr.ActiveUnits++
@@ -826,7 +826,7 @@ func getMiningFactor(m *Miner) float64 {
 
 	referralIndex := float64(rc) * 0.25
 
-	if rc >= 3 || hasAintHealth(m, true) {
+	if hasAintHealth(m, true) {
 		mf *= 10
 	}
 
