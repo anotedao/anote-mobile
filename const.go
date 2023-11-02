@@ -34,5 +34,5 @@ const (
 
 	AggregatorURL = "https://wavescup.world/aggregator/calc?token0=HqieNeUxTqzMufgF49QvK99h2ShsAuJAGYKvYZrvRejN&token1=9wc3LXNA4TEBsXyKtoLE9mrbDD7WMHXvXrCjZvabLAsi&amountIn=10000"
 
-	CoinGeckoURL = "https://api.geckoterminal.com/api/v2/networks/bsc/tokens/0xbad04e33cc88bbcccc1b7adb8319f7d36f5bc472"
+	CoinGeckoURL = "https://api.geckoterminal.com/api/v2/networks/bsc/tokens/0xe7f0f1585bdbd06b18dbb87099b87bd79bbd315b"
 )
