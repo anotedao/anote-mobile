@@ -317,7 +317,6 @@ func minerView(ctx *macaron.Context) {
 			mr.TelegramId = u.TelegramId
 			mr.AlphaSent = getAlphaSent(mr.Address)
 			mr.Cycles = u.Cycles
-			mr.Price = pc.AnotePrice
 
 			if u.TelegramId != 0 {
 				mr.HasTelegram = true
@@ -328,6 +327,8 @@ func minerView(ctx *macaron.Context) {
 			db.Where("referral_id = ? AND mining_height > ?", u.ID, height-2880).Find(&miners).Count(&mr.Active)
 		}
 	}
+
+	mr.Price = pc.AnotePrice
 
 	ctx.JSON(200, mr)
 }
