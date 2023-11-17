@@ -398,6 +398,8 @@ func withdrawView(ctx *macaron.Context) {
 
 		u.MinedTelegram = 0
 		db.Save(u)
+
+		mon.loadMiners()
 	} else {
 		mr.Error = 1
 		mr.Success = false
