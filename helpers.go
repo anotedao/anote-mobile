@@ -11,7 +11,6 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
-	"math"
 	"net/http"
 	"net/url"
 	"path"
@@ -385,7 +384,6 @@ func sendMined(address string, heightDif int64) {
 	var referralIndex float64
 	miner := getMiner(address)
 	stats := cch.StatsCache
-	height := int64(getHeight())
 
 	if miner.ID != 0 {
 		sender, err := crypto.NewPublicKeyFromBase58(conf.PublicKey)
@@ -447,11 +445,6 @@ func sendMined(address string, heightDif int64) {
 		if fa > MULTI8 {
 			fa = MULTI8
 		}
-
-		log.Println(fa)
-		log.Println(getIpFactor(miner, true, uint64(height), 2))
-
-		fa = uint64(float64(fa) * getIpFactor(miner, true, uint64(height), 2))
 
 		if strings.HasPrefix(address, "3A") {
 			sendAsset(fa, "", address)
@@ -629,7 +622,6 @@ func getStats() *Stats {
 	sr := &Stats{}
 	db.Find(&miners)
 	height := getHeight()
-	pc := 0
 
 	for _, m := range miners {
 		if height-uint64(m.MiningHeight) <= 1440 {
@@ -641,7 +633,6 @@ func getStats() *Stats {
 
 		if height-uint64(m.MiningHeight) <= 1440 {
 			sr.PayoutMiners++
-			pc += int(m.PingCount)
 
 			if hasAintHealth(m, true) {
 				sr.ActiveUnits += 10
@@ -652,7 +643,6 @@ func getStats() *Stats {
 	}
 
 	sr.InactiveMiners = len(miners) - sr.PayoutMiners
-	sr.PingCount = pc
 
 	return sr
 }
@@ -662,7 +652,6 @@ type Stats struct {
 	ActiveReferred int `json:"active_referred"`
 	PayoutMiners   int `json:"payout_miners"`
 	InactiveMiners int `json:"inactive_miners"`
-	PingCount      int `json:"ping_count"`
 	ActiveUnits    int `json:"active_units"`
 }
 
@@ -677,52 +666,6 @@ func getRefCount(m *Miner) uint64 {
 	miners = nil
 
 	return uint64(count)
-}
-
-func countIP(ip string) int64 {
-	ipa := &IpAddress{Address: ip}
-	count := db.Model(&ipa).Association("Miners").Count()
-
-	return count
-}
-
-func getIpFactor(m *Miner, checkReferred bool, height uint64, add int64) float64 {
-	ipf := float64(0)
-
-	if hasAintHealth(m, false) {
-		return 1
-	}
-
-	min := time.Since(m.MiningTime).Minutes() / 5
-
-	if m.PingCount < 5 {
-		m.PingCount += add
-	}
-
-	if min <= 282 {
-		ipf = float64(m.PingCount-1) / math.Floor(min)
-	} else {
-		ipf = float64(m.PingCount) / 282
-	}
-
-	if checkReferred {
-		var referred []*Miner
-		db.Where("referral_id = ? AND mining_height > ?", m.ID, height-2880).Find(&referred)
-
-		for _, m := range referred {
-			ipfr := getIpFactor(m, false, height, add)
-
-			if ipfr > ipf {
-				ipf = ipfr
-			}
-		}
-	}
-
-	if ipf > 1 {
-		ipf = 1
-	}
-
-	return ipf
 }
 
 func hasAintHealth(m *Miner, second bool) bool {
@@ -831,8 +774,6 @@ func getMiningFactor(m *Miner) float64 {
 	}
 
 	mf += referralIndex
-
-	// mf *= getIpFactor(m, true, uint64(height), 2)
 
 	return mf
 }

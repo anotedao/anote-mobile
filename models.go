@@ -28,7 +28,6 @@ type Miner struct {
 	MinedTelegram          uint64
 	MinedMobile            uint64
 	LastPing               time.Time
-	PingCount              int64
 	IpAddresses            []*IpAddress `gorm:"many2many:miner_ip_addresses;"`
 	UpdatedApp             bool         `gorm:"default:false"`
 	LastInvite             time.Time

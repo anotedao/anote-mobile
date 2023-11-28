@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"math"
 	"regexp"
 	"strconv"
 	"strings"
@@ -53,11 +52,6 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 				pr.Error = 2
 			}
 
-			if pr.Error == 0 && countIP(ip) > 3 {
-				pr.Success = false
-				pr.Error = 4
-			}
-
 			if !strings.HasPrefix(addr, "3A") {
 				pr.Success = false
 				pr.Error = 5
@@ -73,7 +67,6 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 					sendMined(addr, height-savedHeight)
 
 					miner.Cycles++
-					miner.PingCount = 1
 					miner.MiningTime = time.Now()
 					miner.MiningHeight = height
 					miner.BatteryNotification = true
@@ -85,7 +78,6 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 					miner.saveInBlockchain()
 				} else {
 					miner.MinedTelegram = Fee
-					miner.PingCount = 1
 					miner.Cycles = 1
 					miner.MiningTime = time.Now()
 					miner.MiningHeight = height
@@ -155,13 +147,6 @@ type MinerResponse struct {
 	Price         float64 `json:"price"`
 }
 
-type MinePingResponse struct {
-	Success       bool `json:"success"`
-	CycleFinished bool `json:"cycle_finished"`
-	Error         int  `json:"error"`
-	Health        int  `json:"health"`
-}
-
 type HealthResponse struct {
 	Health     int  `json:"health"`
 	UpdatedApp bool `json:"updated_app"`
@@ -172,68 +157,14 @@ type ImageResponse struct {
 	Id    string `json:"id"`
 }
 
-func minePingView(ctx *macaron.Context) {
-	mr := &MinePingResponse{Success: true}
-	a := ctx.Params("address")
-	if len(a) > 0 && strings.HasPrefix(a, "3A") {
-		apk := ctx.Params("apk")
-		ip := GetRealIP(ctx.Req.Request)
-
-		mr.CycleFinished = false
-
-		height := int64(mon.Height)
-
-		miner := getMiner(a)
-
-		if miner.ID == 0 {
-			mr.Success = false
-			mr.Error = 1
-		} else if !strings.HasPrefix(a, "3A") {
-			mr.Success = false
-			mr.Error = 2
-		} else {
-			if time.Since(miner.LastPing) > time.Second*55 {
-				miner.saveIp(ip)
-				minerPing(miner)
-
-				if apk == conf.APK {
-					miner.UpdatedApp = true
-				} else {
-					miner.UpdatedApp = false
-				}
-
-				err := db.Save(miner).Error
-				if err != nil {
-					log.Println(err)
-					logTelegram(err.Error())
-				}
-			}
-		}
-
-		// m := time.Since(miner.MiningTime).Minutes()
-		mr.Health = int((math.Floor(getIpFactor(miner, true, uint64(height), 0)*100) / 100) * 100)
-
-		if mr.Health > 100 {
-			mr.Health = 100
-		} else if mr.Health < 0 {
-			mr.Health = 0
-		}
-
-		log.Println("Ping: " + a + " " + ip + " Health: " + strconv.Itoa(mr.Health) + " IPs: " + strconv.Itoa(int(db.Model(miner).Association("IpAddresses").Count())) + " Pings: " + strconv.Itoa(int(miner.PingCount)))
-	}
-
-	ctx.JSON(200, mr)
-}
-
 func healthView(ctx *macaron.Context) {
 	a := ctx.Params("address")
-	height := getHeight()
 
 	hr := &HealthResponse{}
 
 	miner := getMiner(a)
 
-	hr.Health = int((math.Floor(getIpFactor(miner, true, uint64(height), 2)*100) / 100) * 100)
+	hr.Health = 100
 
 	if hr.Health > 100 {
 		hr.Health = 100
@@ -249,16 +180,6 @@ func healthView(ctx *macaron.Context) {
 func statsView(ctx *macaron.Context) {
 	sr := cch.StatsCache
 	ctx.JSON(200, sr)
-}
-
-func minerPing(miner *Miner) {
-	miner.PingCount++
-	miner.LastPing = time.Now()
-	err := db.Save(miner).Error
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
 }
 
 // func newUserView(ctx *macaron.Context) {
@@ -510,7 +431,6 @@ func telegramMineView(ctx *macaron.Context) {
 					if int64(h)-m.MiningHeight > 1409 {
 						if m.MiningHeight > 0 {
 							sendMined(m.Address, int64(h)-int64(m.MiningHeight))
-							m.PingCount = 1
 							m.Cycles++
 							m.MiningTime = time.Now()
 							m.MiningHeight = int64(h)
@@ -523,7 +443,6 @@ func telegramMineView(ctx *macaron.Context) {
 							m.saveInBlockchain()
 						} else {
 							m.MinedTelegram = Fee
-							m.PingCount = 1
 							m.MiningTime = time.Now()
 							m.Cycles = 1
 							m.MiningHeight = int64(h)
