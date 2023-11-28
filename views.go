@@ -384,18 +384,6 @@ func withdrawView(ctx *macaron.Context) {
 
 		sendAsset2(u.MinedTelegram-Fee, "", u.Address)
 
-		mon.NewBalanceTelegram -= u.MinedTelegram
-		mon.OldBalanceTelegram = mon.NewBalanceTelegram
-
-		ks := &KeyValue{Key: "oldBalanceTelegram"}
-		db.FirstOrCreate(ks, ks)
-		ks.ValueInt = mon.OldBalanceTelegram
-		err = db.Save(ks).Error
-		if err != nil {
-			log.Println(err)
-			logTelegram(err.Error())
-		}
-
 		u.MinedTelegram = 0
 		db.Save(u)
 

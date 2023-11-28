@@ -6,10 +6,8 @@ import (
 )
 
 type Monitor struct {
-	Miners             []*Miner
-	Height             uint64
-	OldBalanceTelegram uint64
-	NewBalanceTelegram uint64
+	Miners []*Miner
+	Height uint64
 }
 
 func (m *Monitor) loadMiners() {
