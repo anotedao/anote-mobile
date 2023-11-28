@@ -153,6 +153,8 @@ func (m *Monitor) checkMined() {
 }
 
 func (m *Monitor) start() {
+	m.loadMiners()
+
 	total := 0
 
 	for _, mnr := range m.Miners {
