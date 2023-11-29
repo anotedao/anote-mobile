@@ -35,7 +35,7 @@ func (m *Monitor) sendNotifications() {
 func (m *Monitor) isSending(miner *Miner, limit int64) bool {
 	if miner.ID != 0 &&
 		(int64(m.Height)-miner.MiningHeight) >= limit &&
-		(int64(m.Height)-miner.MiningHeight) < limit+30 &&
+		// (int64(m.Height)-miner.MiningHeight) < limit+30 &&
 		miner.LastNotification.Day() != time.Now().Day() &&
 		miner.MiningHeight > 0 &&
 		miner.TelegramId != 0 {
@@ -95,6 +95,8 @@ func (m *Monitor) start() {
 	log.Printf("Total Telegram: %d", total)
 
 	for {
+		m.Height = getHeight()
+
 		m.loadMiners()
 
 		m.sendNotifications()
