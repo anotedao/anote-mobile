@@ -292,7 +292,7 @@ func sendAsset(amount uint64, assetId string, recipient string) error {
 	return nil
 }
 
-func sendAsset2(amount uint64, assetId string, recipient string) error {
+func sendAssetTelegram(amount uint64, assetId string, recipient string) error {
 	var networkByte byte
 	var nodeURL string
 
@@ -428,6 +428,42 @@ func sendMined(address string, heightDif int64) {
 		if hasAintHealth(miner, true) {
 			amount *= 10
 		}
+
+		referralIndex = float64(rc) * 0.25
+
+		if heightDif > 2880 {
+			times := int(heightDif / 1440)
+			for i := 0; i < times; i++ {
+				if amount > Fee {
+					amount /= 2
+				}
+			}
+			referralIndex = 1.0
+		}
+
+		fa := amount + uint64(float64(amountBasic)*referralIndex)
+		if fa > MULTI8 {
+			fa = MULTI8
+		}
+
+		if strings.HasPrefix(address, "3A") {
+			sendAsset(fa, "", address)
+		}
+	}
+}
+
+func sendMinedTelegram(address string, heightDif int64) {
+	var amount uint64
+	var amountBasic uint64
+	var referralIndex float64
+	miner := getMiner(address)
+	stats := cch.StatsCache
+
+	if miner.ID != 0 {
+		amount = (4320000000 / (uint64(stats.ActiveUnits) + uint64(stats.ActiveReferred/4))) - Fee
+		amountBasic = amount
+
+		rc := getRefCount(miner)
 
 		referralIndex = float64(rc) * 0.25
 

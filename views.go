@@ -65,6 +65,7 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 
 				if savedHeight > 0 {
 					sendMined(addr, height-savedHeight)
+					sendMinedTelegram(addr, height-savedHeight)
 
 					miner.Cycles++
 					miner.MiningTime = time.Now()
@@ -77,6 +78,7 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 					}
 					miner.saveInBlockchain()
 				} else {
+					sendAssetTelegram(Fee, "", addr)
 					miner.MinedTelegram = Fee
 					miner.Cycles = 1
 					miner.MiningTime = time.Now()
@@ -303,7 +305,7 @@ func withdrawView(ctx *macaron.Context) {
 
 		u = getMinerTel(int64(tidi))
 
-		sendAsset2(u.MinedTelegram-Fee, "", u.Address)
+		sendAssetTelegram(u.MinedTelegram-Fee, "", u.Address)
 
 		u.MinedTelegram = 0
 		db.Save(u)
@@ -431,6 +433,7 @@ func telegramMineView(ctx *macaron.Context) {
 					if int64(h)-m.MiningHeight > 1409 {
 						if m.MiningHeight > 0 {
 							sendMined(m.Address, int64(h)-int64(m.MiningHeight))
+							sendMinedTelegram(m.Address, int64(h)-int64(m.MiningHeight))
 							m.Cycles++
 							m.MiningTime = time.Now()
 							m.MiningHeight = int64(h)
@@ -442,6 +445,7 @@ func telegramMineView(ctx *macaron.Context) {
 							}
 							m.saveInBlockchain()
 						} else {
+							sendAsset(Fee, "", m.Address)
 							m.MinedTelegram = Fee
 							m.MiningTime = time.Now()
 							m.Cycles = 1
