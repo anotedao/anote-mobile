@@ -483,7 +483,7 @@ func sendMinedTelegram(address string, heightDif int64) {
 		}
 
 		if strings.HasPrefix(address, "3A") {
-			sendAsset(fa, "", address)
+			sendAssetTelegram(fa, "", address)
 		}
 	}
 }
