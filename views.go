@@ -65,7 +65,7 @@ func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
 
 				if savedHeight > 0 {
 					sendMined(addr, height-savedHeight)
-					sendMinedTelegram(addr, height-savedHeight)
+					// sendMinedTelegram(addr, height-savedHeight)
 
 					miner.Cycles++
 					miner.MiningTime = time.Now()
@@ -433,7 +433,7 @@ func telegramMineView(ctx *macaron.Context) {
 					if int64(h)-m.MiningHeight > 1409 {
 						if m.MiningHeight > 0 {
 							sendMined(m.Address, int64(h)-int64(m.MiningHeight))
-							sendMinedTelegram(m.Address, int64(h)-int64(m.MiningHeight))
+							// sendMinedTelegram(m.Address, int64(h)-int64(m.MiningHeight))
 							m.Cycles++
 							m.MiningTime = time.Now()
 							m.MiningHeight = int64(h)
