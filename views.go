@@ -445,7 +445,9 @@ func telegramMineView(ctx *macaron.Context) {
 							}
 							m.saveInBlockchain()
 						} else {
-							sendAsset(Fee, "", m.Address)
+							if strings.HasPrefix(m.Address, "3A") {
+								sendAsset(Fee, "", m.Address)
+							}
 							m.MinedTelegram = Fee
 							m.MiningTime = time.Now()
 							m.Cycles = 1
