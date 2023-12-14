@@ -46,13 +46,13 @@ func main() {
 
 	// miners[1].TelegramId
 
-	msg := `Please notice that you have anotes accrued on this bot!
-	
-To withdraw them, click here -> /withdraw
+	// 	msg := `Please notice that you have anotes accrued on this bot!
 
-Or click the menu on this bot and choose withdraw. If you haven't attached the wallet (app.anotedao.com) yet, open it and click Connect Telegram on the bottom and do withdraw after that.
+	// To withdraw them, click here -> /withdraw
 
-After withdrawal, you will receive your anotes once a day, when you enter daily mining code. Happy mining! 🚀`
+	// Or click the menu on this bot and choose withdraw. If you haven't attached the wallet (app.anotedao.com) yet, open it and click Connect Telegram on the bottom and do withdraw after that.
+
+	// After withdrawal, you will receive your anotes once a day, when you enter daily mining code. Happy mining! 🚀`
 
 	// telegramNotification(963770508, msg)
 
