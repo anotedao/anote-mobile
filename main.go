@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"net/url"
 
 	// _ "net/http/pprof"
 
@@ -41,26 +40,26 @@ func main() {
 
 	cch = initCache()
 
-	var miners []*Miner
-	db.Where("mined_telegram > ?", Fee).Find(&miners)
-	log.Println(len(miners))
+	// 	var miners []*Miner
+	// 	db.Where("mined_telegram > ?", Fee).Find(&miners)
+	// 	log.Println(len(miners))
 
-	msg := `Please notice that you have anotes accrued on this bot!
-	
-To withdraw them, click here -> /withdraw or do it from menu on this bot.
+	// 	msg := `Please notice that you have anotes accrued on this bot!
 
-If you haven't connected the wallet yet, open it (app.anotedao.com), click Connect Telegram on the bottom of the wallet and do withdraw after that.
+	// To withdraw them, click here -> /withdraw or do it from menu on this bot.
 
-After withdrawal, you will receive your anotes once a day, when you enter daily mining code. Happy mining! 🚀`
+	// If you haven't connected the wallet yet, open it (app.anotedao.com), click Connect Telegram on the bottom of the wallet and do withdraw after that.
 
-	msg = url.QueryEscape(msg)
+	// After withdrawal, you will receive your anotes once a day, when you enter daily mining code. Happy mining! 🚀`
 
-	// telegramNotification(963770508, msg)
+	// 	msg = url.QueryEscape(msg)
 
-	for i, m := range miners {
-		telegramNotification(m.TelegramId, msg)
-		log.Printf("Sent TG notification: %d", i)
-	}
+	// 	// telegramNotification(963770508, msg)
+
+	// 	for i, m := range miners {
+	// 		telegramNotification(m.TelegramId, msg)
+	// 		log.Printf("Sent TG notification: %d", i)
+	// 	}
 
 	mac.Run("127.0.0.1", Port)
 }
