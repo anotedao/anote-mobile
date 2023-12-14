@@ -50,7 +50,9 @@ func main() {
 	
 To withdraw them, click here -> /withdraw
 
-Or click the menu on this bot and choose withdraw. If you haven't attached the wallet (app.anotedao.com) yet, open it and click Connect Telegram on the bottom and do withdraw after that.`
+Or click the menu on this bot and choose withdraw. If you haven't attached the wallet (app.anotedao.com) yet, open it and click Connect Telegram on the bottom and do withdraw after that.
+
+After withdrawal, you will receive your anotes once a day, when you enter daily mining code. Happy mining! 🚀`
 
 	telegramNotification(963770508, msg)
 
