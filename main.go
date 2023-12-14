@@ -46,7 +46,7 @@ func main() {
 
 	// miners[1].TelegramId
 
-	telegramNotification(963770508, "Test message from anote mobile.")
+	telegramNotification(963770508, "Test message from anote mobile. 🚀")
 
 	mac.Run("127.0.0.1", Port)
 }
