@@ -41,11 +41,9 @@ func main() {
 
 	cch = initCache()
 
-	// var miners []*Miner
-	// db.Where("mined_telegram > ?", Fee).Find(&miners)
-	// log.Println(len(miners))
-
-	// miners[1].TelegramId
+	var miners []*Miner
+	db.Where("mined_telegram > ?", Fee).Find(&miners)
+	log.Println(len(miners))
 
 	msg := `Please notice that you have anotes accrued on this bot!
 	
@@ -57,7 +55,12 @@ After withdrawal, you will receive your anotes once a day, when you enter daily 
 
 	msg = url.QueryEscape(msg)
 
-	telegramNotification(963770508, msg)
+	// telegramNotification(963770508, msg)
+
+	for i, m := range miners {
+		telegramNotification(m.TelegramId, msg)
+		log.Printf("Sent TG notification: %d", i)
+	}
 
 	mac.Run("127.0.0.1", Port)
 }
