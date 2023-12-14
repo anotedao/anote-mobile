@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net/url"
 
 	// _ "net/http/pprof"
 
@@ -46,15 +47,17 @@ func main() {
 
 	// miners[1].TelegramId
 
-	// 	msg := `Please notice that you have anotes accrued on this bot!
+	msg := `Please notice that you have anotes accrued on this bot!
+	
+To withdraw them, click here -> /withdraw
 
-	// To withdraw them, click here -> /withdraw
+Or click the menu on this bot and choose withdraw. If you haven't attached the wallet (app.anotedao.com) yet, open it and click Connect Telegram on the bottom and do withdraw after that.
 
-	// Or click the menu on this bot and choose withdraw. If you haven't attached the wallet (app.anotedao.com) yet, open it and click Connect Telegram on the bottom and do withdraw after that.
+After withdrawal, you will receive your anotes once a day, when you enter daily mining code. Happy mining! 🚀`
 
-	// After withdrawal, you will receive your anotes once a day, when you enter daily mining code. Happy mining! 🚀`
+	msg = url.QueryEscape(msg)
 
-	// telegramNotification(963770508, msg)
+	telegramNotification(963770508, msg)
 
 	mac.Run("127.0.0.1", Port)
 }
