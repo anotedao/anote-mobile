@@ -54,7 +54,7 @@ Or click the menu on this bot and choose withdraw. If you haven't attached the w
 
 After withdrawal, you will receive your anotes once a day, when you enter daily mining code. Happy mining! 🚀`
 
-	telegramNotification(963770508, msg)
+	// telegramNotification(963770508, msg)
 
 	mac.Run("127.0.0.1", Port)
 }
