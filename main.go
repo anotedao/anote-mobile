@@ -40,9 +40,13 @@ func main() {
 
 	cch = initCache()
 
-	var miners []*Miner
-	db.Where("mined_telegram > ?", Fee).Find(&miners)
-	log.Println(len(miners))
+	// var miners []*Miner
+	// db.Where("mined_telegram > ?", Fee).Find(&miners)
+	// log.Println(len(miners))
+
+	// miners[1].TelegramId
+
+	telegramNotification(963770508, "Test message from anote mobile.")
 
 	mac.Run("127.0.0.1", Port)
 }

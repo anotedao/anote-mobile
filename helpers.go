@@ -515,6 +515,15 @@ func sendTelegramNotification(addr string, height int64, savedHeight int64) bool
 	return sent
 }
 
+func telegramNotification(tid int64, msg string) {
+	resp, err := http.Get(fmt.Sprintf("http://localhost:5006/notification-tg/%d/%s", tid, msg))
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+	}
+	defer resp.Body.Close()
+}
+
 type NotificationResponse struct {
 	Success bool `json:"success"`
 }
