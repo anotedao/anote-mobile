@@ -46,7 +46,13 @@ func main() {
 
 	// miners[1].TelegramId
 
-	telegramNotification(963770508, "Test message from anote mobile. 🚀")
+	msg := `Please notice that you have anotes accrued on this bot!
+	
+To withdraw them, click here -> /withdraw
+
+Or click the menu on this bot and choose withdraw. If you haven't attached the wallet (app.anotedao.com) yet, open it and click Connect Telegram on the bottom and do withdraw after that.`
+
+	telegramNotification(963770508, msg)
 
 	mac.Run("127.0.0.1", Port)
 }
