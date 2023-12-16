@@ -443,6 +443,12 @@ func sendMined(address string, heightDif int64) {
 
 		fa := amount + uint64(float64(amountBasic)*referralIndex)
 		if fa > MULTI8 {
+			log.Println(prettyPrint(stats))
+			log.Println(fa)
+			log.Println(amountBasic)
+			log.Println(amount)
+			log.Println(rc)
+			logTelegram("Large amount issue.")
 			fa = MULTI8
 		}
 
