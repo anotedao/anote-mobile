@@ -379,8 +379,8 @@ func sendAssetTelegram(amount uint64, assetId string, recipient string) error {
 }
 
 func sendMined(address string, heightDif int64) {
-	var amount uint64
-	var amountBasic uint64
+	var amount int64
+	var amountBasic int64
 	var referralIndex float64
 	miner := getMiner(address)
 	stats := cch.StatsCache
@@ -420,7 +420,12 @@ func sendMined(address string, heightDif int64) {
 			logTelegram(err.Error())
 		}
 
-		amount = (total.Balance / (uint64(stats.ActiveUnits) + uint64(stats.ActiveReferred/4))) - Fee
+		amount = (int64(total.Balance) / (int64(stats.ActiveUnits) + int64(stats.ActiveReferred/4))) - Fee
+
+		if amount < 0 {
+			amount = 0
+		}
+
 		amountBasic = amount
 
 		rc := getRefCount(miner)
@@ -441,7 +446,7 @@ func sendMined(address string, heightDif int64) {
 			referralIndex = 1.0
 		}
 
-		fa := amount + uint64(float64(amountBasic)*referralIndex)
+		fa := amount + int64(float64(amountBasic)*referralIndex)
 		if fa > MULTI8 {
 			log.Println(prettyPrint(total))
 			log.Println(prettyPrint(stats))
@@ -454,7 +459,7 @@ func sendMined(address string, heightDif int64) {
 		}
 
 		if strings.HasPrefix(address, "3A") {
-			sendAsset(fa, "", address)
+			sendAsset(uint64(fa), "", address)
 		}
 	}
 }
