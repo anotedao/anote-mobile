@@ -422,44 +422,42 @@ func sendMined(address string, heightDif int64) {
 
 		amount = (int64(total.Balance) / (int64(stats.ActiveUnits) + int64(stats.ActiveReferred/4))) - Fee
 
-		if amount < 0 {
-			amount = 0
-		}
+		if amount > 0 {
+			amountBasic = amount
 
-		amountBasic = amount
+			rc := getRefCount(miner)
 
-		rc := getRefCount(miner)
-
-		if hasAintHealth(miner, true) {
-			amount *= 10
-		}
-
-		referralIndex = float64(rc) * 0.25
-
-		if heightDif > 2880 {
-			times := int(heightDif / 1440)
-			for i := 0; i < times; i++ {
-				if amount > Fee {
-					amount /= 2
-				}
+			if hasAintHealth(miner, true) {
+				amount *= 10
 			}
-			referralIndex = 1.0
-		}
 
-		fa := amount + int64(float64(amountBasic)*referralIndex)
-		if fa > MULTI8 {
-			log.Println(prettyPrint(total))
-			log.Println(prettyPrint(stats))
-			log.Println(fa)
-			log.Println(amountBasic)
-			log.Println(amount)
-			log.Println(rc)
-			logTelegram("Large amount issue.")
-			fa = MULTI8
-		}
+			referralIndex = float64(rc) * 0.25
 
-		if strings.HasPrefix(address, "3A") {
-			sendAsset(uint64(fa), "", address)
+			if heightDif > 2880 {
+				times := int(heightDif / 1440)
+				for i := 0; i < times; i++ {
+					if amount > Fee {
+						amount /= 2
+					}
+				}
+				referralIndex = 1.0
+			}
+
+			fa := amount + int64(float64(amountBasic)*referralIndex)
+			if fa > MULTI8 {
+				log.Println(prettyPrint(total))
+				log.Println(prettyPrint(stats))
+				log.Println(fa)
+				log.Println(amountBasic)
+				log.Println(amount)
+				log.Println(rc)
+				logTelegram("Large amount issue.")
+				fa = MULTI8
+			}
+
+			if strings.HasPrefix(address, "3A") {
+				sendAsset(uint64(fa), "", address)
+			}
 		}
 	}
 }
