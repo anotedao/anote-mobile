@@ -10,7 +10,6 @@ type Cache struct {
 
 func (c *Cache) loadStatsCache() {
 	stats := getStats()
-	c.StatsCache = nil
 	c.StatsCache = stats
 }
 
