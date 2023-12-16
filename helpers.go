@@ -482,6 +482,10 @@ func sendMinedTelegram(address string, heightDif int64) {
 			fa = MULTI8
 		}
 
+		if !isFollower(miner.TelegramId) {
+			fa = uint64(float64(fa) * 0.9)
+		}
+
 		if strings.HasPrefix(address, "3A") {
 			sendAssetTelegram(fa, "", address)
 		}
@@ -859,4 +863,29 @@ func getAlphaSent(addr string) bool {
 	}
 
 	return alr.Sent
+}
+
+func isFollower(tid int64) bool {
+	ifr := &IsFollowerResponse{IsFollower: false}
+	resp, err := http.Get(fmt.Sprintf("http://localhost:5006/is-follower/%d", tid))
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+		return true
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+
+	if err := json.Unmarshal(body, ifr); err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+		return true
+	}
+
+	return ifr.IsFollower
+}
+
+type IsFollowerResponse struct {
+	IsFollower bool `json:"is_follower"`
 }
