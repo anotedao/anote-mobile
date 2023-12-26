@@ -469,8 +469,32 @@ func sendMinedTelegram(address string, heightDif int64) {
 	miner := getMiner(address)
 	stats := cch.StatsCache
 
+	addr := proto.MustAddressFromString(TelegramAddress)
+
+	cl, err := client.NewClient(client.Options{BaseUrl: AnoteNodeURL, Client: &http.Client{
+		Transport: &http.Transport{
+			ForceAttemptHTTP2: true,
+			// MaxConnsPerHost:   -1,
+			MaxIdleConnsPerHost: -1,
+			DisableKeepAlives:   true,
+		},
+	}})
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	total, _, err := cl.Addresses.Balance(ctx, addr)
+	if err != nil {
+		log.Println(err)
+		logTelegram(err.Error())
+	}
+
 	if miner.ID != 0 {
-		amount = (4320000000 / (uint64(stats.ActiveUnits) + uint64(stats.ActiveReferred/4))) - Fee
+		amount = (total.Balance / (uint64(stats.ActiveUnits) + uint64(stats.ActiveReferred/4))) - Fee
 		amountBasic = amount
 
 		rc := getRefCount(miner)
