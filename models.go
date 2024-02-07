@@ -33,6 +33,7 @@ type Miner struct {
 	LastInvite             time.Time
 	BatteryNotification    bool `gorm:"default:false"`
 	Cycles                 uint64
+	LastTgChange           time.Time
 }
 
 func (m *Miner) saveInBlockchain() {
@@ -87,7 +88,7 @@ func getMinerOrCreate(addr string) *Miner {
 	result := db.FirstOrCreate(mnr, &Miner{Address: addr})
 	if result.Error != nil {
 		log.Println(result.Error)
-		logTelegram(result.Error.Error())
+		// logTelegram(result.Error.Error())
 		log.Println(addr)
 		return nil
 	}
