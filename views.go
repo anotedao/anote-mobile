@@ -1,131 +1,129 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/go-macaron/captcha"
 	macaron "gopkg.in/macaron.v1"
 )
 
-func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
-	height := int64(getHeight())
+// func mineView(ctx *macaron.Context, cpt *captcha.Captcha) {
+// 	height := int64(getHeight())
 
-	pr := &MineResponse{
-		Success: true,
-		Error:   0,
-	}
+// 	pr := &MineResponse{
+// 		Success: true,
+// 		Error:   0,
+// 	}
 
-	addr := ctx.Params("address")
-	if len(addr) > 0 && addr != "0" {
-		cpid := ctx.Params("captchaid")
-		cp := ctx.Params("captcha")
-		code := ctx.Params("code")
-		ip := GetRealIP(ctx.Req.Request)
+// 	addr := ctx.Params("address")
+// 	if len(addr) > 0 && addr != "0" {
+// 		cpid := ctx.Params("captchaid")
+// 		cp := ctx.Params("captcha")
+// 		code := ctx.Params("code")
+// 		ip := GetRealIP(ctx.Req.Request)
 
-		miner := getMinerOrCreate(addr)
-		if miner != nil {
-			savedHeight := miner.MiningHeight
+// 		miner := getMinerOrCreate(addr)
+// 		if miner != nil {
+// 			savedHeight := miner.MiningHeight
 
-			code = strings.TrimSpace(code)
-			code = regexp.MustCompile(`[^0-9]+`).ReplaceAllString(code, "")
+// 			code = strings.TrimSpace(code)
+// 			code = regexp.MustCompile(`[^0-9]+`).ReplaceAllString(code, "")
 
-			codeInt, err := strconv.Atoi(code)
-			if err != nil {
-				log.Println(err)
-				logTelegram(err.Error())
-				pr.Success = false
-				pr.Error = 2
-			}
+// 			codeInt, err := strconv.Atoi(code)
+// 			if err != nil {
+// 				log.Println(err)
+// 				logTelegram(err.Error())
+// 				pr.Success = false
+// 				pr.Error = 2
+// 			}
 
-			if !cpt.Verify(cpid, cp) {
-				pr.Success = false
-				pr.Error = 1
-			}
+// 			if !cpt.Verify(cpid, cp) {
+// 				pr.Success = false
+// 				pr.Error = 1
+// 			}
 
-			if int(codeInt) != getMiningCode() {
-				pr.Success = false
-				pr.Error = 2
-			}
+// 			if int(codeInt) != getMiningCode() {
+// 				pr.Success = false
+// 				pr.Error = 2
+// 			}
 
-			if !strings.HasPrefix(addr, "3A") {
-				pr.Success = false
-				pr.Error = 5
-			}
+// 			if !strings.HasPrefix(addr, "3A") {
+// 				pr.Success = false
+// 				pr.Error = 5
+// 			}
 
-			if pr.Error == 0 && (height-miner.MiningHeight > 1410) {
-				log.Println(fmt.Sprintf("%s %s", addr, ip))
+// 			if pr.Error == 0 && (height-miner.MiningHeight > 1410) {
+// 				log.Println(fmt.Sprintf("%s %s", addr, ip))
 
-				miner.clearIps()
-				miner.saveIp(ip)
+// 				miner.clearIps()
+// 				miner.saveIp(ip)
 
-				if savedHeight > 0 {
-					sendMined(addr, height-savedHeight)
-					sendMinedTelegram(addr, height-savedHeight)
+// 				if savedHeight > 0 {
+// 					sendMined(addr, height-savedHeight)
+// 					sendMinedTelegram(addr, height-savedHeight)
 
-					miner.Cycles++
-					miner.MiningTime = time.Now()
-					miner.MiningHeight = height
-					miner.BatteryNotification = true
-					err = db.Save(miner).Error
-					if err != nil {
-						log.Println(err)
-						logTelegram(err.Error())
-					}
-					miner.saveInBlockchain()
-				} else {
-					sendAssetTelegram(Fee, "", addr)
-					miner.MinedTelegram = Fee
-					miner.Cycles = 1
-					miner.MiningTime = time.Now()
-					miner.MiningHeight = height
-					miner.UpdatedApp = true
-					miner.BatteryNotification = true
-					if miner.Address == "" {
-						miner.Address = strconv.Itoa(int(miner.TelegramId))
-					}
-					err := db.Save(miner).Error
-					if err != nil {
-						log.Println(err)
-						logTelegram(err.Error())
-					}
-					miner.saveInBlockchain()
-					sendNotificationFirst(miner)
-				}
-				// mon.loadMiners()
-			}
-		} else {
-			pr.Success = false
-			pr.Error = 7
-		}
-	} else {
-		pr.Success = false
-		pr.Error = 6
-	}
+// 					miner.Cycles++
+// 					miner.MiningTime = time.Now()
+// 					miner.MiningHeight = height
+// 					miner.BatteryNotification = true
+// 					err = db.Save(miner).Error
+// 					if err != nil {
+// 						log.Println(err)
+// 						logTelegram(err.Error())
+// 					}
+// 					miner.saveInBlockchain()
+// 				} else {
+// 					sendAssetTelegram(Fee, "", addr)
+// 					miner.MinedTelegram = Fee
+// 					miner.Cycles = 1
+// 					miner.MiningTime = time.Now()
+// 					miner.MiningHeight = height
+// 					miner.UpdatedApp = true
+// 					miner.BatteryNotification = true
+// 					if miner.Address == "" {
+// 						miner.Address = strconv.Itoa(int(miner.TelegramId))
+// 					}
+// 					err := db.Save(miner).Error
+// 					if err != nil {
+// 						log.Println(err)
+// 						logTelegram(err.Error())
+// 					}
+// 					miner.saveInBlockchain()
+// 					sendNotificationFirst(miner)
+// 				}
+// 				// mon.loadMiners()
+// 			}
+// 		} else {
+// 			pr.Success = false
+// 			pr.Error = 7
+// 		}
+// 	} else {
+// 		pr.Success = false
+// 		pr.Error = 6
+// 	}
 
-	ctx.Resp.Header().Add("Access-Control-Allow-Origin", "*")
-	ctx.JSON(200, pr)
-}
+// 	ctx.Resp.Header().Add("Access-Control-Allow-Origin", "*")
+// 	ctx.JSON(200, pr)
+// }
 
-func newCaptchaView(ctx *macaron.Context, cpt *captcha.Captcha) {
-	c, err := cpt.CreateCaptcha()
-	if err != nil {
-		log.Println(err)
-		logTelegram(err.Error())
-	}
+// func newCaptchaView(ctx *macaron.Context, cpt *captcha.Captcha) {
+// 	c, err := cpt.CreateCaptcha()
+// 	if err != nil {
+// 		log.Println(err)
+// 		logTelegram(err.Error())
+// 	}
 
-	ir := &ImageResponse{
-		Id:    c,
-		Image: fmt.Sprintf("%s/captcha/%s.png", conf.Host, c),
-	}
+// 	ir := &ImageResponse{
+// 		Id:    c,
+// 		Image: fmt.Sprintf("%s/captcha/%s.png", conf.Host, c),
+// 	}
 
-	ctx.Resp.Header().Add("Access-Control-Allow-Origin", "*")
-	ctx.JSON(200, ir)
-}
+// 	ctx.Resp.Header().Add("Access-Control-Allow-Origin", "*")
+// 	ctx.JSON(200, ir)
+// }
 
 type MineResponse struct {
 	Success bool `json:"success"`
@@ -159,25 +157,25 @@ type ImageResponse struct {
 	Id    string `json:"id"`
 }
 
-func healthView(ctx *macaron.Context) {
-	a := ctx.Params("address")
+// func healthView(ctx *macaron.Context) {
+// 	a := ctx.Params("address")
 
-	hr := &HealthResponse{}
+// 	hr := &HealthResponse{}
 
-	miner := getMiner(a)
+// 	miner := getMiner(a)
 
-	hr.Health = 100
+// 	hr.Health = 100
 
-	if hr.Health > 100 {
-		hr.Health = 100
-	} else if hr.Health < 0 {
-		hr.Health = 0
-	}
+// 	if hr.Health > 100 {
+// 		hr.Health = 100
+// 	} else if hr.Health < 0 {
+// 		hr.Health = 0
+// 	}
 
-	hr.UpdatedApp = miner.UpdatedApp
+// 	hr.UpdatedApp = miner.UpdatedApp
 
-	ctx.JSON(200, hr)
-}
+// 	ctx.JSON(200, hr)
+// }
 
 func statsView(ctx *macaron.Context) {
 	sr := cch.StatsCache
@@ -366,35 +364,35 @@ func saveTelegram(ctx *macaron.Context) {
 	ctx.JSON(200, mr)
 }
 
-func inviteView(ctx *macaron.Context) {
-	var referred []*Miner
-	mr := &MineResponse{Success: true}
-	ap := ctx.Params("addr")
-	height := getHeight()
+// func inviteView(ctx *macaron.Context) {
+// 	var referred []*Miner
+// 	mr := &MineResponse{Success: true}
+// 	ap := ctx.Params("addr")
+// 	height := getHeight()
 
-	m := &Miner{}
-	db.First(m, &Miner{Address: ap})
+// 	m := &Miner{}
+// 	db.First(m, &Miner{Address: ap})
 
-	db.Where("referral_id = ? AND mining_height < ?", m.ID, height-1440).Find(&referred)
-	if time.Since(m.LastInvite) > (time.Hour * 24) {
-		for _, r := range referred {
-			if r.TelegramId != 0 {
-				sendInvite(r)
-			}
-		}
-		m.LastInvite = time.Now()
-		err := db.Save(m).Error
-		if err != nil {
-			log.Println(err)
-			logTelegram(err.Error())
-		}
-	} else {
-		mr.Success = false
-		mr.Error = 1
-	}
+// 	db.Where("referral_id = ? AND mining_height < ?", m.ID, height-1440).Find(&referred)
+// 	if time.Since(m.LastInvite) > (time.Hour * 24) {
+// 		for _, r := range referred {
+// 			if r.TelegramId != 0 {
+// 				sendInvite(r)
+// 			}
+// 		}
+// 		m.LastInvite = time.Now()
+// 		err := db.Save(m).Error
+// 		if err != nil {
+// 			log.Println(err)
+// 			logTelegram(err.Error())
+// 		}
+// 	} else {
+// 		mr.Success = false
+// 		mr.Error = 1
+// 	}
 
-	ctx.JSON(200, mr)
-}
+// 	ctx.JSON(200, mr)
+// }
 
 func telegramMineView(ctx *macaron.Context) {
 	ip := GetRealIP(ctx.Req.Request)

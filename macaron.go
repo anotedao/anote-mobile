@@ -18,17 +18,17 @@ func initMacaron() *macaron.Macaron {
 	))
 
 	mac.Get("/save-telegram/:addr/:telegramid", saveTelegram)
-	mac.Get("/mine/:address/:captchaid/:captcha/:code", mineView)
-	mac.Get("/mine/:address/:captchaid/:captcha/:code/:ref", mineView)
-	mac.Get("/new-captcha/:addr", newCaptchaView)
+	// mac.Get("/mine/:address/:captchaid/:captcha/:code", mineView)
+	// mac.Get("/mine/:address/:captchaid/:captcha/:code/:ref", mineView)
+	// mac.Get("/new-captcha/:addr", newCaptchaView)
 	// mac.Get("/new-user/:addr", newUserView)
 	// mac.Get("/new-user/:addr/:ref", newUserView)
 	mac.Get("/miner/:addr", minerView)
 	mac.Get("/tminer/:tid", telegramMinerView)
 	mac.Get("/withdraw/:tid", withdrawView)
-	mac.Get("/health/:address", healthView)
+	// mac.Get("/health/:address", healthView)
 	mac.Get("/stats", statsView)
-	mac.Get("/invite/:addr", inviteView)
+	// mac.Get("/invite/:addr", inviteView)
 	mac.Get("/telegram-mine/:tid/:code", telegramMineView)
 
 	return mac
