@@ -73,8 +73,7 @@ func (pc *PriceClient) doRequest() (*Prices, error) {
 }
 
 func (pc *PriceClient) loadPrice() {
-	// pc.AnotePrice = getPriceCoinGecko()
-	pc.AnotePrice = 121.78
+	pc.AnotePrice = getPriceCoinGecko()
 }
 
 func (pc *PriceClient) doRequestOrderbook() {
